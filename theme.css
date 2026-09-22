@@ -3175,6 +3175,29 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
 .monster-boss-label { top: 1px; }
 .monster.boss .monster-status { top: 13px; }
 
+.board-wrap,
+.board-wrap * {
+  cursor: none !important;
+}
+
+.monster {
+  overflow: visible;
+}
+
+.monster .hp {
+  z-index: 3;
+  bottom: -10px;
+}
+
+.monster.boss .hp {
+  bottom: -13px;
+}
+
+.monster-status,
+.monster-boss-label {
+  z-index: 3;
+}
+
 @media (max-width: 380px) {
   .equipment-stage {
     flex-basis: 132px;
