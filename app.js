@@ -221,6 +221,11 @@ const FORGE_CONFIG = {
   starGoldStep: 160,
   starValueRate: 0.08,
 };
+const SHOP_EXCHANGE_CONFIG = Object.freeze({
+  enhance: { label: "强化石", rate: 10, batchCosts: [10, 50, 200, 500] },
+  star: { label: "升星石", rate: 1, batchCosts: [10, 50, 200, 500] },
+  gold: { label: "金币", rate: 1000, batchCosts: [1, 10, 50, 100] },
+});
 const FORGE_ECONOMY = {
   startingEnhanceStone: 24,
   startingStarStone: 8,
@@ -251,8 +256,8 @@ const FORGE_ECONOMY = {
   ],
   /* 兑换仅用于补缺口，不能替代关卡与每日任务的长期产出。 */
   exchangeOffers: {
-    enhance: { price: 20, amount: 40 },
-    star: { price: 20, amount: 4 },
+    enhance: { price: 20, amount: 20 * SHOP_EXCHANGE_CONFIG.enhance.rate },
+    star: { price: 20, amount: 20 * SHOP_EXCHANGE_CONFIG.star.rate },
   },
 };
 const FORGE_STAR_RATES = [
@@ -5357,6 +5362,8 @@ function showHeroGrowthModal(onBack = showHome) {
 }
 
 function showShop(onBack = showHome, noticeText = "") {
+  const shopExchangeTiers = (kind) => SHOP_EXCHANGE_CONFIG[kind].batchCosts
+    .map((cost) => [cost * SHOP_EXCHANGE_CONFIG[kind].rate, cost]);
   const groups = [
     {
       kind: "enhance",
@@ -5365,7 +5372,7 @@ function showShop(onBack = showHome, noticeText = "") {
       field: "forgeEnhanceStone",
       unit: "个",
       tone: "green",
-      tiers: [[20, 10], [100, 50], [400, 200], [1000, 500]],
+      tiers: shopExchangeTiers("enhance"),
     },
     {
       kind: "star",
@@ -5374,7 +5381,7 @@ function showShop(onBack = showHome, noticeText = "") {
       field: "forgeStarStone",
       unit: "个",
       tone: "purple",
-      tiers: [[2, 10], [10, 50], [40, 200], [100, 500]],
+      tiers: shopExchangeTiers("star"),
     },
     {
       kind: "gold",
@@ -5383,7 +5390,7 @@ function showShop(onBack = showHome, noticeText = "") {
       field: "gold",
       unit: "",
       tone: "gold",
-      tiers: [[500, 1], [5000, 10], [25000, 50], [50000, 100]],
+      tiers: shopExchangeTiers("gold"),
     },
   ];
   const short = (value) => {
@@ -5441,7 +5448,8 @@ function showShop(onBack = showHome, noticeText = "") {
     </div>
     <div class="shop-body">${shopAdGroupHtml()}${groups.map(groupHtml).join("")}</div>
     <p class="shop-notice" role="status" aria-live="polite"></p>
-    <p class="shop-rate">汇率：1 元宝 = 2 强化石 = 0.2 升星石 = 500 金币</p>
+    <p class="shop-rate">汇率：1 元宝 = ${Object.values(SHOP_EXCHANGE_CONFIG)
+      .map(({ rate, label }) => `${rate} ${label}`).join(" = ")}</p>
   </div>`;
   const notice = modalDetail.querySelector(".shop-notice");
   notice.textContent = noticeText;
