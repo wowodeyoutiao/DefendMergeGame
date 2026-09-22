@@ -3762,3 +3762,126 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   }
   .shop-modal .shop-card-icon { width: 32px; height: 32px; }
 }
+
+/* 顶部资源统一使用主界面的白色蓝边胶囊，保证各页面的持有数量和加号控件一致。 */
+.resource-pill {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 34px;
+  gap: 4px;
+  padding: 2px 4px;
+  border: 2px solid #c9eaff;
+  border-radius: 18px;
+  background: linear-gradient(#ffffffee, #e6f4ffed);
+  box-shadow: inset 0 1px 0 #ffffff, 0 2px 0 #2874c7;
+  color: #4a3f5a;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.resource-pill > img:first-child {
+  flex: 0 0 21px;
+  width: 21px;
+  height: 21px;
+  object-fit: contain;
+}
+.resource-pill b,
+.resource-pill strong {
+  min-width: 0;
+  overflow: hidden;
+  color: #4a3f5a;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.resource-plus,
+.resource-pill > .home-plus,
+.resource-pill > .stamina-plus-icon {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  margin-left: auto;
+  padding: 0;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 0 #4ecb71);
+}
+.resource-plus {
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: transform .12s ease, filter .12s ease;
+}
+.resource-plus img { width: 100%; height: 100%; object-fit: contain; }
+.resource-plus:hover { transform: translateY(-1px); filter: brightness(1.08) drop-shadow(0 2px 3px #2874c755); }
+.resource-plus:active { transform: translateY(0) scale(.94); }
+.resource-pill .hud-icon { width: 21px; height: 21px; flex-basis: 21px; }
+.resource-pill .stamina-plus-icon { pointer-events: none; }
+.forge-wallet { gap: 4px; }
+.forge-money { flex: 0 1 auto; }
+.bag-wallet { flex: 0 1 auto; }
+.modal-resource-bar { min-height: 34px; }
+
+.top-hud .hud-pill.resource-pill,
+.equipment-modal .equipment-wallet-item.resource-pill,
+.shop-modal .shop-wallet.resource-pill,
+.forge-panel .forge-money.resource-pill,
+.bag-modal .bag-wallet.resource-pill,
+.modal-resource-bar .resource-pill {
+  min-height: 34px;
+  padding: 2px 4px;
+  border: 2px solid #c9eaff;
+  border-radius: 18px;
+  background: linear-gradient(#ffffffee, #e6f4ffed);
+  box-shadow: inset 0 1px 0 #ffffff, 0 2px 0 #2874c7;
+  color: #4a3f5a;
+}
+.top-hud .hud-pill.resource-pill > img:first-child,
+.equipment-modal .equipment-wallet-item.resource-pill > img:first-child,
+.shop-modal .shop-wallet.resource-pill > img:first-child,
+.forge-panel .forge-money.resource-pill > img:first-child,
+.bag-modal .bag-wallet.resource-pill > img:first-child,
+.modal-resource-bar .resource-pill > img:first-child {
+  width: 21px;
+  height: 21px;
+  flex-basis: 21px;
+}
+.top-hud .hud-pill.resource-pill b,
+.equipment-modal .equipment-wallet-item.resource-pill b,
+.shop-modal .shop-wallet.resource-pill b,
+.forge-panel .forge-money.resource-pill b,
+.bag-modal .bag-wallet.resource-pill strong,
+.modal-resource-bar .resource-pill b {
+  color: #4a3f5a;
+  font-size: 11px;
+  font-weight: 800;
+}
+.top-hud .hud-pill.resource-pill > .stamina-plus-icon,
+.forge-panel .forge-money.resource-pill > .resource-plus {
+  width: 16px;
+  height: 16px;
+  flex-basis: 16px;
+}
+
+@media (max-width: 370px) {
+  .resource-pill { min-height: 32px; padding-inline: 3px; gap: 2px; }
+  .resource-pill > img:first-child,
+  .resource-pill .hud-icon { width: 18px; height: 18px; flex-basis: 18px; }
+  .resource-pill b,
+  .resource-pill strong { font-size: 10px; }
+  .resource-plus,
+  .resource-pill > .home-plus,
+  .resource-pill > .stamina-plus-icon { width: 15px; height: 15px; flex-basis: 15px; }
+  .top-hud .hud-pill.resource-pill > img:first-child,
+  .equipment-modal .equipment-wallet-item.resource-pill > img:first-child,
+  .shop-modal .shop-wallet.resource-pill > img:first-child,
+  .forge-panel .forge-money.resource-pill > img:first-child,
+  .bag-modal .bag-wallet.resource-pill > img:first-child,
+  .modal-resource-bar .resource-pill > img:first-child { width: 18px; height: 18px; flex-basis: 18px; }
+}

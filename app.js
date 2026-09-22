@@ -47,12 +47,12 @@ const CHALLENGE_MODE_CONFIG = {
   dailyAttemptLimit: 3,
   rewardMultiplierMin: 2.5,
   rewardMultiplierMax: 3,
-  extraWavesMin: 5,
-  extraWavesMax: 10,
+  extraWavesMin: 2,
+  extraWavesMax: 3,
   bossEveryWaves: 3,
-  bossesPerBossWave: 2,
-  monsterTotalMultiplier: 1.2,
-  difficultyMultiplier: 1.35,
+  bossesPerBossWave: 1,
+  monsterTotalMultiplier: 1.1,
+  difficultyMultiplier: 1.2,
   equipmentQualityBonusMin: 1,
   equipmentQualityBonusMax: 2,
   equipmentDoubleChance: 0.35,
@@ -181,6 +181,7 @@ const EQUIPMENT_SYNTHESIS_RATES = [1, 0.95, 0.85, 0.72, 0.58, 0.45];
 const EQUIPMENT_SYNTHESIS_BONUS = { enabled: false, chance: 0.1, salePriceMultiplier: 2 };
 const EQUIPMENT_DROP_CHANCE = 0.68;
 const EQUIPMENT_DROP_PITY_MISSES = 3;
+const EARLY_EQUIPMENT_GUARANTEE_COUNT = 3;
 const EQUIPMENT_DROP_TABLES = [
   { minLevel: 1, weights: [0.94, 0.055, 0.005, 0, 0, 0, 0] },
   { minLevel: 21, weights: [0.8, 0.16, 0.035, 0.005, 0, 0, 0] },
@@ -211,6 +212,13 @@ const FORGE_TABS = [
   { id: "gem", name: "魂石" },
 ];
 const FORGE_UNLOCKED_TABS = ["enhance", "star"];
+const PROGRESSION_UNLOCKS = Object.freeze({
+  equipment: { clearedNormalLevels: 1, label: "武将装备" },
+  enhance: { clearedNormalLevels: 2, label: "装备强化" },
+  star: { clearedNormalLevels: 3, label: "装备升星" },
+  challenge: { clearedNormalLevels: 4, label: "挑战模式" },
+  breakthrough: { clearedNormalLevels: 5, label: "武将突破" },
+});
 const FORGE_CONFIG = {
   enhanceCapFactor: 2,
   enhanceGoldBase: 200,
@@ -303,10 +311,21 @@ const MAIN_QUESTS = [
   { id: "equip-3", type: "equip", target: 3, title: "任意武将穿戴3件装备", action: "equipment", reward: { gold: 300, enhance: 15 } },
   { id: "clear-4", type: "level", target: 4, title: "通关第4关", action: "battle", reward: { yuanbao: 25 } },
   { id: "star-1", type: "star", target: 1, title: "完成1次装备升星", action: "star", reward: { gold: 800 } },
+  { id: "challenge-1", type: "challenge", target: 1, title: "通关1次挑战模式", action: "challenge", reward: { yuanbao: 30, star: 5 } },
+  { id: "enhance-3", type: "enhance", target: 3, title: "累计完成3次装备强化", action: "enhance", reward: { star: 3 } },
+  { id: "challenge-2", type: "challenge", target: 2, title: "累计通关2次挑战模式", action: "challenge", reward: { yuanbao: 35, star: 5 } },
   { id: "clear-5", type: "level", target: 5, title: "通关第5关", action: "battle", reward: { star: 5 } },
-  { id: "equip-6", type: "equip", target: 6, title: "任意武将穿戴全套装备", action: "equipment", reward: { yuanbao: 30 } },
+  { id: "hero-level-3", type: "heroLevel", target: 3, title: "主角达到3级", action: "heroGrowth", reward: { gold: 600 } },
+  { id: "equip-6", type: "equip", target: 6, title: "累计穿戴6件装备", action: "equipment", reward: { yuanbao: 30 } },
+  { id: "challenge-3", type: "challenge", target: 3, title: "累计通关3次挑战模式", action: "challenge", reward: { enhance: 20, star: 10 } },
+  { id: "clear-6", type: "level", target: 6, title: "通关第6关", action: "battle", reward: { gold: 600 } },
+  { id: "hero-level-5", type: "heroLevel", target: 5, title: "主角达到5级", action: "heroGrowth", reward: { yuanbao: 40 } },
   { id: "breakthrough-1", type: "breakthrough", target: 1, title: "完成1次武将突破", action: "equipment", reward: { gold: 1200, enhance: 25 } },
+  { id: "challenge-4", type: "challenge", target: 4, title: "累计通关4次挑战模式", action: "challenge", reward: { yuanbao: 50, star: 10 } },
   { id: "clear-7", type: "level", target: 7, title: "通关第7关", action: "battle", reward: { yuanbao: 50 } },
+  { id: "hero-level-8", type: "heroLevel", target: 8, title: "主角达到8级", action: "heroGrowth", reward: { gold: 1000 } },
+  { id: "star-3", type: "star", target: 3, title: "累计完成3次装备升星", action: "star", reward: { enhance: 25 } },
+  { id: "challenge-5", type: "challenge", target: 5, title: "累计通关5次挑战模式", action: "challenge", reward: { yuanbao: 80, star: 15 } },
 ];
 // 进度表由任务清单派生：以后加任务只改上面这份清单，不用再手改重置逻辑
 function makeDailyProgress() {
@@ -852,7 +871,7 @@ const state = {
   dailyClaimed: {},
   dailyLoginClaimed: false,
   mainQuestIndex: 0,
-  mainQuestStats: { equip: 0, enhance: 0, star: 0, breakthrough: 0 },
+  mainQuestStats: { equip: 0, enhance: 0, star: 0, breakthrough: 0, challenge: 0 },
   equipmentInventory: [],
   equipmentNextId: 1,
   warriorEquipment: { sword: {}, fan: {}, rock: {} },
@@ -1151,6 +1170,34 @@ function isChallengeMode() {
   return Boolean(state.challengeMode && !isBeastRaid());
 }
 
+function normalClearedLevelCount() {
+  return Math.max(0, state.highestUnlockedLevel - 1);
+}
+
+function isFeatureUnlocked(feature) {
+  const unlock = PROGRESSION_UNLOCKS[feature];
+  return Boolean(unlock && normalClearedLevelCount() >= unlock.clearedNormalLevels);
+}
+
+function featureUnlockHint(feature) {
+  const unlock = PROGRESSION_UNLOCKS[feature];
+  if (!unlock) return "请继续完成主线任务。";
+  return `通关普通第 ${unlock.clearedNormalLevels} 关后开启${unlock.label}。`;
+}
+
+function isForgeTabUnlocked(tabId) {
+  return FORGE_UNLOCKED_TABS.includes(tabId) && isFeatureUnlocked(tabId);
+}
+
+function showFeatureLocked(feature) {
+  const unlock = PROGRESSION_UNLOCKS[feature];
+  const title = unlock ? `${unlock.label}尚未开启` : "功能尚未开启";
+  showModal(title, featureUnlockHint(feature), [
+    { label: "继续普通关卡", onClick: () => { state.challengeMode = false; showHome(); } },
+    { label: "知道了", secondary: true, onClick: () => {} },
+  ], { backAction: showHome });
+}
+
 function challengeAttemptCount(level = state.selectedLevel) {
   refreshChallengeState();
   return Number(state.challengeAttempts[String(level)]) || 0;
@@ -1161,9 +1208,8 @@ function challengeAttemptsRemaining(level = state.selectedLevel) {
 }
 
 function isChallengeUnlocked(level = state.selectedLevel) {
-  const mask = Number.isSafeInteger(state.stageChests[String(level)])
-    ? state.stageChests[String(level)] : 0;
-  return state.highestUnlockedLevel >= level && (mask & (1 << 2)) !== 0;
+  return isFeatureUnlocked("challenge")
+    && state.highestUnlockedLevel > level;
 }
 
 function challengeRoundsForLevel(level = state.level) {
@@ -1272,6 +1318,7 @@ function getMainQuestProgress(task = currentMainQuest()) {
   if (!task) return 0;
   if (task.type === "level") return Math.min(task.target, Math.max(0, state.highestUnlockedLevel - 1));
   if (task.type === "equip") return Math.min(task.target, totalEquippedCount());
+  if (task.type === "heroLevel") return Math.min(task.target, state.heroLevel);
   return Math.min(task.target, state.mainQuestStats[task.type] || 0);
 }
 
@@ -1316,9 +1363,21 @@ function jumpToMainQuest(task = currentMainQuest()) {
     showEquipmentGrowth(showHome);
     return;
   }
+  if (task.action === "heroGrowth") {
+    showHeroGrowthModal(showHome);
+    return;
+  }
   if (task.action === "enhance" || task.action === "star") {
     forgeUi.tab = task.action;
     showForge(showHome);
+    return;
+  }
+  if (task.action === "challenge") {
+    const highestCleared = Math.max(1, state.highestUnlockedLevel - 1);
+    state.selectedLevel = Math.min(highestCleared, Math.max(1, PROGRESSION_UNLOCKS.challenge.clearedNormalLevels));
+    state.challengeMode = true;
+    renderHomeHud();
+    startLevelFromHome();
   }
 }
 
@@ -1380,7 +1439,11 @@ function jumpToDailyTask(id) {
     return;
   }
   if (id === "enhance" || id === "star") {
-    if (FORGE_UNLOCKED_TABS.indexOf(id) >= 0) forgeUi.tab = id;
+    if (!isFeatureUnlocked(id)) {
+      showFeatureLocked(id);
+      return;
+    }
+    if (isForgeTabUnlocked(id)) forgeUi.tab = id;
     showForge(showHome);
   }
 }
@@ -1894,8 +1957,9 @@ function grantEquipmentDrop() {
     return state.lastEquipmentDrop;
   }
   const pityDrop = state.equipmentDropMisses >= EQUIPMENT_DROP_PITY_MISSES;
-  const onboardingGuaranteed = state.level === 1 && state.highestUnlockedLevel === 1
-    && state.equipmentInventory.length + totalEquippedCount() === 0;
+  const onboardingGuaranteed = !isChallengeMode()
+    && state.level <= EARLY_EQUIPMENT_GUARANTEE_COUNT
+    && state.equipmentInventory.length + totalEquippedCount() < state.level;
   if (!onboardingGuaranteed && !pityDrop && Math.random() >= EQUIPMENT_DROP_CHANCE) {
     state.equipmentDropMisses += 1;
     state.lastEquipmentDrop = null;
@@ -2233,11 +2297,15 @@ function renderHomeHud() {
   } else if (mode && selectedLocked) {
     homeRecordText.textContent = `普通第 ${selectedLevel} 关尚未通关`;
   } else if (mode && challengeLocked) {
-    homeRecordText.textContent = `普通第 ${selectedLevel} 关需满血通关`;
+    homeRecordText.textContent = isFeatureUnlocked("challenge")
+      ? `先通关普通第 ${selectedLevel} 关`
+      : `普通第 ${PROGRESSION_UNLOCKS.challenge.clearedNormalLevels} 关通关后开启`;
   } else if (mode && challengeRemaining <= 0) {
     homeRecordText.textContent = "今日挑战次数已用完";
   } else if (selectedLocked) {
     homeRecordText.textContent = "完成前一关后解锁";
+  } else if (!isFeatureUnlocked("challenge")) {
+    homeRecordText.textContent = `普通模式 · 第 ${PROGRESSION_UNLOCKS.challenge.clearedNormalLevels} 关后开启挑战`;
   } else if (selectedLevel < state.highestUnlockedLevel) {
     homeRecordText.textContent = "已通关，可重复挑战";
   } else {
@@ -2252,7 +2320,7 @@ function renderHomeHud() {
   homeStartBtn.querySelector("small").lastChild.textContent = levelInProgress
     ? "返回当前战局"
     : mode && selectedLocked ? `先解锁普通第 ${selectedLevel} 关`
-      : mode && challengeLocked ? "先满血通关普通关卡"
+      : mode && challengeLocked ? (isFeatureUnlocked("challenge") ? `先通关普通第 ${selectedLevel} 关` : "先完成普通关卡引导")
         : mode ? `消耗 ${staminaCost} · 今日剩余 ${challengeRemaining}/${CHALLENGE_MODE_CONFIG.dailyAttemptLimit}`
           : selectedLocked ? `先通关第 ${selectedLevel - 1} 关` : `消耗 ${staminaCost}`;
   homePrevLevelBtn.disabled = levelInProgress || selectedLevel <= 1;
@@ -2279,8 +2347,15 @@ function selectHomeLevel(direction) {
 
 function selectHomeMode(challenge) {
   if (state.levelStaminaSpent && state.phase !== "settle") return;
+  if (challenge && !isFeatureUnlocked("challenge")) {
+    showModal("挑战模式未开启", featureUnlockHint("challenge"), [
+      { label: "继续普通关卡", onClick: () => { state.challengeMode = false; renderHomeHud(); } },
+      { label: "知道了", secondary: true, onClick: () => {} },
+    ]);
+    return;
+  }
   if (challenge && !isChallengeUnlocked(state.selectedLevel)) {
-    showModal("挑战模式未开启", `需要普通第 ${state.selectedLevel} 关以 100% 防线血量通关，开启后才能挑战本关。`, [
+    showModal("挑战模式未开启", `请先通关普通第 ${state.selectedLevel} 关，之后才能挑战本关。`, [
       { label: "知道了", secondary: true, onClick: () => {} },
     ]);
     return;
@@ -2357,10 +2432,18 @@ function showHomeFeature(feature) {
     return;
   }
   if (feature === "武将名册") {
+    if (!isFeatureUnlocked("equipment")) {
+      showFeatureLocked("equipment");
+      return;
+    }
     showGrowthModal(showHome);
     return;
   }
   if (feature === "装备打造") {
+    if (!isFeatureUnlocked("enhance")) {
+      showFeatureLocked("enhance");
+      return;
+    }
     showForge(showHome);
     return;
   }
@@ -2369,6 +2452,10 @@ function showHomeFeature(feature) {
     return;
   }
   if (feature === "行军包裹") {
+    if (!isFeatureUnlocked("equipment")) {
+      showFeatureLocked("equipment");
+      return;
+    }
     showEquipmentBag(showHome);
     return;
   }
@@ -3939,16 +4026,27 @@ function showDefeat() {
   renderHud();
   const ybText = state.paidYuanbao > 0 ? `${state.paidYuanbao} 元宝、` : "";
   const rewardText = `本关累计奖励 ${state.paidReward} 金币、${ybText}强化石 ${state.paidForgeEnhanceStone}、升星石 ${state.paidForgeStarStone}（全额奖励 × 到达波次比例 × 60%）。`;
+  const challengeDefeat = isChallengeMode();
+  const growthHint = challengeDefeat
+    ? "挑战模式未通关：可先强化装备，再升星；穿齐同品质装备后还能进行武将突破。"
+    : "可以前往局外养成，穿戴装备并提升装备等级后再试。";
+  const growthActions = challengeDefeat
+    ? [
+      { label: "去强化装备", secondary: true, onClick: () => { forgeUi.tab = "enhance"; showForge(showHome); } },
+      { label: "去升星装备", secondary: true, onClick: () => { forgeUi.tab = "star"; showForge(showHome); } },
+      { label: "去武将突破", secondary: true, onClick: () => showEquipmentGrowth(showHome) },
+    ]
+    : [{ label: "局外养成", secondary: true, onClick: () => showGrowthModal(showDefeat) }];
   if (!state.revived) {
-    showModal("防线失守", `${rewardText} 模拟激励广告复活：回满防线 HP，并重新挑战当前波。`, [
+    showModal("防线失守", `${rewardText} ${growthHint} 模拟激励广告复活：回满防线 HP，并重新挑战当前波。`, [
       { label: "看广告复活", onClick: () => AdService.showRewarded({ placement: "失败复活", onComplete: revive }) },
-      { label: "局外养成", secondary: true, onClick: () => showGrowthModal(showDefeat) },
+      ...growthActions,
       { label: "重开本关", secondary: true, onClick: resetGame },
       { label: "返回主界面", secondary: true, onClick: returnToHomeAfterDefeat },
     ]);
   } else {
-    showModal("本关失败", `${rewardText} 本局复活机会已经用完，可以重开再试。`, [
-      { label: "局外养成", secondary: true, onClick: () => showGrowthModal(showDefeat) },
+    showModal("本关失败", `${rewardText} ${growthHint} 本局复活机会已经用完，可以重开再试。`, [
+      ...growthActions,
       { label: "重开本关", onClick: resetGame },
       { label: "返回主界面", secondary: true, onClick: returnToHomeAfterDefeat },
     ]);
@@ -3974,6 +4072,7 @@ function revive() {
 
 function showVictory() {
   updateDailyProgress("play");
+  if (isChallengeMode()) updateMainQuestStat("challenge");
   const equipmentDrop = grantEquipmentDrop() || state.lastEquipmentDrop;
   const adEquipmentDrop = state.doubled ? grantSettlementAdEquipmentDrop() : null;
   state.highestUnlockedLevel = Math.max(state.highestUnlockedLevel, state.level + 1);
@@ -4095,8 +4194,9 @@ function showEquipmentGrowth(onBack = showHome) {
   const cost = EQUIPMENT_BREAKTHROUGH_COSTS[quality - 1] || 150;
   const previewData = warriorBreakthroughPreview(type, quality);
   const isMaxQuality = quality >= MAX_WARRIOR_QUALITY;
+  const breakthroughUnlocked = isFeatureUnlocked("breakthrough");
   const yuanbaoLack = state.yuanbao < cost;
-  const canBreak = canManageHero() && status.complete && !isMaxQuality && !yuanbaoLack;
+  const canBreak = breakthroughUnlocked && canManageHero() && status.complete && !isMaxQuality && !yuanbaoLack;
 
   showModal("武将成长", "", [], { backAction: onBack });
   modalCard.classList.add("equipment-modal");
@@ -4104,7 +4204,7 @@ function showEquipmentGrowth(onBack = showHome) {
   /* 顶栏右侧资源胶囊借 #modalBody 这一格渲染，与居中的标题叠在同一 grid 单元，
      形成「返回 / 标题 / 元宝·金币」三段式顶栏（样式见 theme.css 的 equipment-wallet）。 */
   modalBody.className = "equipment-wallet";
-  modalBody.innerHTML = `<span class="equipment-wallet-item"><img src="${ASSET}home/premium.png" alt="元宝" /><b>${formatCurrency(state.yuanbao)}</b></span><span class="equipment-wallet-item"><img src="${ASSET}icon-coin.png" alt="金币" /><b>${formatCurrency(state.gold)}</b></span>`;
+  modalBody.innerHTML = `<span class="equipment-wallet-item resource-pill"><img src="${ASSET}home/premium.png" alt="元宝" /><b>${formatCurrency(state.yuanbao)}</b></span><span class="equipment-wallet-item resource-pill"><img src="${ASSET}icon-coin.png" alt="金币" /><b>${formatCurrency(state.gold)}</b></span>`;
 
   const gainCells = [
     { key: "attack", label: "攻击" },
@@ -4118,7 +4218,9 @@ function showEquipmentGrowth(onBack = showHome) {
 
   /* 突破区里的条件只放短标签：长句会把「需要」列撑宽，反过来挤扁左侧属性提升列。
      详细说明交给下方的 .equipment-equip-status 一行。 */
-  const breakCondition = isMaxQuality
+  const breakCondition = !breakthroughUnlocked
+    ? `普通第 ${PROGRESSION_UNLOCKS.breakthrough.clearedNormalLevels} 关后开启`
+    : isMaxQuality
     ? "无需消耗"
     : !status.complete
       ? `缺 ${EQUIPMENT_SLOTS.length - status.count} 件`
@@ -4142,7 +4244,7 @@ function showEquipmentGrowth(onBack = showHome) {
         <span class="bt-arrow" aria-hidden="true">→</span>
         <div class="bt-gains">${gainCells}</div>
         <div class="bt-cost"><span class="bt-cost-line"><i>需要</i><img src="${ASSET}home/premium.png" alt="元宝" /><b class="bt-cost-value${!isMaxQuality && yuanbaoLack ? " lack" : ""}">${formatCurrency(cost)}</b></span><span class="bt-condition">${breakCondition}</span></div>
-        <button type="button" class="bt-button"${canBreak ? "" : " disabled"}>${isMaxQuality ? "已满" : "突破"}</button>
+        <button type="button" class="bt-button"${canBreak ? "" : " disabled"}>${!breakthroughUnlocked ? "第5关开启" : isMaxQuality ? "已满" : "突破"}</button>
       </div>
       <p class="bt-skill">突破技能：${previewData.skillText}</p>
     </section>
@@ -4207,7 +4309,9 @@ function showEquipmentGrowth(onBack = showHome) {
 
   const conditionEl = panel.querySelector(".equipment-equip-status");
   if (conditionEl) {
-    conditionEl.textContent = isMaxQuality
+    conditionEl.textContent = !breakthroughUnlocked
+      ? `通关普通第 ${PROGRESSION_UNLOCKS.breakthrough.clearedNormalLevels} 关后开启武将突破`
+      : isMaxQuality
       ? "已达当前版本最高品质"
       : !status.complete
         ? `同品质装备 ${status.count}/6，穿齐后可突破`
@@ -4241,7 +4345,7 @@ function showBagShell(title, onBack, compact = false) {
   showModal(title, "", [], { backAction: onBack });
   modalCard.classList.add("bag-modal");
   if (compact) modalCard.classList.add("bag-compact");
-  modalDetail.innerHTML = `<div class="bag-navigation"><span>装备 ${state.equipmentInventory.length} 件</span><span class="bag-wallet"><img src="${ASSET}icon-coin.png" alt="金币" /><strong>${formatCurrency(state.gold)}</strong></span></div><div class="bag-content"></div><div class="bag-notice" role="status" aria-live="polite"></div>`;
+  modalDetail.innerHTML = `<div class="bag-navigation"><span>装备 ${state.equipmentInventory.length} 件</span><span class="bag-wallet resource-pill"><img src="${ASSET}icon-coin.png" alt="金币" /><strong>${formatCurrency(state.gold)}</strong></span></div><div class="bag-content"></div><div class="bag-notice" role="status" aria-live="polite"></div>`;
   return { content: modalDetail.querySelector(".bag-content"), notice: modalDetail.querySelector(".bag-notice") };
 }
 
@@ -4777,7 +4881,7 @@ function renderForge(back, type = state.selectedWarriorType) {
   const row = forgeSlotState(type, slotId);
   const item = forgeWornItem(type, slotId);
   const warrior = getWarriorAppearance(type);
-  const unlocked = FORGE_UNLOCKED_TABS.includes(tab.id);
+  const unlocked = isForgeTabUnlocked(tab.id);
 
   const closeForge = () => {
     forgeUi.busy = false;
@@ -4790,7 +4894,7 @@ function renderForge(back, type = state.selectedWarriorType) {
   modalCard.classList.add("forge-modal");
 
   const tabs = `<div class="forge-tabs" role="tablist">${FORGE_TABS
-    .map((entry) => `<button type="button" role="tab" class="forge-tab${entry.id === tab.id ? " active" : ""}${FORGE_UNLOCKED_TABS.includes(entry.id) ? "" : " locked"}" data-forge-tab="${entry.id}" aria-selected="${entry.id === tab.id}">${entry.name}</button>`)
+    .map((entry) => `<button type="button" role="tab" class="forge-tab${entry.id === tab.id ? " active" : ""}${isForgeTabUnlocked(entry.id) ? "" : " locked"}" data-forge-tab="${entry.id}" aria-selected="${entry.id === tab.id}">${entry.name}</button>`)
     .join("")}</div>`;
 
   /* 武将切换页签：装备养成（强化/升星）永久记在具体武将身上，
@@ -4806,9 +4910,9 @@ function renderForge(back, type = state.selectedWarriorType) {
     .join("")}</div>`;
 
   const wallet = `<div class="forge-wallet">
-    <span class="forge-money"><img src="${ASSET}icon-coin.png" alt="金币" /><b>${formatCurrency(state.gold)}</b></span>
-    <span class="forge-money"><img src="${ASSET}ui/forge/stone-enhance.png" alt="强化石" /><b>${state.forgeEnhanceStone}</b><button type="button" class="forge-plus" data-forge-buy="enhance" aria-label="获取强化石"><img src="${ASSET}ui/stamina-plus.png" alt="" /></button></span>
-    <span class="forge-money"><img src="${ASSET}ui/forge/stone-star.png" alt="升星石" /><b>${state.forgeStarStone}</b><button type="button" class="forge-plus" data-forge-buy="star" aria-label="获取升星石"><img src="${ASSET}ui/stamina-plus.png" alt="" /></button></span>
+    <span class="forge-money resource-pill"><img src="${ASSET}icon-coin.png" alt="金币" /><b>${formatCurrency(state.gold)}</b></span>
+    <span class="forge-money resource-pill"><img src="${ASSET}ui/forge/stone-enhance.png" alt="强化石" /><b>${state.forgeEnhanceStone}</b><button type="button" class="forge-plus resource-plus" data-forge-buy="enhance" aria-label="获取强化石"><img src="${ASSET}ui/stamina-plus.png" alt="" /></button></span>
+    <span class="forge-money resource-pill"><img src="${ASSET}ui/forge/stone-star.png" alt="升星石" /><b>${state.forgeStarStone}</b><button type="button" class="forge-plus resource-plus" data-forge-buy="star" aria-label="获取升星石"><img src="${ASSET}ui/stamina-plus.png" alt="" /></button></span>
   </div>`;
 
   const slots = `<div class="forge-slots" role="list">${EQUIPMENT_SLOTS
@@ -4830,10 +4934,13 @@ function renderForge(back, type = state.selectedWarriorType) {
 
   let body = "";
   if (!unlocked) {
+    const unlockHint = entry => entry.id === "enhance" || entry.id === "star"
+      ? featureUnlockHint(entry.id)
+      : "本轮暂未开放，将在后续版本补齐。";
     body = `<div class="forge-locked">
       <img src="${ASSET}ui/forge/gem.png" alt="" />
       <strong>${tab.name}模块筹备中</strong>
-      <span>本轮先开放「强化」与「升星」，洗炼与魂石将在下一轮补齐。</span>
+      <span>${unlockHint(tab)}</span>
     </div>`;
   } else if (tab.id === "enhance") {
     body = forgeEnhanceBody(type, slotId, row, item, slot);
@@ -5342,7 +5449,7 @@ function showHeroGrowthModal(onBack = showHome) {
     ], { backAction: onBack },
   );
   modalCard.classList.add("growth-modal");
-  modalDetail.innerHTML = `<div class="modal-resource-bar"><span><img src="${ASSET}home/premium.png" alt="元宝" /><b>${formatCurrency(state.yuanbao)}</b></span><span><img src="${ASSET}icon-coin.png" alt="金币" /><b>${formatCurrency(state.gold)}</b></span></div>`;
+  modalDetail.innerHTML = `<div class="modal-resource-bar"><span class="resource-pill"><img src="${ASSET}home/premium.png" alt="元宝" /><b>${formatCurrency(state.yuanbao)}</b></span><span class="resource-pill"><img src="${ASSET}icon-coin.png" alt="金币" /><b>${formatCurrency(state.gold)}</b></span></div>`;
   const skills = document.createElement("div");
   skills.className = "growth-skill-list";
   HERO_SKILLS.forEach((skill) => {
@@ -5443,8 +5550,8 @@ function showShop(onBack = showHome, noticeText = "") {
     <div class="shop-topbar">
       <span class="shop-title">商店</span>
       <span class="shop-wallets">
-        <span class="shop-wallet"><img src="${ASSET}home/premium.png" alt="元宝" /><b class="shop-yuanbao">${state.yuanbao}</b></span>
-        <span class="shop-wallet"><img src="${ASSET}icon-coin.png" alt="金币" /><b class="shop-coin">${formatCurrency(state.gold)}</b></span>
+        <span class="shop-wallet resource-pill"><img src="${ASSET}home/premium.png" alt="元宝" /><b class="shop-yuanbao">${state.yuanbao}</b></span>
+        <span class="shop-wallet resource-pill"><img src="${ASSET}icon-coin.png" alt="金币" /><b class="shop-coin">${formatCurrency(state.gold)}</b></span>
       </span>
     </div>
     <div class="shop-body">${shopAdGroupHtml()}${groups.map(groupHtml).join("")}</div>
