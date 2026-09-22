@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>合战守格小游戏软件</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23a84b24'/%3E%3Cpath d='M12 40h40v14H12zM18 26h28v14H18zM10 26 32 10l22 16z' fill='%23ffe2a1'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="./styles.css?v=20260909-growth1" />
+    <link rel="stylesheet" href="./theme.css?v=20260909-growth1" />
+  </head>
+  <body>
+    <main class="phone-shell" aria-label="合战守格试玩 demo">
+      <section class="home-screen" id="homeScreen" aria-label="合战守格主界面">
+        <img class="home-background home-background-sky" src="./public/assets/scene-2.png" alt="" />
+        <img class="home-background home-background-foreground" src="./public/assets/ui/theme/lobby-cliffs.png" alt="" />
+
+        <header class="home-topbar">
+          <div class="profile-block">
+            <span class="profile-avatar"><img src="./public/assets/hero.png" alt="守城少主" /></span>
+            <span class="profile-copy">
+              <b>守城少主</b>
+              <small>Lv.<span id="homeGrowthText">1</span></small>
+            </span>
+          </div>
+          <div class="home-currency gold-currency">
+            <img src="./public/assets/icon-coin.png" alt="金币" />
+            <b id="homeGoldText">0</b>
+          </div>
+          <div class="home-currency premium-currency">
+            <img src="./public/assets/home/premium.png" alt="元宝" />
+            <b id="homeYuanbaoText">0</b>
+          </div>
+          <button class="home-stamina" id="homeStaminaBtn" type="button" aria-label="补充体力">
+            <img src="./public/assets/home/stamina.png" alt="" />
+            <b id="homeStaminaText">60/60</b>
+            <img class="home-plus" src="./public/assets/ui/stamina-plus.png" alt="" />
+          </button>
+        </header>
+
+        <div class="home-shortcuts" aria-label="快捷功能">
+          <button type="button" data-home-feature="每日任务">
+            <img src="./public/assets/home/quest.png" alt="" />
+            <span>任务</span>
+            <i></i>
+          </button>
+          <button type="button" data-home-feature="边塞军报">
+            <img src="./public/assets/home/notice.png" alt="" />
+            <span>军报</span>
+          </button>
+        </div>
+
+        <section class="home-stage-focus" aria-label="当前关卡">
+          <div class="home-stage-switcher">
+            <button class="home-stage-arrow" id="homePrevLevelBtn" type="button" aria-label="上一关">‹</button>
+            <div class="home-stage-title">
+              <span id="homeStageName">荒骨峡谷</span>
+              <strong>第 <b id="homeLevelText">1</b> 关</strong>
+              <small id="homeRecordText">当前挑战关卡</small>
+            </div>
+            <button class="home-stage-arrow" id="homeNextLevelBtn" type="button" aria-label="下一关">›</button>
+          </div>
+
+          <div class="home-stage-cast" aria-hidden="true">
+            <img class="home-warrior home-warrior-left" src="./public/assets/warriors/mage-idle-transparent.gif" alt="" />
+            <img class="home-warrior home-warrior-center" src="./public/assets/warriors/warrior-idle-transparent.gif" alt="" />
+            <img class="home-warrior home-warrior-right" src="./public/assets/warriors/priest-idle-transparent.gif" alt="" />
+            <img class="home-enemy" id="homeEnemy" src="./public/assets/monsters/round-1-monster.gif" alt="" />
+          </div>
+
+          <div class="home-reward-row" id="homeRewardRow" aria-label="关卡宝箱目标">
+            <div data-reward="complete"><img alt="" /><span>成功通关</span></div>
+            <div data-reward="intact"><img alt="" /><span>防线无损</span></div>
+            <div data-reward="perfect"><img alt="" /><span>完美守城</span></div>
+          </div>
+
+          <div class="home-difficulty" role="group" aria-label="关卡难度">
+            <button class="active" type="button">普通</button>
+            <button type="button" data-home-feature="挑战难度">挑战</button>
+          </div>
+
+          <button class="home-start-button" id="homeStartBtn" type="button">
+            <span>开始守城</span>
+            <small><img src="./public/assets/home/stamina.png" alt="" />消耗 10</small>
+          </button>
+        </section>
+
+        <nav class="home-bottom-nav" aria-label="常驻功能">
+          <button type="button" data-home-feature="边塞商店"><img src="./public/assets/home/nav-shop.png" alt="" /><span>商店</span></button>
+          <button type="button" data-home-feature="武将名册"><img src="./public/assets/home/nav-hero.png" alt="" /><span>武将</span></button>
+          <button class="active" type="button" aria-current="page"><img src="./public/assets/home/nav-battle.png" alt="" /><span>关卡</span></button>
+          <button type="button" data-home-feature="角色成长"><img src="./public/assets/home/nav-growth.png" alt="" /><span>成长</span></button>
+          <button type="button" data-home-feature="行军包裹"><img src="./public/assets/home/nav-bag.png" alt="" /><span>包裹</span></button>
+        </nav>
+      </section>
+
+      <section class="game-screen hidden" id="gameScreen">
+        <header class="top-hud">
+          <div class="hud-pill">
+            <img class="hud-icon" src="./public/assets/icon-revive.png" alt="" />
+            <div>
+              <b id="stepsText">8</b>
+              <small>步数</small>
+            </div>
+          </div>
+          <div class="hud-pill">
+            <img class="hud-icon" src="./public/assets/icon-coin.png" alt="" />
+            <div>
+              <b id="goldText">0</b>
+              <small>金币</small>
+            </div>
+          </div>
+          <div class="hud-pill">
+            <img class="hud-icon" src="./public/assets/home/premium.png" alt="" />
+            <div>
+              <b id="yuanbaoText">0</b>
+              <small>元宝</small>
+            </div>
+          </div>
+          <button class="hud-pill stamina-pill" id="staminaBtn" type="button" aria-label="补充体力" title="补充体力">
+            <img class="hud-icon" src="./public/assets/home/stamina.png" alt="" />
+            <div>
+              <b id="staminaText">60/60</b>
+              <small>体力</small>
+            </div>
+            <img class="stamina-plus-icon" src="./public/assets/ui/stamina-plus.png" alt="" />
+          </button>
+          <div class="battle-top-actions">
+            <button class="icon-button" id="battleHomeBtn" type="button" aria-label="返回主界面" title="返回主界面"><img src="./public/assets/ui/theme/back.png" alt="" /></button>
+            <button class="icon-button" id="resetBtn" type="button" aria-label="重开" title="重开">↻</button>
+          </div>
+        </header>
+
+        <section class="stage">
+          <img class="stage-bg" src="./public/assets/ui/theme/battle-jade.png" alt="" />
+          <div class="round-banner">
+            <span id="levelText">关卡 1</span>
+            <strong id="phaseText">操作期</strong>
+            <span id="cardProgress">卡牌 0/6</span>
+            <span id="roundText">第 1/3 波</span>
+          </div>
+
+          <div class="board-wrap">
+            <div class="approach-zone" aria-hidden="true"></div>
+            <div class="lane-layer" id="laneLayer" aria-hidden="true"></div>
+            <div class="monster-layer" id="monsterLayer" aria-hidden="true"></div>
+            <div class="fx-layer" id="fxLayer" aria-hidden="true"></div>
+            <div class="board" id="board" role="grid" aria-label="6x6 消除棋盘"></div>
+          </div>
+
+          <div class="defense-status">
+            <button class="hero-mini hero-skill-button" id="heroSkillBtn" type="button" aria-label="主角大招" title="主角大招">
+              <img class="hero-portrait" src="./public/assets/hero.png" alt="守城少主" />
+              <img class="hero-skill-icon" id="heroSkillIcon" src="./public/assets/ui/skills/skill-smash.png" alt="裂地重击" />
+              <span class="skill-timer" id="heroSkillTimer">大招</span>
+            </button>
+            <div class="hero-skill-info">
+              <strong id="heroSkillName">裂地重击</strong>
+              <div class="hero-skill-strip" id="heroSkillStrip" aria-label="主角技能"></div>
+            </div>
+            <div class="defense-hp">
+              <div class="defense-hp-label">
+                <span>防线</span>
+                <strong id="defenseHpText">4 / 4</strong>
+              </div>
+              <div class="defense-hp-track" role="progressbar" aria-label="防线血量" aria-valuemin="0" aria-valuemax="4" aria-valuenow="4" id="defenseHpTrack">
+                <span id="defenseHpFill"></span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <footer class="bottom-bar">
+          <button class="action-button ghost" id="adStepsBtn" type="button">
+            <img src="./public/assets/icon-revive.png" alt="" />
+            广告 +3 步
+          </button>
+          <button class="action-button primary" id="startWaveBtn" type="button">出怪</button>
+          <button class="action-button ghost" id="speedBtn" type="button">1x</button>
+        </footer>
+      </section>
+
+      <section class="side-panel">
+        <h1>合战·守格 MVP</h1>
+        <p id="tipText">交换棋子，让 3 个以上同类棋子在横、竖或斜线上连续排列即可消除。</p>
+        <div class="legend" id="legend"></div>
+      </section>
+    </main>
+
+    <div class="modal hidden" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-card">
+        <img class="modal-art" id="modalArt" src="./public/assets/home/reward-chest.png" alt="" />
+        <h2 id="modalTitle">结算</h2>
+        <p id="modalBody"></p>
+        <div class="modal-detail" id="modalDetail"></div>
+        <div class="modal-actions" id="modalActions"></div>
+      </div>
+    </div>
+
+    <script src="./app.js?v=20260909-growth1"></script>
+  </body>
+</html>

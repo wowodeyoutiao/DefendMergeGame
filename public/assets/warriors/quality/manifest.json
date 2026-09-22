@@ -1,0 +1,368 @@
+{
+  "warrior": {
+    "1": {
+      "idle": {
+        "frames": 14,
+        "durationMs": 1350,
+        "bounds": [
+          72,
+          105,
+          236,
+          312
+        ]
+      },
+      "attack": {
+        "frames": 14,
+        "durationMs": 446
+      },
+      "source": {
+        "idle": "白色武将-男战士/GIF/Hb_g_zs_nan_stand.gif",
+        "attack": "白色武将-男战士/GIF/Hb_g_zs_nan_attack.gif"
+      }
+    },
+    "2": {
+      "idle": {
+        "frames": 14,
+        "durationMs": 1350,
+        "bounds": [
+          68,
+          102,
+          253,
+          310
+        ]
+      },
+      "attack": {
+        "frames": 14,
+        "durationMs": 446
+      },
+      "source": {
+        "idle": "绿色武将-男战士/GIF/Hb_b_zs_nan_stand.gif",
+        "attack": "绿色武将-男战士/GIF/Hb_b_zs_nan_attack.gif"
+      }
+    },
+    "3": {
+      "idle": {
+        "frames": 14,
+        "durationMs": 1350,
+        "bounds": [
+          49,
+          63,
+          248,
+          284
+        ]
+      },
+      "attack": {
+        "frames": 14,
+        "durationMs": 446
+      },
+      "source": {
+        "idle": "蓝色武将-男战士/GIF/Hb_p_zs_nan_stand.gif",
+        "attack": "蓝色武将-男战士/GIF/Hb_p_zs_nan_attack.gif"
+      }
+    },
+    "4": {
+      "idle": {
+        "frames": 14,
+        "durationMs": 1350,
+        "bounds": [
+          64,
+          113,
+          246,
+          298
+        ]
+      },
+      "attack": {
+        "frames": 14,
+        "durationMs": 446
+      },
+      "source": {
+        "idle": "紫色武将-男战士/GIF/Hb_o_zs_nan2_stand.gif",
+        "attack": "紫色武将-男战士/GIF/Hb_o_zs_nan2_attack.gif"
+      }
+    },
+    "5": {
+      "idle": {
+        "frames": 20,
+        "durationMs": 1200,
+        "bounds": [
+          95,
+          68,
+          290,
+          306
+        ]
+      },
+      "attack": {
+        "frames": 21,
+        "durationMs": 451
+      },
+      "source": {
+        "idle": "橙色武将_男战士/GIF/Hb_r_zs_nan_stand.gif",
+        "attack": "橙色武将_男战士/GIF/Hb_r_zs_nan_attack.gif"
+      }
+    },
+    "6": {
+      "idle": {
+        "frames": 14,
+        "durationMs": 1350,
+        "bounds": [
+          42,
+          157,
+          258,
+          293
+        ]
+      },
+      "attack": {
+        "frames": 14,
+        "durationMs": 446
+      },
+      "source": {
+        "idle": "红色武将-男战士/GIF/Hb_ws_zs_nan_stand.gif",
+        "attack": "红色武将-男战士/GIF/Hb_ws_zs_nan_attack.gif"
+      }
+    }
+  },
+  "mage": {
+    "1": {
+      "idle": {
+        "frames": 20,
+        "durationMs": 1200,
+        "bounds": [
+          40,
+          8,
+          288,
+          313
+        ]
+      },
+      "attack": {
+        "frames": 20,
+        "durationMs": 449
+      },
+      "source": {
+        "idle": "白色武将-男法师/GIF/Hb_g_fs_nan_stand.gif",
+        "attack": "白色武将-男法师/GIF/Hb_g_fs_nan_attack.gif"
+      }
+    },
+    "2": {
+      "idle": {
+        "frames": 20,
+        "durationMs": 1200,
+        "bounds": [
+          34,
+          13,
+          282,
+          297
+        ]
+      },
+      "attack": {
+        "frames": 16,
+        "durationMs": 450
+      },
+      "source": {
+        "idle": "绿色武将-男法师/GIF/Hb_b_fs_nan_stand.gif",
+        "attack": "绿色武将-男法师/GIF/Hb_b_fs_nan_attack.gif"
+      }
+    },
+    "3": {
+      "idle": {
+        "frames": 20,
+        "durationMs": 1200,
+        "bounds": [
+          36,
+          45,
+          309,
+          302
+        ]
+      },
+      "attack": {
+        "frames": 20,
+        "durationMs": 449
+      },
+      "source": {
+        "idle": "蓝色武将-男法师/GIF/Hb_p_fs_nan6_stand.gif",
+        "attack": "蓝色武将-男法师/GIF/Hb_p_fs_nan6_attack.gif"
+      }
+    },
+    "4": {
+      "idle": {
+        "frames": 20,
+        "durationMs": 1200,
+        "bounds": [
+          10,
+          34,
+          309,
+          307
+        ]
+      },
+      "attack": {
+        "frames": 16,
+        "durationMs": 450
+      },
+      "source": {
+        "idle": "紫色武将-男法师/GIF/Hb_o_fs_nv1_stand.gif",
+        "attack": "紫色武将-男法师/GIF/Hb_o_fs_nv1_attack.gif"
+      }
+    },
+    "5": {
+      "idle": {
+        "frames": 20,
+        "durationMs": 1200,
+        "bounds": [
+          30,
+          11,
+          296,
+          312
+        ]
+      },
+      "attack": {
+        "frames": 20,
+        "durationMs": 449
+      },
+      "source": {
+        "idle": "橙色武将-男法师/GIF/Hb_r_fs_nan_stand.gif",
+        "attack": "橙色武将-男法师/GIF/Hb_r_fs_nan_attack.gif"
+      }
+    },
+    "6": {
+      "idle": {
+        "frames": 20,
+        "durationMs": 1200,
+        "bounds": [
+          41,
+          96,
+          245,
+          303
+        ]
+      },
+      "attack": {
+        "frames": 20,
+        "durationMs": 449
+      },
+      "source": {
+        "idle": "红色武将-男法师/GIF/Hb_ws_js_nan_stand.gif",
+        "attack": "红色武将-男法师/GIF/Hb_ws_js_nan_attack.gif"
+      }
+    }
+  },
+  "priest": {
+    "1": {
+      "idle": {
+        "frames": 20,
+        "durationMs": 1200,
+        "bounds": [
+          22,
+          8,
+          302,
+          313
+        ]
+      },
+      "attack": {
+        "frames": 20,
+        "durationMs": 449
+      },
+      "source": {
+        "idle": "白色武将-女祭司/GIF/Hb_g_jd_nv_stand.gif",
+        "attack": "白色武将-女祭司/GIF/Hb_g_jd_nv_attack.gif"
+      }
+    },
+    "2": {
+      "idle": {
+        "frames": 20,
+        "durationMs": 1200,
+        "bounds": [
+          31,
+          85,
+          292,
+          310
+        ]
+      },
+      "attack": {
+        "frames": 16,
+        "durationMs": 450
+      },
+      "source": {
+        "idle": "绿色武将-女祭祀/GIF/Hb_b_js_nv_stand.gif",
+        "attack": "绿色武将-女祭祀/GIF/Hb_b_js_nv_attack.gif"
+      }
+    },
+    "3": {
+      "idle": {
+        "frames": 20,
+        "durationMs": 1200,
+        "bounds": [
+          57,
+          11,
+          295,
+          290
+        ]
+      },
+      "attack": {
+        "frames": 20,
+        "durationMs": 449
+      },
+      "source": {
+        "idle": "蓝色武将-女祭祀/GIF/Hb_p_js_nv4_stand.gif",
+        "attack": "蓝色武将-女祭祀/GIF/Hb_p_js_nv4_attack.gif"
+      }
+    },
+    "4": {
+      "idle": {
+        "frames": 14,
+        "durationMs": 1350,
+        "bounds": [
+          59,
+          116,
+          270,
+          305
+        ]
+      },
+      "attack": {
+        "frames": 13,
+        "durationMs": 455
+      },
+      "source": {
+        "idle": "紫色武将-女祭司/GIF/Hb_o_js_nv1_stand.gif",
+        "attack": "紫色武将-女祭司/GIF/Hb_o_js_nv1_attack.gif"
+      }
+    },
+    "5": {
+      "idle": {
+        "frames": 14,
+        "durationMs": 1350,
+        "bounds": [
+          32,
+          28,
+          250,
+          303
+        ]
+      },
+      "attack": {
+        "frames": 13,
+        "durationMs": 455
+      },
+      "source": {
+        "idle": "橙色武将-女祭祀/GIF/Hb_r_js_nv1_stand.gif",
+        "attack": "橙色武将-女祭祀/GIF/Hb_r_js_nv1_attack.gif"
+      }
+    },
+    "6": {
+      "idle": {
+        "frames": 20,
+        "durationMs": 1200,
+        "bounds": [
+          7,
+          36,
+          302,
+          309
+        ]
+      },
+      "attack": {
+        "frames": 15,
+        "durationMs": 450
+      },
+      "source": {
+        "idle": "红色武将-女祭祀/GIF/Hb_ws_fs_nv_stand.gif",
+        "attack": "红色武将-女祭祀/GIF/Hb_ws_fs_nv_attack.gif"
+      }
+    }
+  }
+}

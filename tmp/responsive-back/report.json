@@ -1,0 +1,3766 @@
+{
+  "cases": 52,
+  "failing": [],
+  "warnings": [
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "home",
+      "issues": [],
+      "warnings": [
+        "short-landscape-requires-vertical-scroll"
+      ],
+      "panel": {
+        "width": 440,
+        "height": 560
+      },
+      "page": {
+        "width": 844,
+        "height": 584
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "piece": null,
+      "pieceImage": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "home-report",
+      "issues": [],
+      "warnings": [
+        "short-landscape-requires-vertical-scroll"
+      ],
+      "panel": {
+        "width": 440,
+        "height": 560
+      },
+      "page": {
+        "width": 844,
+        "height": 584
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "piece": null,
+      "pieceImage": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "battle",
+      "issues": [],
+      "warnings": [
+        "short-landscape-requires-vertical-scroll"
+      ],
+      "panel": {
+        "width": 440,
+        "height": 560
+      },
+      "page": {
+        "width": 844,
+        "height": 584
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": {
+        "left": 310,
+        "top": 229,
+        "right": 534,
+        "bottom": 453,
+        "width": 224,
+        "height": 224
+      },
+      "defense": {
+        "left": 222,
+        "top": 460,
+        "right": 622,
+        "bottom": 503,
+        "width": 400,
+        "height": 43
+      },
+      "approach": {
+        "left": 310,
+        "top": 109,
+        "right": 534,
+        "bottom": 228.984375,
+        "width": 224,
+        "height": 119.984375
+      },
+      "cell": {
+        "left": 313,
+        "top": 232,
+        "right": 349.328125,
+        "bottom": 268.328125,
+        "width": 36.328125,
+        "height": 36.328125
+      },
+      "piece": {
+        "left": 315.03125,
+        "top": 234.03125,
+        "right": 347.296875,
+        "bottom": 266.296875,
+        "width": 32.265625,
+        "height": 32.265625
+      },
+      "pieceImage": {
+        "left": 316.890625,
+        "top": 236.171875,
+        "right": 344.765625,
+        "bottom": 264.046875,
+        "width": 27.875,
+        "height": 27.875
+      },
+      "missingImages": []
+    }
+  ],
+  "pageErrors": [],
+  "resourceErrors": [],
+  "results": [
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "home",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 320,
+        "height": 568
+      },
+      "page": {
+        "width": 320,
+        "height": 568
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "piece": null,
+      "pieceImage": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "home-report",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 320,
+        "height": 568
+      },
+      "page": {
+        "width": 320,
+        "height": 568
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "piece": null,
+      "pieceImage": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "battle",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 320,
+        "height": 568
+      },
+      "page": {
+        "width": 320,
+        "height": 568
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": {
+        "left": 44,
+        "top": 213,
+        "right": 276,
+        "bottom": 445,
+        "width": 232,
+        "height": 232
+      },
+      "defense": {
+        "left": 16,
+        "top": 460,
+        "right": 304,
+        "bottom": 503,
+        "width": 288,
+        "height": 43
+      },
+      "approach": {
+        "left": 44,
+        "top": 93,
+        "right": 276,
+        "bottom": 213,
+        "width": 232,
+        "height": 120
+      },
+      "cell": {
+        "left": 47,
+        "top": 216,
+        "right": 84.65625,
+        "bottom": 253.65625,
+        "width": 37.65625,
+        "height": 37.65625
+      },
+      "piece": {
+        "left": 49.0625,
+        "top": 218.0625,
+        "right": 82.578125,
+        "bottom": 251.578125,
+        "width": 33.515625,
+        "height": 33.515625
+      },
+      "pieceImage": {
+        "left": 50.90625,
+        "top": 220.21875,
+        "right": 80,
+        "bottom": 249.3125,
+        "width": 29.09375,
+        "height": 29.09375
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "forge",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 308,
+        "height": 556
+      },
+      "page": {
+        "width": 320,
+        "height": 568
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 476,
+          "scrollHeight": 617,
+          "width": 288,
+          "scrollWidth": 288,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 44,
+        "top": 213,
+        "right": 276,
+        "bottom": 445,
+        "width": 232,
+        "height": 232
+      },
+      "defense": {
+        "left": 16,
+        "top": 460,
+        "right": 304,
+        "bottom": 503,
+        "width": 288,
+        "height": 43
+      },
+      "approach": {
+        "left": 44,
+        "top": 93,
+        "right": 276,
+        "bottom": 213,
+        "width": 232,
+        "height": 120
+      },
+      "cell": {
+        "left": 47,
+        "top": 216,
+        "right": 84.65625,
+        "bottom": 253.65625,
+        "width": 37.65625,
+        "height": 37.65625
+      },
+      "piece": {
+        "left": 49.0625,
+        "top": 218.0625,
+        "right": 82.578125,
+        "bottom": 251.578125,
+        "width": 33.515625,
+        "height": 33.515625
+      },
+      "pieceImage": {
+        "left": 50.90625,
+        "top": 220.21875,
+        "right": 80,
+        "bottom": 249.3125,
+        "width": 29.09375,
+        "height": 29.09375
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "star",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 308,
+        "height": 556
+      },
+      "page": {
+        "width": 320,
+        "height": 568
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 476,
+          "scrollHeight": 697,
+          "width": 288,
+          "scrollWidth": 288,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 44,
+        "top": 213,
+        "right": 276,
+        "bottom": 445,
+        "width": 232,
+        "height": 232
+      },
+      "defense": {
+        "left": 16,
+        "top": 460,
+        "right": 304,
+        "bottom": 503,
+        "width": 288,
+        "height": 43
+      },
+      "approach": {
+        "left": 44,
+        "top": 93,
+        "right": 276,
+        "bottom": 213,
+        "width": 232,
+        "height": 120
+      },
+      "cell": {
+        "left": 47,
+        "top": 216,
+        "right": 84.65625,
+        "bottom": 253.65625,
+        "width": 37.65625,
+        "height": 37.65625
+      },
+      "piece": {
+        "left": 49.0625,
+        "top": 218.0625,
+        "right": 82.578125,
+        "bottom": 251.578125,
+        "width": 33.515625,
+        "height": 33.515625
+      },
+      "pieceImage": {
+        "left": 50.90625,
+        "top": 220.21875,
+        "right": 80,
+        "bottom": 249.3125,
+        "width": 29.09375,
+        "height": 29.09375
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "equipment",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 296,
+        "height": 544
+      },
+      "page": {
+        "width": 320,
+        "height": 568
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 356,
+          "scrollHeight": 623,
+          "width": 278,
+          "scrollWidth": 278,
+          "overflowY": "auto"
+        },
+        {
+          "className": "equipment-compatible-list",
+          "height": 144,
+          "scrollHeight": 656,
+          "width": 262,
+          "scrollWidth": 262,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 44,
+        "top": 213,
+        "right": 276,
+        "bottom": 445,
+        "width": 232,
+        "height": 232
+      },
+      "defense": {
+        "left": 16,
+        "top": 460,
+        "right": 304,
+        "bottom": 503,
+        "width": 288,
+        "height": 43
+      },
+      "approach": {
+        "left": 44,
+        "top": 93,
+        "right": 276,
+        "bottom": 213,
+        "width": 232,
+        "height": 120
+      },
+      "cell": {
+        "left": 47,
+        "top": 216,
+        "right": 84.65625,
+        "bottom": 253.65625,
+        "width": 37.65625,
+        "height": 37.65625
+      },
+      "piece": {
+        "left": 49.0625,
+        "top": 218.0625,
+        "right": 82.578125,
+        "bottom": 251.578125,
+        "width": 33.515625,
+        "height": 33.515625
+      },
+      "pieceImage": {
+        "left": 50.90625,
+        "top": 220.21875,
+        "right": 80,
+        "bottom": 249.3125,
+        "width": 29.09375,
+        "height": 29.09375
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "bag",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 296,
+        "height": 544
+      },
+      "page": {
+        "width": 320,
+        "height": 568
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 366,
+          "scrollHeight": 366,
+          "width": 260,
+          "scrollWidth": 260,
+          "overflowY": "visible"
+        },
+        {
+          "className": "bag-grid",
+          "height": 229,
+          "scrollHeight": 409,
+          "width": 240,
+          "scrollWidth": 240,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 44,
+        "top": 213,
+        "right": 276,
+        "bottom": 445,
+        "width": 232,
+        "height": 232
+      },
+      "defense": {
+        "left": 16,
+        "top": 460,
+        "right": 304,
+        "bottom": 503,
+        "width": 288,
+        "height": 43
+      },
+      "approach": {
+        "left": 44,
+        "top": 93,
+        "right": 276,
+        "bottom": 213,
+        "width": 232,
+        "height": 120
+      },
+      "cell": {
+        "left": 47,
+        "top": 216,
+        "right": 84.65625,
+        "bottom": 253.65625,
+        "width": 37.65625,
+        "height": 37.65625
+      },
+      "piece": {
+        "left": 49.0625,
+        "top": 218.0625,
+        "right": 82.578125,
+        "bottom": 251.578125,
+        "width": 33.515625,
+        "height": 33.515625
+      },
+      "pieceImage": {
+        "left": 50.90625,
+        "top": 220.21875,
+        "right": 80,
+        "bottom": 249.3125,
+        "width": 29.09375,
+        "height": 29.09375
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "synthesis",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 296,
+        "height": 544
+      },
+      "page": {
+        "width": 320,
+        "height": 568
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 366,
+          "scrollHeight": 366,
+          "width": 260,
+          "scrollWidth": 260,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 44,
+        "top": 213,
+        "right": 276,
+        "bottom": 445,
+        "width": 232,
+        "height": 232
+      },
+      "defense": {
+        "left": 16,
+        "top": 460,
+        "right": 304,
+        "bottom": 503,
+        "width": 288,
+        "height": 43
+      },
+      "approach": {
+        "left": 44,
+        "top": 93,
+        "right": 276,
+        "bottom": 213,
+        "width": 232,
+        "height": 120
+      },
+      "cell": {
+        "left": 47,
+        "top": 216,
+        "right": 84.65625,
+        "bottom": 253.65625,
+        "width": 37.65625,
+        "height": 37.65625
+      },
+      "piece": {
+        "left": 49.0625,
+        "top": 218.0625,
+        "right": 82.578125,
+        "bottom": 251.578125,
+        "width": 33.515625,
+        "height": 33.515625
+      },
+      "pieceImage": {
+        "left": 50.90625,
+        "top": 220.21875,
+        "right": 80,
+        "bottom": 249.3125,
+        "width": 29.09375,
+        "height": 29.09375
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "cards",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 284,
+        "height": 544
+      },
+      "page": {
+        "width": 320,
+        "height": 568
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 20,
+          "scrollHeight": 20,
+          "width": 252,
+          "scrollWidth": 252,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 44,
+        "top": 213,
+        "right": 276,
+        "bottom": 445,
+        "width": 232,
+        "height": 232
+      },
+      "defense": {
+        "left": 16,
+        "top": 460,
+        "right": 304,
+        "bottom": 503,
+        "width": 288,
+        "height": 43
+      },
+      "approach": {
+        "left": 44,
+        "top": 93,
+        "right": 276,
+        "bottom": 213,
+        "width": 232,
+        "height": 120
+      },
+      "cell": {
+        "left": 47,
+        "top": 216,
+        "right": 84.65625,
+        "bottom": 253.65625,
+        "width": 37.65625,
+        "height": 37.65625
+      },
+      "piece": {
+        "left": 49.0625,
+        "top": 218.0625,
+        "right": 82.578125,
+        "bottom": 251.578125,
+        "width": 33.515625,
+        "height": 33.515625
+      },
+      "pieceImage": {
+        "left": 50.90625,
+        "top": 220.21875,
+        "right": 80,
+        "bottom": 249.3125,
+        "width": 29.09375,
+        "height": 29.09375
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "shop",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 294.390625,
+        "height": 552
+      },
+      "page": {
+        "width": 320,
+        "height": 568
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 536,
+          "scrollHeight": 1010,
+          "width": 276,
+          "scrollWidth": 276,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 44,
+        "top": 213,
+        "right": 276,
+        "bottom": 445,
+        "width": 232,
+        "height": 232
+      },
+      "defense": {
+        "left": 16,
+        "top": 460,
+        "right": 304,
+        "bottom": 503,
+        "width": 288,
+        "height": 43
+      },
+      "approach": {
+        "left": 44,
+        "top": 93,
+        "right": 276,
+        "bottom": 213,
+        "width": 232,
+        "height": 120
+      },
+      "cell": {
+        "left": 47,
+        "top": 216,
+        "right": 84.65625,
+        "bottom": 253.65625,
+        "width": 37.65625,
+        "height": 37.65625
+      },
+      "piece": {
+        "left": 49.0625,
+        "top": 218.0625,
+        "right": 82.578125,
+        "bottom": 251.578125,
+        "width": 33.515625,
+        "height": 33.515625
+      },
+      "pieceImage": {
+        "left": 50.90625,
+        "top": 220.21875,
+        "right": 80,
+        "bottom": 249.3125,
+        "width": 29.09375,
+        "height": 29.09375
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "tasks",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 296,
+        "height": 544
+      },
+      "page": {
+        "width": 320,
+        "height": 568
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 357,
+          "scrollHeight": 420,
+          "width": 264,
+          "scrollWidth": 264,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 44,
+        "top": 213,
+        "right": 276,
+        "bottom": 445,
+        "width": 232,
+        "height": 232
+      },
+      "defense": {
+        "left": 16,
+        "top": 460,
+        "right": 304,
+        "bottom": 503,
+        "width": 288,
+        "height": 43
+      },
+      "approach": {
+        "left": 44,
+        "top": 93,
+        "right": 276,
+        "bottom": 213,
+        "width": 232,
+        "height": 120
+      },
+      "cell": {
+        "left": 47,
+        "top": 216,
+        "right": 84.65625,
+        "bottom": 253.65625,
+        "width": 37.65625,
+        "height": 37.65625
+      },
+      "piece": {
+        "left": 49.0625,
+        "top": 218.0625,
+        "right": 82.578125,
+        "bottom": 251.578125,
+        "width": 33.515625,
+        "height": 33.515625
+      },
+      "pieceImage": {
+        "left": 50.90625,
+        "top": 220.21875,
+        "right": 80,
+        "bottom": 249.3125,
+        "width": 29.09375,
+        "height": 29.09375
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "hero",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 284,
+        "height": 532
+      },
+      "page": {
+        "width": 320,
+        "height": 568
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 293,
+          "scrollHeight": 1258,
+          "width": 240,
+          "scrollWidth": 240,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 44,
+        "top": 213,
+        "right": 276,
+        "bottom": 445,
+        "width": 232,
+        "height": 232
+      },
+      "defense": {
+        "left": 16,
+        "top": 460,
+        "right": 304,
+        "bottom": 503,
+        "width": 288,
+        "height": 43
+      },
+      "approach": {
+        "left": 44,
+        "top": 93,
+        "right": 276,
+        "bottom": 213,
+        "width": 232,
+        "height": 120
+      },
+      "cell": {
+        "left": 47,
+        "top": 216,
+        "right": 84.65625,
+        "bottom": 253.65625,
+        "width": 37.65625,
+        "height": 37.65625
+      },
+      "piece": {
+        "left": 49.0625,
+        "top": 218.0625,
+        "right": 82.578125,
+        "bottom": 251.578125,
+        "width": 33.515625,
+        "height": 33.515625
+      },
+      "pieceImage": {
+        "left": 50.90625,
+        "top": 220.21875,
+        "right": 80,
+        "bottom": 249.3125,
+        "width": 29.09375,
+        "height": 29.09375
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "victory",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 284,
+        "height": 517.796875
+      },
+      "page": {
+        "width": 320,
+        "height": 568
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 90,
+          "scrollHeight": 90,
+          "width": 240,
+          "scrollWidth": 240,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 44,
+        "top": 213,
+        "right": 276,
+        "bottom": 445,
+        "width": 232,
+        "height": 232
+      },
+      "defense": {
+        "left": 16,
+        "top": 460,
+        "right": 304,
+        "bottom": 503,
+        "width": 288,
+        "height": 43
+      },
+      "approach": {
+        "left": 44,
+        "top": 93,
+        "right": 276,
+        "bottom": 213,
+        "width": 232,
+        "height": 120
+      },
+      "cell": {
+        "left": 47,
+        "top": 216,
+        "right": 84.65625,
+        "bottom": 253.65625,
+        "width": 37.65625,
+        "height": 37.65625
+      },
+      "piece": {
+        "left": 49.0625,
+        "top": 218.0625,
+        "right": 82.578125,
+        "bottom": 251.578125,
+        "width": 33.515625,
+        "height": 33.515625
+      },
+      "pieceImage": {
+        "left": 50.90625,
+        "top": 220.21875,
+        "right": 80,
+        "bottom": 249.3125,
+        "width": 29.09375,
+        "height": 29.09375
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "home",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 360,
+        "height": 640
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "piece": null,
+      "pieceImage": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "home-report",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 360,
+        "height": 640
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "piece": null,
+      "pieceImage": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "battle",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 360,
+        "height": 640
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": {
+        "left": 38.671875,
+        "top": 234.34375,
+        "right": 321.328125,
+        "bottom": 517,
+        "width": 282.65625,
+        "height": 282.65625
+      },
+      "defense": {
+        "left": 16,
+        "top": 532,
+        "right": 344,
+        "bottom": 575,
+        "width": 328,
+        "height": 43
+      },
+      "approach": {
+        "left": 38.671875,
+        "top": 93,
+        "right": 321.328125,
+        "bottom": 234.328125,
+        "width": 282.65625,
+        "height": 141.328125
+      },
+      "cell": {
+        "left": 41.671875,
+        "top": 237.34375,
+        "right": 87.78125,
+        "bottom": 283.453125,
+        "width": 46.109375,
+        "height": 46.109375
+      },
+      "piece": {
+        "left": 44,
+        "top": 239.671875,
+        "right": 85.453125,
+        "bottom": 281.125,
+        "width": 41.453125,
+        "height": 41.453125
+      },
+      "pieceImage": {
+        "left": 45.796875,
+        "top": 241.859375,
+        "right": 82.71875,
+        "bottom": 278.78125,
+        "width": 36.921875,
+        "height": 36.921875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "forge",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 348,
+        "height": 628
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 548,
+          "scrollHeight": 591,
+          "width": 328,
+          "scrollWidth": 328,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 38.671875,
+        "top": 234.34375,
+        "right": 321.328125,
+        "bottom": 517,
+        "width": 282.65625,
+        "height": 282.65625
+      },
+      "defense": {
+        "left": 16,
+        "top": 532,
+        "right": 344,
+        "bottom": 575,
+        "width": 328,
+        "height": 43
+      },
+      "approach": {
+        "left": 38.671875,
+        "top": 93,
+        "right": 321.328125,
+        "bottom": 234.328125,
+        "width": 282.65625,
+        "height": 141.328125
+      },
+      "cell": {
+        "left": 41.671875,
+        "top": 237.34375,
+        "right": 87.78125,
+        "bottom": 283.453125,
+        "width": 46.109375,
+        "height": 46.109375
+      },
+      "piece": {
+        "left": 44,
+        "top": 239.671875,
+        "right": 85.453125,
+        "bottom": 281.125,
+        "width": 41.453125,
+        "height": 41.453125
+      },
+      "pieceImage": {
+        "left": 45.796875,
+        "top": 241.859375,
+        "right": 82.71875,
+        "bottom": 278.78125,
+        "width": 36.921875,
+        "height": 36.921875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "star",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 348,
+        "height": 628
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 548,
+          "scrollHeight": 671,
+          "width": 328,
+          "scrollWidth": 328,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 38.671875,
+        "top": 234.34375,
+        "right": 321.328125,
+        "bottom": 517,
+        "width": 282.65625,
+        "height": 282.65625
+      },
+      "defense": {
+        "left": 16,
+        "top": 532,
+        "right": 344,
+        "bottom": 575,
+        "width": 328,
+        "height": 43
+      },
+      "approach": {
+        "left": 38.671875,
+        "top": 93,
+        "right": 321.328125,
+        "bottom": 234.328125,
+        "width": 282.65625,
+        "height": 141.328125
+      },
+      "cell": {
+        "left": 41.671875,
+        "top": 237.34375,
+        "right": 87.78125,
+        "bottom": 283.453125,
+        "width": 46.109375,
+        "height": 46.109375
+      },
+      "piece": {
+        "left": 44,
+        "top": 239.671875,
+        "right": 85.453125,
+        "bottom": 281.125,
+        "width": 41.453125,
+        "height": 41.453125
+      },
+      "pieceImage": {
+        "left": 45.796875,
+        "top": 241.859375,
+        "right": 82.71875,
+        "bottom": 278.78125,
+        "width": 36.921875,
+        "height": 36.921875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "equipment",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 336,
+        "height": 616
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 428,
+          "scrollHeight": 623,
+          "width": 318,
+          "scrollWidth": 318,
+          "overflowY": "auto"
+        },
+        {
+          "className": "equipment-compatible-list",
+          "height": 144,
+          "scrollHeight": 656,
+          "width": 302,
+          "scrollWidth": 302,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 38.671875,
+        "top": 234.34375,
+        "right": 321.328125,
+        "bottom": 517,
+        "width": 282.65625,
+        "height": 282.65625
+      },
+      "defense": {
+        "left": 16,
+        "top": 532,
+        "right": 344,
+        "bottom": 575,
+        "width": 328,
+        "height": 43
+      },
+      "approach": {
+        "left": 38.671875,
+        "top": 93,
+        "right": 321.328125,
+        "bottom": 234.328125,
+        "width": 282.65625,
+        "height": 141.328125
+      },
+      "cell": {
+        "left": 41.671875,
+        "top": 237.34375,
+        "right": 87.78125,
+        "bottom": 283.453125,
+        "width": 46.109375,
+        "height": 46.109375
+      },
+      "piece": {
+        "left": 44,
+        "top": 239.671875,
+        "right": 85.453125,
+        "bottom": 281.125,
+        "width": 41.453125,
+        "height": 41.453125
+      },
+      "pieceImage": {
+        "left": 45.796875,
+        "top": 241.859375,
+        "right": 82.71875,
+        "bottom": 278.78125,
+        "width": 36.921875,
+        "height": 36.921875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "bag",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 336,
+        "height": 616
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 438,
+          "scrollHeight": 438,
+          "width": 300,
+          "scrollWidth": 300,
+          "overflowY": "visible"
+        },
+        {
+          "className": "bag-grid",
+          "height": 301,
+          "scrollHeight": 473,
+          "width": 280,
+          "scrollWidth": 280,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 38.671875,
+        "top": 234.34375,
+        "right": 321.328125,
+        "bottom": 517,
+        "width": 282.65625,
+        "height": 282.65625
+      },
+      "defense": {
+        "left": 16,
+        "top": 532,
+        "right": 344,
+        "bottom": 575,
+        "width": 328,
+        "height": 43
+      },
+      "approach": {
+        "left": 38.671875,
+        "top": 93,
+        "right": 321.328125,
+        "bottom": 234.328125,
+        "width": 282.65625,
+        "height": 141.328125
+      },
+      "cell": {
+        "left": 41.671875,
+        "top": 237.34375,
+        "right": 87.78125,
+        "bottom": 283.453125,
+        "width": 46.109375,
+        "height": 46.109375
+      },
+      "piece": {
+        "left": 44,
+        "top": 239.671875,
+        "right": 85.453125,
+        "bottom": 281.125,
+        "width": 41.453125,
+        "height": 41.453125
+      },
+      "pieceImage": {
+        "left": 45.796875,
+        "top": 241.859375,
+        "right": 82.71875,
+        "bottom": 278.78125,
+        "width": 36.921875,
+        "height": 36.921875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "synthesis",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 336,
+        "height": 616
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 438,
+          "scrollHeight": 438,
+          "width": 300,
+          "scrollWidth": 300,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 38.671875,
+        "top": 234.34375,
+        "right": 321.328125,
+        "bottom": 517,
+        "width": 282.65625,
+        "height": 282.65625
+      },
+      "defense": {
+        "left": 16,
+        "top": 532,
+        "right": 344,
+        "bottom": 575,
+        "width": 328,
+        "height": 43
+      },
+      "approach": {
+        "left": 38.671875,
+        "top": 93,
+        "right": 321.328125,
+        "bottom": 234.328125,
+        "width": 282.65625,
+        "height": 141.328125
+      },
+      "cell": {
+        "left": 41.671875,
+        "top": 237.34375,
+        "right": 87.78125,
+        "bottom": 283.453125,
+        "width": 46.109375,
+        "height": 46.109375
+      },
+      "piece": {
+        "left": 44,
+        "top": 239.671875,
+        "right": 85.453125,
+        "bottom": 281.125,
+        "width": 41.453125,
+        "height": 41.453125
+      },
+      "pieceImage": {
+        "left": 45.796875,
+        "top": 241.859375,
+        "right": 82.71875,
+        "bottom": 278.78125,
+        "width": 36.921875,
+        "height": 36.921875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "cards",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 324,
+        "height": 552.25
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 20,
+          "scrollHeight": 20,
+          "width": 292,
+          "scrollWidth": 292,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 38.671875,
+        "top": 234.34375,
+        "right": 321.328125,
+        "bottom": 517,
+        "width": 282.65625,
+        "height": 282.65625
+      },
+      "defense": {
+        "left": 16,
+        "top": 532,
+        "right": 344,
+        "bottom": 575,
+        "width": 328,
+        "height": 43
+      },
+      "approach": {
+        "left": 38.671875,
+        "top": 93,
+        "right": 321.328125,
+        "bottom": 234.328125,
+        "width": 282.65625,
+        "height": 141.328125
+      },
+      "cell": {
+        "left": 41.671875,
+        "top": 237.34375,
+        "right": 87.78125,
+        "bottom": 283.453125,
+        "width": 46.109375,
+        "height": 46.109375
+      },
+      "piece": {
+        "left": 44,
+        "top": 239.671875,
+        "right": 85.453125,
+        "bottom": 281.125,
+        "width": 41.453125,
+        "height": 41.453125
+      },
+      "pieceImage": {
+        "left": 45.796875,
+        "top": 241.859375,
+        "right": 82.71875,
+        "bottom": 278.78125,
+        "width": 36.921875,
+        "height": 36.921875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "shop",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 331.1875,
+        "height": 624
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 608,
+          "scrollHeight": 969,
+          "width": 313,
+          "scrollWidth": 313,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 38.671875,
+        "top": 234.34375,
+        "right": 321.328125,
+        "bottom": 517,
+        "width": 282.65625,
+        "height": 282.65625
+      },
+      "defense": {
+        "left": 16,
+        "top": 532,
+        "right": 344,
+        "bottom": 575,
+        "width": 328,
+        "height": 43
+      },
+      "approach": {
+        "left": 38.671875,
+        "top": 93,
+        "right": 321.328125,
+        "bottom": 234.328125,
+        "width": 282.65625,
+        "height": 141.328125
+      },
+      "cell": {
+        "left": 41.671875,
+        "top": 237.34375,
+        "right": 87.78125,
+        "bottom": 283.453125,
+        "width": 46.109375,
+        "height": 46.109375
+      },
+      "piece": {
+        "left": 44,
+        "top": 239.671875,
+        "right": 85.453125,
+        "bottom": 281.125,
+        "width": 41.453125,
+        "height": 41.453125
+      },
+      "pieceImage": {
+        "left": 45.796875,
+        "top": 241.859375,
+        "right": 82.71875,
+        "bottom": 278.78125,
+        "width": 36.921875,
+        "height": 36.921875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "tasks",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 336,
+        "height": 523.5
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 336,
+          "scrollHeight": 336,
+          "width": 304,
+          "scrollWidth": 304,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 38.671875,
+        "top": 234.34375,
+        "right": 321.328125,
+        "bottom": 517,
+        "width": 282.65625,
+        "height": 282.65625
+      },
+      "defense": {
+        "left": 16,
+        "top": 532,
+        "right": 344,
+        "bottom": 575,
+        "width": 328,
+        "height": 43
+      },
+      "approach": {
+        "left": 38.671875,
+        "top": 93,
+        "right": 321.328125,
+        "bottom": 234.328125,
+        "width": 282.65625,
+        "height": 141.328125
+      },
+      "cell": {
+        "left": 41.671875,
+        "top": 237.34375,
+        "right": 87.78125,
+        "bottom": 283.453125,
+        "width": 46.109375,
+        "height": 46.109375
+      },
+      "piece": {
+        "left": 44,
+        "top": 239.671875,
+        "right": 85.453125,
+        "bottom": 281.125,
+        "width": 41.453125,
+        "height": 41.453125
+      },
+      "pieceImage": {
+        "left": 45.796875,
+        "top": 241.859375,
+        "right": 82.71875,
+        "bottom": 278.78125,
+        "width": 36.921875,
+        "height": 36.921875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "hero",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 324,
+        "height": 604
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 365,
+          "scrollHeight": 1093,
+          "width": 280,
+          "scrollWidth": 280,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 38.671875,
+        "top": 234.34375,
+        "right": 321.328125,
+        "bottom": 517,
+        "width": 282.65625,
+        "height": 282.65625
+      },
+      "defense": {
+        "left": 16,
+        "top": 532,
+        "right": 344,
+        "bottom": 575,
+        "width": 328,
+        "height": 43
+      },
+      "approach": {
+        "left": 38.671875,
+        "top": 93,
+        "right": 321.328125,
+        "bottom": 234.328125,
+        "width": 282.65625,
+        "height": 141.328125
+      },
+      "cell": {
+        "left": 41.671875,
+        "top": 237.34375,
+        "right": 87.78125,
+        "bottom": 283.453125,
+        "width": 46.109375,
+        "height": 46.109375
+      },
+      "piece": {
+        "left": 44,
+        "top": 239.671875,
+        "right": 85.453125,
+        "bottom": 281.125,
+        "width": 41.453125,
+        "height": 41.453125
+      },
+      "pieceImage": {
+        "left": 45.796875,
+        "top": 241.859375,
+        "right": 82.71875,
+        "bottom": 278.78125,
+        "width": 36.921875,
+        "height": 36.921875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "victory",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 324,
+        "height": 495.046875
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 90,
+          "scrollHeight": 90,
+          "width": 280,
+          "scrollWidth": 280,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 38.671875,
+        "top": 234.34375,
+        "right": 321.328125,
+        "bottom": 517,
+        "width": 282.65625,
+        "height": 282.65625
+      },
+      "defense": {
+        "left": 16,
+        "top": 532,
+        "right": 344,
+        "bottom": 575,
+        "width": 328,
+        "height": 43
+      },
+      "approach": {
+        "left": 38.671875,
+        "top": 93,
+        "right": 321.328125,
+        "bottom": 234.328125,
+        "width": 282.65625,
+        "height": 141.328125
+      },
+      "cell": {
+        "left": 41.671875,
+        "top": 237.34375,
+        "right": 87.78125,
+        "bottom": 283.453125,
+        "width": 46.109375,
+        "height": 46.109375
+      },
+      "piece": {
+        "left": 44,
+        "top": 239.671875,
+        "right": 85.453125,
+        "bottom": 281.125,
+        "width": 41.453125,
+        "height": 41.453125
+      },
+      "pieceImage": {
+        "left": 45.796875,
+        "top": 241.859375,
+        "right": 82.71875,
+        "bottom": 278.78125,
+        "width": 36.921875,
+        "height": 36.921875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "home",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 390,
+        "height": 844
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "piece": null,
+      "pieceImage": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "home-report",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 390,
+        "height": 844
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "piece": null,
+      "pieceImage": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "battle",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 390,
+        "height": 844
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "piece": {
+        "left": 23.6875,
+        "top": 359.6875,
+        "right": 76.3125,
+        "bottom": 412.3125,
+        "width": 52.625,
+        "height": 52.625
+      },
+      "pieceImage": {
+        "left": 25.4375,
+        "top": 361.9375,
+        "right": 73.390625,
+        "bottom": 409.890625,
+        "width": 47.953125,
+        "height": 47.953125
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "forge",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 378,
+        "height": 678.34375
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 598,
+          "scrollHeight": 598,
+          "width": 358,
+          "scrollWidth": 358,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "piece": {
+        "left": 23.6875,
+        "top": 359.6875,
+        "right": 76.3125,
+        "bottom": 412.3125,
+        "width": 52.625,
+        "height": 52.625
+      },
+      "pieceImage": {
+        "left": 25.4375,
+        "top": 361.9375,
+        "right": 73.390625,
+        "bottom": 409.890625,
+        "width": 47.953125,
+        "height": 47.953125
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "star",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 378,
+        "height": 705.59375
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 625,
+          "scrollHeight": 625,
+          "width": 358,
+          "scrollWidth": 358,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "piece": {
+        "left": 23.6875,
+        "top": 359.6875,
+        "right": 76.3125,
+        "bottom": 412.3125,
+        "width": 52.625,
+        "height": 52.625
+      },
+      "pieceImage": {
+        "left": 25.4375,
+        "top": 361.9375,
+        "right": 73.390625,
+        "bottom": 409.890625,
+        "width": 47.953125,
+        "height": 47.953125
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "equipment",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 366,
+        "height": 800
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 612,
+          "scrollHeight": 657,
+          "width": 338,
+          "scrollWidth": 338,
+          "overflowY": "auto"
+        },
+        {
+          "className": "equipment-compatible-list",
+          "height": 144,
+          "scrollHeight": 656,
+          "width": 314,
+          "scrollWidth": 314,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "piece": {
+        "left": 23.6875,
+        "top": 359.6875,
+        "right": 76.3125,
+        "bottom": 412.3125,
+        "width": 52.625,
+        "height": 52.625
+      },
+      "pieceImage": {
+        "left": 25.4375,
+        "top": 361.9375,
+        "right": 73.390625,
+        "bottom": 409.890625,
+        "width": 47.953125,
+        "height": 47.953125
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "bag",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 366,
+        "height": 682.5
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 505,
+          "scrollHeight": 505,
+          "width": 330,
+          "scrollWidth": 330,
+          "overflowY": "visible"
+        },
+        {
+          "className": "bag-grid",
+          "height": 368,
+          "scrollHeight": 521,
+          "width": 310,
+          "scrollWidth": 310,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "piece": {
+        "left": 23.6875,
+        "top": 359.6875,
+        "right": 76.3125,
+        "bottom": 412.3125,
+        "width": 52.625,
+        "height": 52.625
+      },
+      "pieceImage": {
+        "left": 25.4375,
+        "top": 361.9375,
+        "right": 73.390625,
+        "bottom": 409.890625,
+        "width": 47.953125,
+        "height": 47.953125
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "synthesis",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 366,
+        "height": 682.5
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 505,
+          "scrollHeight": 505,
+          "width": 330,
+          "scrollWidth": 330,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "piece": {
+        "left": 23.6875,
+        "top": 359.6875,
+        "right": 76.3125,
+        "bottom": 412.3125,
+        "width": 52.625,
+        "height": 52.625
+      },
+      "pieceImage": {
+        "left": 25.4375,
+        "top": 361.9375,
+        "right": 73.390625,
+        "bottom": 409.890625,
+        "width": 47.953125,
+        "height": 47.953125
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "cards",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 354,
+        "height": 552.25
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 20,
+          "scrollHeight": 20,
+          "width": 322,
+          "scrollWidth": 322,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "piece": {
+        "left": 23.6875,
+        "top": 359.6875,
+        "right": 76.3125,
+        "bottom": 412.3125,
+        "width": 52.625,
+        "height": 52.625
+      },
+      "pieceImage": {
+        "left": 25.4375,
+        "top": 361.9375,
+        "right": 73.390625,
+        "bottom": 409.890625,
+        "width": 47.953125,
+        "height": 47.953125
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "shop",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 358.796875,
+        "height": 828
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 812,
+          "scrollHeight": 969,
+          "width": 341,
+          "scrollWidth": 341,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "piece": {
+        "left": 23.6875,
+        "top": 359.6875,
+        "right": 76.3125,
+        "bottom": 412.3125,
+        "width": 52.625,
+        "height": 52.625
+      },
+      "pieceImage": {
+        "left": 25.4375,
+        "top": 361.9375,
+        "right": 73.390625,
+        "bottom": 409.890625,
+        "width": 47.953125,
+        "height": 47.953125
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "tasks",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 366,
+        "height": 523.5
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 336,
+          "scrollHeight": 336,
+          "width": 334,
+          "scrollWidth": 334,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "piece": {
+        "left": 23.6875,
+        "top": 359.6875,
+        "right": 76.3125,
+        "bottom": 412.3125,
+        "width": 52.625,
+        "height": 52.625
+      },
+      "pieceImage": {
+        "left": 25.4375,
+        "top": 361.9375,
+        "right": 73.390625,
+        "bottom": 409.890625,
+        "width": 47.953125,
+        "height": 47.953125
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "hero",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 354,
+        "height": 690
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 445,
+          "scrollHeight": 1093,
+          "width": 310,
+          "scrollWidth": 310,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "piece": {
+        "left": 23.6875,
+        "top": 359.6875,
+        "right": 76.3125,
+        "bottom": 412.3125,
+        "width": 52.625,
+        "height": 52.625
+      },
+      "pieceImage": {
+        "left": 25.4375,
+        "top": 361.9375,
+        "right": 73.390625,
+        "bottom": 409.890625,
+        "width": 47.953125,
+        "height": 47.953125
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "victory",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 354,
+        "height": 529.046875
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 90,
+          "scrollHeight": 90,
+          "width": 310,
+          "scrollWidth": 310,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "piece": {
+        "left": 23.6875,
+        "top": 359.6875,
+        "right": 76.3125,
+        "bottom": 412.3125,
+        "width": 52.625,
+        "height": 52.625
+      },
+      "pieceImage": {
+        "left": 25.4375,
+        "top": 361.9375,
+        "right": 73.390625,
+        "bottom": 409.890625,
+        "width": 47.953125,
+        "height": 47.953125
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "home",
+      "issues": [],
+      "warnings": [
+        "short-landscape-requires-vertical-scroll"
+      ],
+      "panel": {
+        "width": 440,
+        "height": 560
+      },
+      "page": {
+        "width": 844,
+        "height": 584
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "piece": null,
+      "pieceImage": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "home-report",
+      "issues": [],
+      "warnings": [
+        "short-landscape-requires-vertical-scroll"
+      ],
+      "panel": {
+        "width": 440,
+        "height": 560
+      },
+      "page": {
+        "width": 844,
+        "height": 584
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "piece": null,
+      "pieceImage": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "battle",
+      "issues": [],
+      "warnings": [
+        "short-landscape-requires-vertical-scroll"
+      ],
+      "panel": {
+        "width": 440,
+        "height": 560
+      },
+      "page": {
+        "width": 844,
+        "height": 584
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": {
+        "left": 310,
+        "top": 229,
+        "right": 534,
+        "bottom": 453,
+        "width": 224,
+        "height": 224
+      },
+      "defense": {
+        "left": 222,
+        "top": 460,
+        "right": 622,
+        "bottom": 503,
+        "width": 400,
+        "height": 43
+      },
+      "approach": {
+        "left": 310,
+        "top": 109,
+        "right": 534,
+        "bottom": 228.984375,
+        "width": 224,
+        "height": 119.984375
+      },
+      "cell": {
+        "left": 313,
+        "top": 232,
+        "right": 349.328125,
+        "bottom": 268.328125,
+        "width": 36.328125,
+        "height": 36.328125
+      },
+      "piece": {
+        "left": 315.03125,
+        "top": 234.03125,
+        "right": 347.296875,
+        "bottom": 266.296875,
+        "width": 32.265625,
+        "height": 32.265625
+      },
+      "pieceImage": {
+        "left": 316.890625,
+        "top": 236.171875,
+        "right": 344.765625,
+        "bottom": 264.046875,
+        "width": 27.875,
+        "height": 27.875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "forge",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 430,
+        "height": 378
+      },
+      "page": {
+        "width": 844,
+        "height": 584
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 298,
+          "scrollHeight": 605,
+          "width": 400,
+          "scrollWidth": 400,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 310,
+        "top": 229,
+        "right": 534,
+        "bottom": 453,
+        "width": 224,
+        "height": 224
+      },
+      "defense": {
+        "left": 222,
+        "top": 460,
+        "right": 622,
+        "bottom": 503,
+        "width": 400,
+        "height": 43
+      },
+      "approach": {
+        "left": 310,
+        "top": 109,
+        "right": 534,
+        "bottom": 228.984375,
+        "width": 224,
+        "height": 119.984375
+      },
+      "cell": {
+        "left": 313,
+        "top": 232,
+        "right": 349.328125,
+        "bottom": 268.328125,
+        "width": 36.328125,
+        "height": 36.328125
+      },
+      "piece": {
+        "left": 315.03125,
+        "top": 234.03125,
+        "right": 347.296875,
+        "bottom": 266.296875,
+        "width": 32.265625,
+        "height": 32.265625
+      },
+      "pieceImage": {
+        "left": 316.890625,
+        "top": 236.171875,
+        "right": 344.765625,
+        "bottom": 264.046875,
+        "width": 27.875,
+        "height": 27.875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "star",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 430,
+        "height": 378
+      },
+      "page": {
+        "width": 844,
+        "height": 584
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 298,
+          "scrollHeight": 632,
+          "width": 400,
+          "scrollWidth": 400,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 310,
+        "top": 229,
+        "right": 534,
+        "bottom": 453,
+        "width": 224,
+        "height": 224
+      },
+      "defense": {
+        "left": 222,
+        "top": 460,
+        "right": 622,
+        "bottom": 503,
+        "width": 400,
+        "height": 43
+      },
+      "approach": {
+        "left": 310,
+        "top": 109,
+        "right": 534,
+        "bottom": 228.984375,
+        "width": 224,
+        "height": 119.984375
+      },
+      "cell": {
+        "left": 313,
+        "top": 232,
+        "right": 349.328125,
+        "bottom": 268.328125,
+        "width": 36.328125,
+        "height": 36.328125
+      },
+      "piece": {
+        "left": 315.03125,
+        "top": 234.03125,
+        "right": 347.296875,
+        "bottom": 266.296875,
+        "width": 32.265625,
+        "height": 32.265625
+      },
+      "pieceImage": {
+        "left": 316.890625,
+        "top": 236.171875,
+        "right": 344.765625,
+        "bottom": 264.046875,
+        "width": 27.875,
+        "height": 27.875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "equipment",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 420,
+        "height": 366
+      },
+      "page": {
+        "width": 844,
+        "height": 584
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 178,
+          "scrollHeight": 657,
+          "width": 382,
+          "scrollWidth": 382,
+          "overflowY": "auto"
+        },
+        {
+          "className": "equipment-compatible-list",
+          "height": 144,
+          "scrollHeight": 656,
+          "width": 348,
+          "scrollWidth": 348,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 310,
+        "top": 229,
+        "right": 534,
+        "bottom": 453,
+        "width": 224,
+        "height": 224
+      },
+      "defense": {
+        "left": 222,
+        "top": 460,
+        "right": 622,
+        "bottom": 503,
+        "width": 400,
+        "height": 43
+      },
+      "approach": {
+        "left": 310,
+        "top": 109,
+        "right": 534,
+        "bottom": 228.984375,
+        "width": 224,
+        "height": 119.984375
+      },
+      "cell": {
+        "left": 313,
+        "top": 232,
+        "right": 349.328125,
+        "bottom": 268.328125,
+        "width": 36.328125,
+        "height": 36.328125
+      },
+      "piece": {
+        "left": 315.03125,
+        "top": 234.03125,
+        "right": 347.296875,
+        "bottom": 266.296875,
+        "width": 32.265625,
+        "height": 32.265625
+      },
+      "pieceImage": {
+        "left": 316.890625,
+        "top": 236.171875,
+        "right": 344.765625,
+        "bottom": 264.046875,
+        "width": 27.875,
+        "height": 27.875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "bag",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 420,
+        "height": 366
+      },
+      "page": {
+        "width": 844,
+        "height": 584
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 188,
+          "scrollHeight": 188,
+          "width": 384,
+          "scrollWidth": 384,
+          "overflowY": "visible"
+        },
+        {
+          "className": "bag-grid",
+          "height": 51,
+          "scrollHeight": 608,
+          "width": 364,
+          "scrollWidth": 364,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 310,
+        "top": 229,
+        "right": 534,
+        "bottom": 453,
+        "width": 224,
+        "height": 224
+      },
+      "defense": {
+        "left": 222,
+        "top": 460,
+        "right": 622,
+        "bottom": 503,
+        "width": 400,
+        "height": 43
+      },
+      "approach": {
+        "left": 310,
+        "top": 109,
+        "right": 534,
+        "bottom": 228.984375,
+        "width": 224,
+        "height": 119.984375
+      },
+      "cell": {
+        "left": 313,
+        "top": 232,
+        "right": 349.328125,
+        "bottom": 268.328125,
+        "width": 36.328125,
+        "height": 36.328125
+      },
+      "piece": {
+        "left": 315.03125,
+        "top": 234.03125,
+        "right": 347.296875,
+        "bottom": 266.296875,
+        "width": 32.265625,
+        "height": 32.265625
+      },
+      "pieceImage": {
+        "left": 316.890625,
+        "top": 236.171875,
+        "right": 344.765625,
+        "bottom": 264.046875,
+        "width": 27.875,
+        "height": 27.875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "synthesis",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 420,
+        "height": 366
+      },
+      "page": {
+        "width": 844,
+        "height": 584
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 188,
+          "scrollHeight": 188,
+          "width": 384,
+          "scrollWidth": 384,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 310,
+        "top": 229,
+        "right": 534,
+        "bottom": 453,
+        "width": 224,
+        "height": 224
+      },
+      "defense": {
+        "left": 222,
+        "top": 460,
+        "right": 622,
+        "bottom": 503,
+        "width": 400,
+        "height": 43
+      },
+      "approach": {
+        "left": 310,
+        "top": 109,
+        "right": 534,
+        "bottom": 228.984375,
+        "width": 224,
+        "height": 119.984375
+      },
+      "cell": {
+        "left": 313,
+        "top": 232,
+        "right": 349.328125,
+        "bottom": 268.328125,
+        "width": 36.328125,
+        "height": 36.328125
+      },
+      "piece": {
+        "left": 315.03125,
+        "top": 234.03125,
+        "right": 347.296875,
+        "bottom": 266.296875,
+        "width": 32.265625,
+        "height": 32.265625
+      },
+      "pieceImage": {
+        "left": 316.890625,
+        "top": 236.171875,
+        "right": 344.765625,
+        "bottom": 264.046875,
+        "width": 27.875,
+        "height": 27.875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "cards",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 394,
+        "height": 366
+      },
+      "page": {
+        "width": 844,
+        "height": 584
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 20,
+          "scrollHeight": 20,
+          "width": 362,
+          "scrollWidth": 362,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 310,
+        "top": 229,
+        "right": 534,
+        "bottom": 453,
+        "width": 224,
+        "height": 224
+      },
+      "defense": {
+        "left": 222,
+        "top": 460,
+        "right": 622,
+        "bottom": 503,
+        "width": 400,
+        "height": 43
+      },
+      "approach": {
+        "left": 310,
+        "top": 109,
+        "right": 534,
+        "bottom": 228.984375,
+        "width": 224,
+        "height": 119.984375
+      },
+      "cell": {
+        "left": 313,
+        "top": 232,
+        "right": 349.328125,
+        "bottom": 268.328125,
+        "width": 36.328125,
+        "height": 36.328125
+      },
+      "piece": {
+        "left": 315.03125,
+        "top": 234.03125,
+        "right": 347.296875,
+        "bottom": 266.296875,
+        "width": 32.265625,
+        "height": 32.265625
+      },
+      "pieceImage": {
+        "left": 316.890625,
+        "top": 236.171875,
+        "right": 344.765625,
+        "bottom": 264.046875,
+        "width": 27.875,
+        "height": 27.875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "shop",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 440,
+        "height": 374
+      },
+      "page": {
+        "width": 844,
+        "height": 584
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 358,
+          "scrollHeight": 969,
+          "width": 412,
+          "scrollWidth": 412,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 310,
+        "top": 229,
+        "right": 534,
+        "bottom": 453,
+        "width": 224,
+        "height": 224
+      },
+      "defense": {
+        "left": 222,
+        "top": 460,
+        "right": 622,
+        "bottom": 503,
+        "width": 400,
+        "height": 43
+      },
+      "approach": {
+        "left": 310,
+        "top": 109,
+        "right": 534,
+        "bottom": 228.984375,
+        "width": 224,
+        "height": 119.984375
+      },
+      "cell": {
+        "left": 313,
+        "top": 232,
+        "right": 349.328125,
+        "bottom": 268.328125,
+        "width": 36.328125,
+        "height": 36.328125
+      },
+      "piece": {
+        "left": 315.03125,
+        "top": 234.03125,
+        "right": 347.296875,
+        "bottom": 266.296875,
+        "width": 32.265625,
+        "height": 32.265625
+      },
+      "pieceImage": {
+        "left": 316.890625,
+        "top": 236.171875,
+        "right": 344.765625,
+        "bottom": 264.046875,
+        "width": 27.875,
+        "height": 27.875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "tasks",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 392,
+        "height": 366
+      },
+      "page": {
+        "width": 844,
+        "height": 584
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 179,
+          "scrollHeight": 336,
+          "width": 360,
+          "scrollWidth": 360,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 310,
+        "top": 229,
+        "right": 534,
+        "bottom": 453,
+        "width": 224,
+        "height": 224
+      },
+      "defense": {
+        "left": 222,
+        "top": 460,
+        "right": 622,
+        "bottom": 503,
+        "width": 400,
+        "height": 43
+      },
+      "approach": {
+        "left": 310,
+        "top": 109,
+        "right": 534,
+        "bottom": 228.984375,
+        "width": 224,
+        "height": 119.984375
+      },
+      "cell": {
+        "left": 313,
+        "top": 232,
+        "right": 349.328125,
+        "bottom": 268.328125,
+        "width": 36.328125,
+        "height": 36.328125
+      },
+      "piece": {
+        "left": 315.03125,
+        "top": 234.03125,
+        "right": 347.296875,
+        "bottom": 266.296875,
+        "width": 32.265625,
+        "height": 32.265625
+      },
+      "pieceImage": {
+        "left": 316.890625,
+        "top": 236.171875,
+        "right": 344.765625,
+        "bottom": 264.046875,
+        "width": 27.875,
+        "height": 27.875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "hero",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 360,
+        "height": 354
+      },
+      "page": {
+        "width": 844,
+        "height": 584
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 115,
+          "scrollHeight": 1093,
+          "width": 316,
+          "scrollWidth": 316,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 310,
+        "top": 229,
+        "right": 534,
+        "bottom": 453,
+        "width": 224,
+        "height": 224
+      },
+      "defense": {
+        "left": 222,
+        "top": 460,
+        "right": 622,
+        "bottom": 503,
+        "width": 400,
+        "height": 43
+      },
+      "approach": {
+        "left": 310,
+        "top": 109,
+        "right": 534,
+        "bottom": 228.984375,
+        "width": 224,
+        "height": 119.984375
+      },
+      "cell": {
+        "left": 313,
+        "top": 232,
+        "right": 349.328125,
+        "bottom": 268.328125,
+        "width": 36.328125,
+        "height": 36.328125
+      },
+      "piece": {
+        "left": 315.03125,
+        "top": 234.03125,
+        "right": 347.296875,
+        "bottom": 266.296875,
+        "width": 32.265625,
+        "height": 32.265625
+      },
+      "pieceImage": {
+        "left": 316.890625,
+        "top": 236.171875,
+        "right": 344.765625,
+        "bottom": 264.046875,
+        "width": 27.875,
+        "height": 27.875
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "safeTop": 0,
+      "safeBottom": 0,
+      "view": "victory",
+      "issues": [],
+      "warnings": [],
+      "panel": {
+        "width": 360,
+        "height": 354
+      },
+      "page": {
+        "width": 844,
+        "height": 584
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 90,
+          "scrollHeight": 90,
+          "width": 316,
+          "scrollWidth": 316,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 310,
+        "top": 229,
+        "right": 534,
+        "bottom": 453,
+        "width": 224,
+        "height": 224
+      },
+      "defense": {
+        "left": 222,
+        "top": 460,
+        "right": 622,
+        "bottom": 503,
+        "width": 400,
+        "height": 43
+      },
+      "approach": {
+        "left": 310,
+        "top": 109,
+        "right": 534,
+        "bottom": 228.984375,
+        "width": 224,
+        "height": 119.984375
+      },
+      "cell": {
+        "left": 313,
+        "top": 232,
+        "right": 349.328125,
+        "bottom": 268.328125,
+        "width": 36.328125,
+        "height": 36.328125
+      },
+      "piece": {
+        "left": 315.03125,
+        "top": 234.03125,
+        "right": 347.296875,
+        "bottom": 266.296875,
+        "width": 32.265625,
+        "height": 32.265625
+      },
+      "pieceImage": {
+        "left": 316.890625,
+        "top": 236.171875,
+        "right": 344.765625,
+        "bottom": 264.046875,
+        "width": 27.875,
+        "height": 27.875
+      },
+      "missingImages": []
+    }
+  ]
+}

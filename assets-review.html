@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>棋子图标替换预览 · 合战守格</title>
+<style>
+  :root{
+    --sky:#8fc7ff; --sky-d:#4a8fe0; --ink:#4a3f5a; --mut:#8f84a3;
+    --card:#ffffff; --bg:#eef6ff; --gold:#ffb347; --green:#5ecb8f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:22px 16px 40px;background:radial-gradient(120% 60% at 50% 0%,#ffffff,var(--bg));color:var(--ink);
+    font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:880px;margin:0 auto}
+  h1{margin:0 0 4px;font-size:22px;font-weight:900}
+  .sub{margin:0 0 18px;color:var(--mut);font-size:13px;line-height:1.6}
+  .card{background:var(--card);border:2px solid #d8e9ff;border-radius:18px;padding:14px 16px 16px;margin-bottom:14px;
+    box-shadow:0 4px 0 #cfe3ff,0 12px 22px #5a9eff1f}
+  .row-head{display:flex;align-items:baseline;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .row-head b{font-size:15px}
+  .tag{font-size:11px;color:var(--mut)}
+  .opts{display:flex;gap:14px;flex-wrap:wrap}
+  .opt{width:118px;text-align:center}
+  .opt .frame{position:relative;width:104px;height:104px;margin:0 auto 6px;border-radius:20px;border:2px dashed #cfe3ff;
+    background:linear-gradient(#ffffff,#f2f8ff);display:grid;place-items:center}
+  .opt.primary .frame{border:2px solid var(--sky);box-shadow:0 0 0 4px #8fc7ff33,0 8px 16px #5a9eff33}
+  .opt img{width:78px;height:78px;object-fit:contain;filter:drop-shadow(0 3px 2px #4a3f5a26)}
+  .opt .name{font-size:12px;font-weight:800}
+  .opt .note{font-size:10px;color:var(--mut);line-height:1.4;margin-top:2px}
+  .badge{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--sky);color:#fff;font-size:10px;
+    font-weight:800;padding:2px 8px;border-radius:9px;box-shadow:0 2px 0 var(--sky-d);white-space:nowrap}
+  .opt.alt .badge{background:#e7f0ff;color:var(--sky-d);box-shadow:0 2px 0 #cfe3ff}
+  .legend-box{background:#f6fbff;border:2px solid #e2f0ff;border-radius:14px;padding:12px 14px;color:var(--mut);font-size:12px;line-height:1.7}
+  .live{display:inline-block;margin-top:6px;background:linear-gradient(135deg,var(--sky),#5a9eff);color:#fff;text-decoration:none;
+    font-weight:800;font-size:13px;padding:9px 16px;border-radius:14px;box-shadow:0 2px 0 var(--sky-d)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>棋盘棋子图标替换预览</h1>
+  <p class="sub">武将（男法师 / 男战士 / 女祭司）未改动。以下 5 个非武将物件已从 <code>D:\wly\wly\wly\trunk\art\UI切图</code> 换成更贴合语义的 Q 版图标——<b>蓝框</b>为当前已替换，右侧为备选。想换哪个直接说编号即可。</p>
+
+  <div class="card">
+    <div class="row-head"><b>葫芦</b><span class="tag">消除时回复防线</span></div>
+    <div class="opts">
+      <div class="opt primary"><div class="frame"><span class="badge">当前 · 仙露</span><img src="public/assets/ix-gourd.png" alt=""></div><div class="name">ix-gourd</div><div class="note">绿色药瓶 · 一眼看懂“回血”</div></div>
+      <div class="opt alt"><div class="frame"><span class="badge">备选 A</span><img src="public/assets/ix-gourd-alt.png" alt=""></div><div class="name">ix-gourd-alt</div><div class="note">灵珠 · 更“仙气”</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row-head"><b>铜钱</b><span class="tag">消除时获得金币</span></div>
+    <div class="opts">
+      <div class="opt primary"><div class="frame"><span class="badge">当前 · 金币</span><img src="public/assets/icon-coin.png" alt=""></div><div class="name">icon-coin / ix-coin</div><div class="note">标准金币 · 棋盘与 HUD 统一</div></div>
+      <div class="opt alt"><div class="frame"><span class="badge">备选 A</span><img src="public/assets/ix-coin-ingot.png" alt=""></div><div class="name">ix-coin-ingot</div><div class="note">元宝锭 · 更“值钱”</div></div>
+      <div class="opt alt"><div class="frame"><span class="badge">备选 B</span><img src="public/assets/ix-coin-fire.png" alt=""></div><div class="name">ix-coin-fire</div><div class="note">火焰币 · 更醒目</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row-head"><b>宝箱</b><span class="tag">3 连返 1 步，4 连返 2 步</span></div>
+    <div class="opts">
+      <div class="opt primary"><div class="frame"><span class="badge">当前 · 宝箱</span><img src="public/assets/ix-chest.png" alt=""></div><div class="name">ix-chest</div><div class="note">金锁木箱 · 经典宝箱</div></div>
+      <div class="opt alt"><div class="frame"><span class="badge">备选 A</span><img src="public/assets/ix-chest-2.png" alt=""></div><div class="name">ix-chest-2</div><div class="note">另一款宝箱</div></div>
+      <div class="opt alt"><div class="frame"><span class="badge">备选 B</span><img src="public/assets/ix-chest-red.png" alt=""></div><div class="name">ix-chest-red</div><div class="note">红宝箱 · 更喜庆</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row-head"><b>陷阱</b><span class="tag">消除数量决定禁锢时长</span></div>
+    <div class="opts">
+      <div class="opt primary"><div class="frame"><span class="badge">当前 · 封印锁</span><img src="public/assets/ix-trap.png" alt=""></div><div class="name">ix-trap</div><div class="note">锁形封印 · 表达“禁锢”</div></div>
+      <div class="opt alt"><div class="frame"><span class="badge">备选 A</span><img src="public/assets/ix-trap-fear.png" alt=""></div><div class="name">ix-trap-fear</div><div class="note">控制符 · 更“控制”</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row-head"><b>地雷</b><span class="tag">消除数量决定触发伤害</span></div>
+    <div class="opts">
+      <div class="opt primary"><div class="frame"><span class="badge">当前 · 爆发</span><img src="public/assets/ix-mine.png" alt=""></div><div class="name">ix-mine</div><div class="note">爆发符 · 表达“引爆”</div></div>
+      <div class="opt alt"><div class="frame"><span class="badge">备选 A</span><img src="public/assets/ix-mine-claw.png" alt=""></div><div class="name">ix-mine-claw</div><div class="note">爪痕 · 更“伤害”</div></div>
+    </div>
+  </div>
+
+  <div class="legend-box">
+    说明：资源库中没有专门的“陷阱 / 地雷”写实图标，因此陷阱选用“封印锁”、地雷选用“爆发符”来表达效果语义，风格与棋子统一。
+    <br><b>武将成长面板</b>已同步做 Q 版优化（圆角卡片、悬浮抬升、模型浮动、进入动画，兼容“减少动态效果”）。<br>
+    <a class="live" href="http://127.0.0.1:5174/" target="_blank">打开游戏实机预览 →</a>
+  </div>
+</div>
+</body>
+</html>

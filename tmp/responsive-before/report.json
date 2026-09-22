@@ -1,0 +1,2987 @@
+{
+  "cases": 48,
+  "failing": [
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "view": "home",
+      "issues": [
+        "panel-taller-than-viewport",
+        "text-overflow:homeGoldText",
+        "text-overflow:homeStaminaText"
+      ],
+      "panel": {
+        "width": 320,
+        "height": 580
+      },
+      "page": {
+        "width": 320,
+        "height": 580
+      },
+      "textOverflow": [
+        {
+          "text": "123.5万",
+          "className": "homeGoldText",
+          "clientWidth": 19,
+          "scrollWidth": 28
+        },
+        {
+          "text": "500/60",
+          "className": "homeStaminaText",
+          "clientWidth": 30,
+          "scrollWidth": 46
+        }
+      ],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "view": "battle",
+      "issues": [
+        "panel-taller-than-viewport",
+        "board-cells-below-28px"
+      ],
+      "panel": {
+        "width": 320,
+        "height": 580
+      },
+      "page": {
+        "width": 320,
+        "height": 580
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": {
+        "left": 86,
+        "top": 284,
+        "right": 234,
+        "bottom": 432,
+        "width": 148,
+        "height": 148
+      },
+      "defense": {
+        "left": 16,
+        "top": 454,
+        "right": 304,
+        "bottom": 505,
+        "width": 288,
+        "height": 51
+      },
+      "approach": {
+        "left": 86,
+        "top": 108,
+        "right": 234,
+        "bottom": 284,
+        "width": 148,
+        "height": 176
+      },
+      "cell": {
+        "left": 89,
+        "top": 287,
+        "right": 112.65625,
+        "bottom": 310.65625,
+        "width": 23.65625,
+        "height": 23.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "view": "home",
+      "issues": [
+        "text-overflow:homeStaminaText"
+      ],
+      "panel": {
+        "width": 360,
+        "height": 640
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [
+        {
+          "text": "500/60",
+          "className": "homeStaminaText",
+          "clientWidth": 30,
+          "scrollWidth": 46
+        }
+      ],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "view": "home",
+      "issues": [
+        "text-overflow:homeGoldText",
+        "text-overflow:homeYuanbaoText",
+        "text-overflow:homeStaminaText"
+      ],
+      "panel": {
+        "width": 390,
+        "height": 844
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [
+        {
+          "text": "123.5万",
+          "className": "homeGoldText",
+          "clientWidth": 21,
+          "scrollWidth": 36
+        },
+        {
+          "text": "76.5万",
+          "className": "homeYuanbaoText",
+          "clientWidth": 21,
+          "scrollWidth": 28
+        },
+        {
+          "text": "500/60",
+          "className": "homeStaminaText",
+          "clientWidth": 40,
+          "scrollWidth": 46
+        }
+      ],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "view": "home",
+      "issues": [
+        "panel-taller-than-viewport",
+        "text-overflow:homeStaminaText",
+        "home-start-overlaps-navigation"
+      ],
+      "panel": {
+        "width": 440,
+        "height": 580
+      },
+      "page": {
+        "width": 844,
+        "height": 604
+      },
+      "textOverflow": [
+        {
+          "text": "500/60",
+          "className": "homeStaminaText",
+          "clientWidth": 40,
+          "scrollWidth": 46
+        }
+      ],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "view": "battle",
+      "issues": [
+        "panel-taller-than-viewport",
+        "board-cells-below-28px"
+      ],
+      "panel": {
+        "width": 440,
+        "height": 580
+      },
+      "page": {
+        "width": 844,
+        "height": 604
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": {
+        "left": 422,
+        "top": 240,
+        "right": 428,
+        "bottom": 246,
+        "width": 6,
+        "height": 6
+      },
+      "defense": {
+        "left": 222,
+        "top": 462,
+        "right": 622,
+        "bottom": 513,
+        "width": 400,
+        "height": 51
+      },
+      "approach": {
+        "left": 422,
+        "top": 124,
+        "right": 422,
+        "bottom": 300,
+        "width": 0,
+        "height": 176
+      },
+      "cell": {
+        "left": 425,
+        "top": 243,
+        "right": 439,
+        "bottom": 247,
+        "width": 14,
+        "height": 4
+      },
+      "missingImages": []
+    }
+  ],
+  "pageErrors": [],
+  "resourceErrors": [],
+  "results": [
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "view": "home",
+      "issues": [
+        "panel-taller-than-viewport",
+        "text-overflow:homeGoldText",
+        "text-overflow:homeStaminaText"
+      ],
+      "panel": {
+        "width": 320,
+        "height": 580
+      },
+      "page": {
+        "width": 320,
+        "height": 580
+      },
+      "textOverflow": [
+        {
+          "text": "123.5万",
+          "className": "homeGoldText",
+          "clientWidth": 19,
+          "scrollWidth": 28
+        },
+        {
+          "text": "500/60",
+          "className": "homeStaminaText",
+          "clientWidth": 30,
+          "scrollWidth": 46
+        }
+      ],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "view": "battle",
+      "issues": [
+        "panel-taller-than-viewport",
+        "board-cells-below-28px"
+      ],
+      "panel": {
+        "width": 320,
+        "height": 580
+      },
+      "page": {
+        "width": 320,
+        "height": 580
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": {
+        "left": 86,
+        "top": 284,
+        "right": 234,
+        "bottom": 432,
+        "width": 148,
+        "height": 148
+      },
+      "defense": {
+        "left": 16,
+        "top": 454,
+        "right": 304,
+        "bottom": 505,
+        "width": 288,
+        "height": 51
+      },
+      "approach": {
+        "left": 86,
+        "top": 108,
+        "right": 234,
+        "bottom": 284,
+        "width": 148,
+        "height": 176
+      },
+      "cell": {
+        "left": 89,
+        "top": 287,
+        "right": 112.65625,
+        "bottom": 310.65625,
+        "width": 23.65625,
+        "height": 23.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "view": "forge",
+      "issues": [],
+      "panel": {
+        "width": 308,
+        "height": 560
+      },
+      "page": {
+        "width": 320,
+        "height": 580
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 441,
+          "scrollHeight": 617,
+          "width": 288,
+          "scrollWidth": 288,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 86,
+        "top": 284,
+        "right": 234,
+        "bottom": 432,
+        "width": 148,
+        "height": 148
+      },
+      "defense": {
+        "left": 16,
+        "top": 454,
+        "right": 304,
+        "bottom": 505,
+        "width": 288,
+        "height": 51
+      },
+      "approach": {
+        "left": 86,
+        "top": 108,
+        "right": 234,
+        "bottom": 284,
+        "width": 148,
+        "height": 176
+      },
+      "cell": {
+        "left": 89,
+        "top": 287,
+        "right": 112.65625,
+        "bottom": 310.65625,
+        "width": 23.65625,
+        "height": 23.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "view": "star",
+      "issues": [],
+      "panel": {
+        "width": 308,
+        "height": 560
+      },
+      "page": {
+        "width": 320,
+        "height": 580
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 441,
+          "scrollHeight": 697,
+          "width": 288,
+          "scrollWidth": 288,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 86,
+        "top": 284,
+        "right": 234,
+        "bottom": 432,
+        "width": 148,
+        "height": 148
+      },
+      "defense": {
+        "left": 16,
+        "top": 454,
+        "right": 304,
+        "bottom": 505,
+        "width": 288,
+        "height": 51
+      },
+      "approach": {
+        "left": 86,
+        "top": 108,
+        "right": 234,
+        "bottom": 284,
+        "width": 148,
+        "height": 176
+      },
+      "cell": {
+        "left": 89,
+        "top": 287,
+        "right": 112.65625,
+        "bottom": 310.65625,
+        "width": 23.65625,
+        "height": 23.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "view": "equipment",
+      "issues": [],
+      "panel": {
+        "width": 296,
+        "height": 544
+      },
+      "page": {
+        "width": 320,
+        "height": 580
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 356,
+          "scrollHeight": 579,
+          "width": 278,
+          "scrollWidth": 278,
+          "overflowY": "auto"
+        },
+        {
+          "className": "equipment-compatible-list",
+          "height": 144,
+          "scrollHeight": 656,
+          "width": 262,
+          "scrollWidth": 262,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 86,
+        "top": 284,
+        "right": 234,
+        "bottom": 432,
+        "width": 148,
+        "height": 148
+      },
+      "defense": {
+        "left": 16,
+        "top": 454,
+        "right": 304,
+        "bottom": 505,
+        "width": 288,
+        "height": 51
+      },
+      "approach": {
+        "left": 86,
+        "top": 108,
+        "right": 234,
+        "bottom": 284,
+        "width": 148,
+        "height": 176
+      },
+      "cell": {
+        "left": 89,
+        "top": 287,
+        "right": 112.65625,
+        "bottom": 310.65625,
+        "width": 23.65625,
+        "height": 23.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "view": "bag",
+      "issues": [],
+      "panel": {
+        "width": 296,
+        "height": 544
+      },
+      "page": {
+        "width": 320,
+        "height": 580
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 366,
+          "scrollHeight": 366,
+          "width": 260,
+          "scrollWidth": 260,
+          "overflowY": "visible"
+        },
+        {
+          "className": "bag-grid",
+          "height": 227,
+          "scrollHeight": 409,
+          "width": 240,
+          "scrollWidth": 240,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 86,
+        "top": 284,
+        "right": 234,
+        "bottom": 432,
+        "width": 148,
+        "height": 148
+      },
+      "defense": {
+        "left": 16,
+        "top": 454,
+        "right": 304,
+        "bottom": 505,
+        "width": 288,
+        "height": 51
+      },
+      "approach": {
+        "left": 86,
+        "top": 108,
+        "right": 234,
+        "bottom": 284,
+        "width": 148,
+        "height": 176
+      },
+      "cell": {
+        "left": 89,
+        "top": 287,
+        "right": 112.65625,
+        "bottom": 310.65625,
+        "width": 23.65625,
+        "height": 23.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "view": "synthesis",
+      "issues": [],
+      "panel": {
+        "width": 296,
+        "height": 544
+      },
+      "page": {
+        "width": 320,
+        "height": 580
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 366,
+          "scrollHeight": 366,
+          "width": 260,
+          "scrollWidth": 260,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 86,
+        "top": 284,
+        "right": 234,
+        "bottom": 432,
+        "width": 148,
+        "height": 148
+      },
+      "defense": {
+        "left": 16,
+        "top": 454,
+        "right": 304,
+        "bottom": 505,
+        "width": 288,
+        "height": 51
+      },
+      "approach": {
+        "left": 86,
+        "top": 108,
+        "right": 234,
+        "bottom": 284,
+        "width": 148,
+        "height": 176
+      },
+      "cell": {
+        "left": 89,
+        "top": 287,
+        "right": 112.65625,
+        "bottom": 310.65625,
+        "width": 23.65625,
+        "height": 23.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "view": "cards",
+      "issues": [],
+      "panel": {
+        "width": 284,
+        "height": 544
+      },
+      "page": {
+        "width": 320,
+        "height": 580
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 20,
+          "scrollHeight": 20,
+          "width": 252,
+          "scrollWidth": 252,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 86,
+        "top": 284,
+        "right": 234,
+        "bottom": 432,
+        "width": 148,
+        "height": 148
+      },
+      "defense": {
+        "left": 16,
+        "top": 454,
+        "right": 304,
+        "bottom": 505,
+        "width": 288,
+        "height": 51
+      },
+      "approach": {
+        "left": 86,
+        "top": 108,
+        "right": 234,
+        "bottom": 284,
+        "width": 148,
+        "height": 176
+      },
+      "cell": {
+        "left": 89,
+        "top": 287,
+        "right": 112.65625,
+        "bottom": 310.65625,
+        "width": 23.65625,
+        "height": 23.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "view": "shop",
+      "issues": [],
+      "panel": {
+        "width": 294.390625,
+        "height": 552
+      },
+      "page": {
+        "width": 320,
+        "height": 580
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 536,
+          "scrollHeight": 1029,
+          "width": 276,
+          "scrollWidth": 276,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 86,
+        "top": 284,
+        "right": 234,
+        "bottom": 432,
+        "width": 148,
+        "height": 148
+      },
+      "defense": {
+        "left": 16,
+        "top": 454,
+        "right": 304,
+        "bottom": 505,
+        "width": 288,
+        "height": 51
+      },
+      "approach": {
+        "left": 86,
+        "top": 108,
+        "right": 234,
+        "bottom": 284,
+        "width": 148,
+        "height": 176
+      },
+      "cell": {
+        "left": 89,
+        "top": 287,
+        "right": 112.65625,
+        "bottom": 310.65625,
+        "width": 23.65625,
+        "height": 23.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "view": "tasks",
+      "issues": [],
+      "panel": {
+        "width": 296,
+        "height": 544
+      },
+      "page": {
+        "width": 320,
+        "height": 580
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 308,
+          "scrollHeight": 420,
+          "width": 264,
+          "scrollWidth": 264,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 86,
+        "top": 284,
+        "right": 234,
+        "bottom": 432,
+        "width": 148,
+        "height": 148
+      },
+      "defense": {
+        "left": 16,
+        "top": 454,
+        "right": 304,
+        "bottom": 505,
+        "width": 288,
+        "height": 51
+      },
+      "approach": {
+        "left": 86,
+        "top": 108,
+        "right": 234,
+        "bottom": 284,
+        "width": 148,
+        "height": 176
+      },
+      "cell": {
+        "left": 89,
+        "top": 287,
+        "right": 112.65625,
+        "bottom": 310.65625,
+        "width": 23.65625,
+        "height": 23.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "view": "hero",
+      "issues": [],
+      "panel": {
+        "width": 284,
+        "height": 532
+      },
+      "page": {
+        "width": 320,
+        "height": 580
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 247,
+          "scrollHeight": 1258,
+          "width": 240,
+          "scrollWidth": 240,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 86,
+        "top": 284,
+        "right": 234,
+        "bottom": 432,
+        "width": 148,
+        "height": 148
+      },
+      "defense": {
+        "left": 16,
+        "top": 454,
+        "right": 304,
+        "bottom": 505,
+        "width": 288,
+        "height": 51
+      },
+      "approach": {
+        "left": 86,
+        "top": 108,
+        "right": 234,
+        "bottom": 284,
+        "width": 148,
+        "height": 176
+      },
+      "cell": {
+        "left": 89,
+        "top": 287,
+        "right": 112.65625,
+        "bottom": 310.65625,
+        "width": 23.65625,
+        "height": 23.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "320x568",
+      "dpr": 2,
+      "view": "victory",
+      "issues": [],
+      "panel": {
+        "width": 284,
+        "height": 532
+      },
+      "page": {
+        "width": 320,
+        "height": 580
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 90,
+          "scrollHeight": 90,
+          "width": 240,
+          "scrollWidth": 240,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 86,
+        "top": 284,
+        "right": 234,
+        "bottom": 432,
+        "width": 148,
+        "height": 148
+      },
+      "defense": {
+        "left": 16,
+        "top": 454,
+        "right": 304,
+        "bottom": 505,
+        "width": 288,
+        "height": 51
+      },
+      "approach": {
+        "left": 86,
+        "top": 108,
+        "right": 234,
+        "bottom": 284,
+        "width": 148,
+        "height": 176
+      },
+      "cell": {
+        "left": 89,
+        "top": 287,
+        "right": 112.65625,
+        "bottom": 310.65625,
+        "width": 23.65625,
+        "height": 23.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "view": "home",
+      "issues": [
+        "text-overflow:homeStaminaText"
+      ],
+      "panel": {
+        "width": 360,
+        "height": 640
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [
+        {
+          "text": "500/60",
+          "className": "homeStaminaText",
+          "clientWidth": 30,
+          "scrollWidth": 46
+        }
+      ],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "view": "battle",
+      "issues": [],
+      "panel": {
+        "width": 360,
+        "height": 640
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": {
+        "left": 70,
+        "top": 284,
+        "right": 290,
+        "bottom": 504,
+        "width": 220,
+        "height": 220
+      },
+      "defense": {
+        "left": 16,
+        "top": 514,
+        "right": 344,
+        "bottom": 565,
+        "width": 328,
+        "height": 51
+      },
+      "approach": {
+        "left": 70,
+        "top": 108,
+        "right": 290,
+        "bottom": 284,
+        "width": 220,
+        "height": 176
+      },
+      "cell": {
+        "left": 73,
+        "top": 287,
+        "right": 108.65625,
+        "bottom": 322.65625,
+        "width": 35.65625,
+        "height": 35.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "view": "forge",
+      "issues": [],
+      "panel": {
+        "width": 348,
+        "height": 632
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 513,
+          "scrollHeight": 591,
+          "width": 328,
+          "scrollWidth": 328,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 70,
+        "top": 284,
+        "right": 290,
+        "bottom": 504,
+        "width": 220,
+        "height": 220
+      },
+      "defense": {
+        "left": 16,
+        "top": 514,
+        "right": 344,
+        "bottom": 565,
+        "width": 328,
+        "height": 51
+      },
+      "approach": {
+        "left": 70,
+        "top": 108,
+        "right": 290,
+        "bottom": 284,
+        "width": 220,
+        "height": 176
+      },
+      "cell": {
+        "left": 73,
+        "top": 287,
+        "right": 108.65625,
+        "bottom": 322.65625,
+        "width": 35.65625,
+        "height": 35.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "view": "star",
+      "issues": [],
+      "panel": {
+        "width": 348,
+        "height": 632
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 513,
+          "scrollHeight": 671,
+          "width": 328,
+          "scrollWidth": 328,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 70,
+        "top": 284,
+        "right": 290,
+        "bottom": 504,
+        "width": 220,
+        "height": 220
+      },
+      "defense": {
+        "left": 16,
+        "top": 514,
+        "right": 344,
+        "bottom": 565,
+        "width": 328,
+        "height": 51
+      },
+      "approach": {
+        "left": 70,
+        "top": 108,
+        "right": 290,
+        "bottom": 284,
+        "width": 220,
+        "height": 176
+      },
+      "cell": {
+        "left": 73,
+        "top": 287,
+        "right": 108.65625,
+        "bottom": 322.65625,
+        "width": 35.65625,
+        "height": 35.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "view": "equipment",
+      "issues": [],
+      "panel": {
+        "width": 336,
+        "height": 616
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 428,
+          "scrollHeight": 579,
+          "width": 318,
+          "scrollWidth": 318,
+          "overflowY": "auto"
+        },
+        {
+          "className": "equipment-compatible-list",
+          "height": 144,
+          "scrollHeight": 656,
+          "width": 302,
+          "scrollWidth": 302,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 70,
+        "top": 284,
+        "right": 290,
+        "bottom": 504,
+        "width": 220,
+        "height": 220
+      },
+      "defense": {
+        "left": 16,
+        "top": 514,
+        "right": 344,
+        "bottom": 565,
+        "width": 328,
+        "height": 51
+      },
+      "approach": {
+        "left": 70,
+        "top": 108,
+        "right": 290,
+        "bottom": 284,
+        "width": 220,
+        "height": 176
+      },
+      "cell": {
+        "left": 73,
+        "top": 287,
+        "right": 108.65625,
+        "bottom": 322.65625,
+        "width": 35.65625,
+        "height": 35.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "view": "bag",
+      "issues": [],
+      "panel": {
+        "width": 336,
+        "height": 616
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 438,
+          "scrollHeight": 438,
+          "width": 300,
+          "scrollWidth": 300,
+          "overflowY": "visible"
+        },
+        {
+          "className": "bag-grid",
+          "height": 299,
+          "scrollHeight": 473,
+          "width": 280,
+          "scrollWidth": 280,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 70,
+        "top": 284,
+        "right": 290,
+        "bottom": 504,
+        "width": 220,
+        "height": 220
+      },
+      "defense": {
+        "left": 16,
+        "top": 514,
+        "right": 344,
+        "bottom": 565,
+        "width": 328,
+        "height": 51
+      },
+      "approach": {
+        "left": 70,
+        "top": 108,
+        "right": 290,
+        "bottom": 284,
+        "width": 220,
+        "height": 176
+      },
+      "cell": {
+        "left": 73,
+        "top": 287,
+        "right": 108.65625,
+        "bottom": 322.65625,
+        "width": 35.65625,
+        "height": 35.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "view": "synthesis",
+      "issues": [],
+      "panel": {
+        "width": 336,
+        "height": 616
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 438,
+          "scrollHeight": 438,
+          "width": 300,
+          "scrollWidth": 300,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 70,
+        "top": 284,
+        "right": 290,
+        "bottom": 504,
+        "width": 220,
+        "height": 220
+      },
+      "defense": {
+        "left": 16,
+        "top": 514,
+        "right": 344,
+        "bottom": 565,
+        "width": 328,
+        "height": 51
+      },
+      "approach": {
+        "left": 70,
+        "top": 108,
+        "right": 290,
+        "bottom": 284,
+        "width": 220,
+        "height": 176
+      },
+      "cell": {
+        "left": 73,
+        "top": 287,
+        "right": 108.65625,
+        "bottom": 322.65625,
+        "width": 35.65625,
+        "height": 35.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "view": "cards",
+      "issues": [],
+      "panel": {
+        "width": 324,
+        "height": 552.25
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 20,
+          "scrollHeight": 20,
+          "width": 292,
+          "scrollWidth": 292,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 70,
+        "top": 284,
+        "right": 290,
+        "bottom": 504,
+        "width": 220,
+        "height": 220
+      },
+      "defense": {
+        "left": 16,
+        "top": 514,
+        "right": 344,
+        "bottom": 565,
+        "width": 328,
+        "height": 51
+      },
+      "approach": {
+        "left": 70,
+        "top": 108,
+        "right": 290,
+        "bottom": 284,
+        "width": 220,
+        "height": 176
+      },
+      "cell": {
+        "left": 73,
+        "top": 287,
+        "right": 108.65625,
+        "bottom": 322.65625,
+        "width": 35.65625,
+        "height": 35.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "view": "shop",
+      "issues": [],
+      "panel": {
+        "width": 331.1875,
+        "height": 624
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 608,
+          "scrollHeight": 974,
+          "width": 313,
+          "scrollWidth": 313,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 70,
+        "top": 284,
+        "right": 290,
+        "bottom": 504,
+        "width": 220,
+        "height": 220
+      },
+      "defense": {
+        "left": 16,
+        "top": 514,
+        "right": 344,
+        "bottom": 565,
+        "width": 328,
+        "height": 51
+      },
+      "approach": {
+        "left": 70,
+        "top": 108,
+        "right": 290,
+        "bottom": 284,
+        "width": 220,
+        "height": 176
+      },
+      "cell": {
+        "left": 73,
+        "top": 287,
+        "right": 108.65625,
+        "bottom": 322.65625,
+        "width": 35.65625,
+        "height": 35.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "view": "tasks",
+      "issues": [],
+      "panel": {
+        "width": 336,
+        "height": 572.5
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 336,
+          "scrollHeight": 336,
+          "width": 304,
+          "scrollWidth": 304,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 70,
+        "top": 284,
+        "right": 290,
+        "bottom": 504,
+        "width": 220,
+        "height": 220
+      },
+      "defense": {
+        "left": 16,
+        "top": 514,
+        "right": 344,
+        "bottom": 565,
+        "width": 328,
+        "height": 51
+      },
+      "approach": {
+        "left": 70,
+        "top": 108,
+        "right": 290,
+        "bottom": 284,
+        "width": 220,
+        "height": 176
+      },
+      "cell": {
+        "left": 73,
+        "top": 287,
+        "right": 108.65625,
+        "bottom": 322.65625,
+        "width": 35.65625,
+        "height": 35.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "view": "hero",
+      "issues": [],
+      "panel": {
+        "width": 324,
+        "height": 604
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 319,
+          "scrollHeight": 1093,
+          "width": 280,
+          "scrollWidth": 280,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 70,
+        "top": 284,
+        "right": 290,
+        "bottom": 504,
+        "width": 220,
+        "height": 220
+      },
+      "defense": {
+        "left": 16,
+        "top": 514,
+        "right": 344,
+        "bottom": 565,
+        "width": 328,
+        "height": 51
+      },
+      "approach": {
+        "left": 70,
+        "top": 108,
+        "right": 290,
+        "bottom": 284,
+        "width": 220,
+        "height": 176
+      },
+      "cell": {
+        "left": 73,
+        "top": 287,
+        "right": 108.65625,
+        "bottom": 322.65625,
+        "width": 35.65625,
+        "height": 35.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "360x640",
+      "dpr": 3,
+      "view": "victory",
+      "issues": [],
+      "panel": {
+        "width": 324,
+        "height": 552.046875
+      },
+      "page": {
+        "width": 360,
+        "height": 640
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 90,
+          "scrollHeight": 90,
+          "width": 280,
+          "scrollWidth": 280,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 70,
+        "top": 284,
+        "right": 290,
+        "bottom": 504,
+        "width": 220,
+        "height": 220
+      },
+      "defense": {
+        "left": 16,
+        "top": 514,
+        "right": 344,
+        "bottom": 565,
+        "width": 328,
+        "height": 51
+      },
+      "approach": {
+        "left": 70,
+        "top": 108,
+        "right": 290,
+        "bottom": 284,
+        "width": 220,
+        "height": 176
+      },
+      "cell": {
+        "left": 73,
+        "top": 287,
+        "right": 108.65625,
+        "bottom": 322.65625,
+        "width": 35.65625,
+        "height": 35.65625
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "view": "home",
+      "issues": [
+        "text-overflow:homeGoldText",
+        "text-overflow:homeYuanbaoText",
+        "text-overflow:homeStaminaText"
+      ],
+      "panel": {
+        "width": 390,
+        "height": 844
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [
+        {
+          "text": "123.5万",
+          "className": "homeGoldText",
+          "clientWidth": 21,
+          "scrollWidth": 36
+        },
+        {
+          "text": "76.5万",
+          "className": "homeYuanbaoText",
+          "clientWidth": 21,
+          "scrollWidth": 28
+        },
+        {
+          "text": "500/60",
+          "className": "homeStaminaText",
+          "clientWidth": 40,
+          "scrollWidth": 46
+        }
+      ],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "view": "battle",
+      "issues": [],
+      "panel": {
+        "width": 390,
+        "height": 844
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "view": "forge",
+      "issues": [],
+      "panel": {
+        "width": 378,
+        "height": 717.34375
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 598,
+          "scrollHeight": 598,
+          "width": 358,
+          "scrollWidth": 358,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "view": "star",
+      "issues": [],
+      "panel": {
+        "width": 378,
+        "height": 744.59375
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 625,
+          "scrollHeight": 625,
+          "width": 358,
+          "scrollWidth": 358,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "view": "equipment",
+      "issues": [],
+      "panel": {
+        "width": 366,
+        "height": 800
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 612,
+          "scrollHeight": 612,
+          "width": 338,
+          "scrollWidth": 338,
+          "overflowY": "auto"
+        },
+        {
+          "className": "equipment-compatible-list",
+          "height": 144,
+          "scrollHeight": 656,
+          "width": 314,
+          "scrollWidth": 314,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "view": "bag",
+      "issues": [],
+      "panel": {
+        "width": 366,
+        "height": 682.5
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 505,
+          "scrollHeight": 505,
+          "width": 330,
+          "scrollWidth": 330,
+          "overflowY": "visible"
+        },
+        {
+          "className": "bag-grid",
+          "height": 366,
+          "scrollHeight": 521,
+          "width": 310,
+          "scrollWidth": 310,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "view": "synthesis",
+      "issues": [],
+      "panel": {
+        "width": 366,
+        "height": 682.5
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 505,
+          "scrollHeight": 505,
+          "width": 330,
+          "scrollWidth": 330,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "view": "cards",
+      "issues": [],
+      "panel": {
+        "width": 354,
+        "height": 552.25
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 20,
+          "scrollHeight": 20,
+          "width": 322,
+          "scrollWidth": 322,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "view": "shop",
+      "issues": [],
+      "panel": {
+        "width": 358.796875,
+        "height": 828
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 812,
+          "scrollHeight": 974,
+          "width": 341,
+          "scrollWidth": 341,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "view": "tasks",
+      "issues": [],
+      "panel": {
+        "width": 366,
+        "height": 572.5
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 336,
+          "scrollHeight": 336,
+          "width": 334,
+          "scrollWidth": 334,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "view": "hero",
+      "issues": [],
+      "panel": {
+        "width": 354,
+        "height": 690
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 399,
+          "scrollHeight": 1093,
+          "width": 310,
+          "scrollWidth": 310,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "390x844",
+      "dpr": 3,
+      "view": "victory",
+      "issues": [],
+      "panel": {
+        "width": 354,
+        "height": 608.796875
+      },
+      "page": {
+        "width": 390,
+        "height": 844
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 90,
+          "scrollHeight": 90,
+          "width": 310,
+          "scrollWidth": 310,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 18,
+        "top": 354,
+        "right": 372,
+        "bottom": 708,
+        "width": 354,
+        "height": 354
+      },
+      "defense": {
+        "left": 16,
+        "top": 718,
+        "right": 374,
+        "bottom": 769,
+        "width": 358,
+        "height": 51
+      },
+      "approach": {
+        "left": 18,
+        "top": 108,
+        "right": 372,
+        "bottom": 354,
+        "width": 354,
+        "height": 246
+      },
+      "cell": {
+        "left": 21,
+        "top": 357,
+        "right": 79,
+        "bottom": 415,
+        "width": 58,
+        "height": 58
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "view": "home",
+      "issues": [
+        "panel-taller-than-viewport",
+        "text-overflow:homeStaminaText",
+        "home-start-overlaps-navigation"
+      ],
+      "panel": {
+        "width": 440,
+        "height": 580
+      },
+      "page": {
+        "width": 844,
+        "height": 604
+      },
+      "textOverflow": [
+        {
+          "text": "500/60",
+          "className": "homeStaminaText",
+          "clientWidth": 40,
+          "scrollWidth": 46
+        }
+      ],
+      "scrolling": [],
+      "board": null,
+      "defense": null,
+      "approach": null,
+      "cell": null,
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "view": "battle",
+      "issues": [
+        "panel-taller-than-viewport",
+        "board-cells-below-28px"
+      ],
+      "panel": {
+        "width": 440,
+        "height": 580
+      },
+      "page": {
+        "width": 844,
+        "height": 604
+      },
+      "textOverflow": [],
+      "scrolling": [],
+      "board": {
+        "left": 422,
+        "top": 240,
+        "right": 428,
+        "bottom": 246,
+        "width": 6,
+        "height": 6
+      },
+      "defense": {
+        "left": 222,
+        "top": 462,
+        "right": 622,
+        "bottom": 513,
+        "width": 400,
+        "height": 51
+      },
+      "approach": {
+        "left": 422,
+        "top": 124,
+        "right": 422,
+        "bottom": 300,
+        "width": 0,
+        "height": 176
+      },
+      "cell": {
+        "left": 425,
+        "top": 243,
+        "right": 439,
+        "bottom": 247,
+        "width": 14,
+        "height": 4
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "view": "forge",
+      "issues": [],
+      "panel": {
+        "width": 430,
+        "height": 382
+      },
+      "page": {
+        "width": 844,
+        "height": 604
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 263,
+          "scrollHeight": 605,
+          "width": 400,
+          "scrollWidth": 400,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 422,
+        "top": 240,
+        "right": 428,
+        "bottom": 246,
+        "width": 6,
+        "height": 6
+      },
+      "defense": {
+        "left": 222,
+        "top": 462,
+        "right": 622,
+        "bottom": 513,
+        "width": 400,
+        "height": 51
+      },
+      "approach": {
+        "left": 422,
+        "top": 124,
+        "right": 422,
+        "bottom": 300,
+        "width": 0,
+        "height": 176
+      },
+      "cell": {
+        "left": 425,
+        "top": 243,
+        "right": 439,
+        "bottom": 247,
+        "width": 14,
+        "height": 4
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "view": "star",
+      "issues": [],
+      "panel": {
+        "width": 430,
+        "height": 382
+      },
+      "page": {
+        "width": 844,
+        "height": 604
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 263,
+          "scrollHeight": 632,
+          "width": 400,
+          "scrollWidth": 400,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 422,
+        "top": 240,
+        "right": 428,
+        "bottom": 246,
+        "width": 6,
+        "height": 6
+      },
+      "defense": {
+        "left": 222,
+        "top": 462,
+        "right": 622,
+        "bottom": 513,
+        "width": 400,
+        "height": 51
+      },
+      "approach": {
+        "left": 422,
+        "top": 124,
+        "right": 422,
+        "bottom": 300,
+        "width": 0,
+        "height": 176
+      },
+      "cell": {
+        "left": 425,
+        "top": 243,
+        "right": 439,
+        "bottom": 247,
+        "width": 14,
+        "height": 4
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "view": "equipment",
+      "issues": [],
+      "panel": {
+        "width": 420,
+        "height": 366
+      },
+      "page": {
+        "width": 844,
+        "height": 604
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 178,
+          "scrollHeight": 589,
+          "width": 382,
+          "scrollWidth": 382,
+          "overflowY": "auto"
+        },
+        {
+          "className": "equipment-compatible-list",
+          "height": 144,
+          "scrollHeight": 656,
+          "width": 348,
+          "scrollWidth": 348,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 422,
+        "top": 240,
+        "right": 428,
+        "bottom": 246,
+        "width": 6,
+        "height": 6
+      },
+      "defense": {
+        "left": 222,
+        "top": 462,
+        "right": 622,
+        "bottom": 513,
+        "width": 400,
+        "height": 51
+      },
+      "approach": {
+        "left": 422,
+        "top": 124,
+        "right": 422,
+        "bottom": 300,
+        "width": 0,
+        "height": 176
+      },
+      "cell": {
+        "left": 425,
+        "top": 243,
+        "right": 439,
+        "bottom": 247,
+        "width": 14,
+        "height": 4
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "view": "bag",
+      "issues": [],
+      "panel": {
+        "width": 420,
+        "height": 366
+      },
+      "page": {
+        "width": 844,
+        "height": 604
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 188,
+          "scrollHeight": 188,
+          "width": 384,
+          "scrollWidth": 384,
+          "overflowY": "visible"
+        },
+        {
+          "className": "bag-grid",
+          "height": 49,
+          "scrollHeight": 608,
+          "width": 364,
+          "scrollWidth": 364,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 422,
+        "top": 240,
+        "right": 428,
+        "bottom": 246,
+        "width": 6,
+        "height": 6
+      },
+      "defense": {
+        "left": 222,
+        "top": 462,
+        "right": 622,
+        "bottom": 513,
+        "width": 400,
+        "height": 51
+      },
+      "approach": {
+        "left": 422,
+        "top": 124,
+        "right": 422,
+        "bottom": 300,
+        "width": 0,
+        "height": 176
+      },
+      "cell": {
+        "left": 425,
+        "top": 243,
+        "right": 439,
+        "bottom": 247,
+        "width": 14,
+        "height": 4
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "view": "synthesis",
+      "issues": [],
+      "panel": {
+        "width": 420,
+        "height": 366
+      },
+      "page": {
+        "width": 844,
+        "height": 604
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 188,
+          "scrollHeight": 188,
+          "width": 384,
+          "scrollWidth": 384,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 422,
+        "top": 240,
+        "right": 428,
+        "bottom": 246,
+        "width": 6,
+        "height": 6
+      },
+      "defense": {
+        "left": 222,
+        "top": 462,
+        "right": 622,
+        "bottom": 513,
+        "width": 400,
+        "height": 51
+      },
+      "approach": {
+        "left": 422,
+        "top": 124,
+        "right": 422,
+        "bottom": 300,
+        "width": 0,
+        "height": 176
+      },
+      "cell": {
+        "left": 425,
+        "top": 243,
+        "right": 439,
+        "bottom": 247,
+        "width": 14,
+        "height": 4
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "view": "cards",
+      "issues": [],
+      "panel": {
+        "width": 394,
+        "height": 366
+      },
+      "page": {
+        "width": 844,
+        "height": 604
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 20,
+          "scrollHeight": 20,
+          "width": 362,
+          "scrollWidth": 362,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 422,
+        "top": 240,
+        "right": 428,
+        "bottom": 246,
+        "width": 6,
+        "height": 6
+      },
+      "defense": {
+        "left": 222,
+        "top": 462,
+        "right": 622,
+        "bottom": 513,
+        "width": 400,
+        "height": 51
+      },
+      "approach": {
+        "left": 422,
+        "top": 124,
+        "right": 422,
+        "bottom": 300,
+        "width": 0,
+        "height": 176
+      },
+      "cell": {
+        "left": 425,
+        "top": 243,
+        "right": 439,
+        "bottom": 247,
+        "width": 14,
+        "height": 4
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "view": "shop",
+      "issues": [],
+      "panel": {
+        "width": 440,
+        "height": 374
+      },
+      "page": {
+        "width": 844,
+        "height": 604
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 358,
+          "scrollHeight": 974,
+          "width": 412,
+          "scrollWidth": 412,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 422,
+        "top": 240,
+        "right": 428,
+        "bottom": 246,
+        "width": 6,
+        "height": 6
+      },
+      "defense": {
+        "left": 222,
+        "top": 462,
+        "right": 622,
+        "bottom": 513,
+        "width": 400,
+        "height": 51
+      },
+      "approach": {
+        "left": 422,
+        "top": 124,
+        "right": 422,
+        "bottom": 300,
+        "width": 0,
+        "height": 176
+      },
+      "cell": {
+        "left": 425,
+        "top": 243,
+        "right": 439,
+        "bottom": 247,
+        "width": 14,
+        "height": 4
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "view": "tasks",
+      "issues": [],
+      "panel": {
+        "width": 392,
+        "height": 366
+      },
+      "page": {
+        "width": 844,
+        "height": 604
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 130,
+          "scrollHeight": 336,
+          "width": 360,
+          "scrollWidth": 360,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 422,
+        "top": 240,
+        "right": 428,
+        "bottom": 246,
+        "width": 6,
+        "height": 6
+      },
+      "defense": {
+        "left": 222,
+        "top": 462,
+        "right": 622,
+        "bottom": 513,
+        "width": 400,
+        "height": 51
+      },
+      "approach": {
+        "left": 422,
+        "top": 124,
+        "right": 422,
+        "bottom": 300,
+        "width": 0,
+        "height": 176
+      },
+      "cell": {
+        "left": 425,
+        "top": 243,
+        "right": 439,
+        "bottom": 247,
+        "width": 14,
+        "height": 4
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "view": "hero",
+      "issues": [],
+      "panel": {
+        "width": 360,
+        "height": 354
+      },
+      "page": {
+        "width": 844,
+        "height": 604
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 69,
+          "scrollHeight": 1093,
+          "width": 316,
+          "scrollWidth": 316,
+          "overflowY": "auto"
+        }
+      ],
+      "board": {
+        "left": 422,
+        "top": 240,
+        "right": 428,
+        "bottom": 246,
+        "width": 6,
+        "height": 6
+      },
+      "defense": {
+        "left": 222,
+        "top": 462,
+        "right": 622,
+        "bottom": 513,
+        "width": 400,
+        "height": 51
+      },
+      "approach": {
+        "left": 422,
+        "top": 124,
+        "right": 422,
+        "bottom": 300,
+        "width": 0,
+        "height": 176
+      },
+      "cell": {
+        "left": 425,
+        "top": 243,
+        "right": 439,
+        "bottom": 247,
+        "width": 14,
+        "height": 4
+      },
+      "missingImages": []
+    },
+    {
+      "viewport": "844x390",
+      "dpr": 3,
+      "view": "victory",
+      "issues": [],
+      "panel": {
+        "width": 360,
+        "height": 354
+      },
+      "page": {
+        "width": 844,
+        "height": 604
+      },
+      "textOverflow": [],
+      "scrolling": [
+        {
+          "className": "modal-detail",
+          "height": 90,
+          "scrollHeight": 90,
+          "width": 316,
+          "scrollWidth": 316,
+          "overflowY": "visible"
+        }
+      ],
+      "board": {
+        "left": 422,
+        "top": 240,
+        "right": 428,
+        "bottom": 246,
+        "width": 6,
+        "height": 6
+      },
+      "defense": {
+        "left": 222,
+        "top": 462,
+        "right": 622,
+        "bottom": 513,
+        "width": 400,
+        "height": 51
+      },
+      "approach": {
+        "left": 422,
+        "top": 124,
+        "right": 422,
+        "bottom": 300,
+        "width": 0,
+        "height": 176
+      },
+      "cell": {
+        "left": 425,
+        "top": 243,
+        "right": 439,
+        "bottom": 247,
+        "width": 14,
+        "height": 4
+      },
+      "missingImages": []
+    }
+  ]
+}
