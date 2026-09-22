@@ -2365,6 +2365,9 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   background: transparent;
   box-shadow: none;
 }
+.shop-modal .shop-card[data-tone] {
+  background-image: none;
+}
 .shop-modal .shop-title {
   flex: 1 1 auto;
   color: #8a4e20;
@@ -3507,12 +3510,17 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
 }
 .equipment-modal .equipment-slot-base {
   position: absolute;
-  inset: 0;
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
   z-index: 0;
-  width: 100%;
+  width: auto;
   height: 100%;
-  object-fit: fill;
-  opacity: .9;
+  max-width: 100%;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  opacity: 1;
   pointer-events: none;
 }
 .equipment-modal .equipment-slot .equipment-quality-frame,
@@ -3532,8 +3540,13 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   display: none;
 }
 .equipment-modal .equipment-slot:not(.filled) {
-  border-color: #9fcceb;
+  border-color: transparent;
   background: #eaf6ffcc;
+}
+.equipment-modal .equipment-slot:not(.filled) .equipment-slot-base {
+  outline: 1px dashed #9fcceb;
+  outline-offset: 1px;
+  border-radius: 8px;
 }
 .equipment-modal .equipment-slot:not(.filled) .equipment-slot-label {
   position: absolute;
@@ -3632,7 +3645,7 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   aspect-ratio: 1.48;
 }
 .equipment-modal .equipment-slot-base {
-  object-fit: fill;
+  object-fit: contain;
 }
 @media (max-height: 740px) {
   .equipment-modal .equipment-slots { gap: 5px; }
@@ -3663,4 +3676,89 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
 }
 @media (max-height: 740px) {
   .equipment-modal .equipment-slot { aspect-ratio: 1.42; }
+}
+
+/* 商店商品卡：使用商城原图的九宫格边框，避免窄卡比例拉伸装饰角。 */
+.shop-modal .shop-card {
+  min-height: 138px;
+  display: grid;
+  grid-template-rows: auto auto minmax(34px, 1fr) auto auto;
+  align-content: stretch;
+  gap: 1px;
+  padding: 8px 5px 7px;
+  border: 8px solid transparent;
+  border-radius: 0;
+  border-image: url("./public/assets/ui/shop/bg-shop-item.png") 18 fill / 8px / 0 stretch;
+  background: transparent;
+  box-shadow: none;
+}
+.shop-modal .shop-card-name {
+  min-width: 0;
+  color: #8b512b;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.shop-modal .shop-card-amount {
+  color: #8b512b;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1.1;
+  text-shadow: 0 1px 0 #fff8e8;
+}
+.shop-modal .shop-card-icon {
+  align-self: center;
+  justify-self: center;
+  width: 36px;
+  height: 36px;
+}
+.shop-modal .shop-card-price {
+  justify-self: center;
+  margin: 1px 0 0;
+  padding: 1px 4px;
+  color: #8b512b;
+  background: #ffffffaa;
+  box-shadow: inset 0 0 0 1px #d7b988;
+  font-size: 9px;
+}
+.shop-modal .shop-card-action {
+  justify-self: stretch;
+  width: auto;
+  margin-top: 1px;
+  padding: 3px 0;
+  border-radius: 7px;
+  background: linear-gradient(180deg, #fff4ce, #e7b965);
+  box-shadow: inset 0 1px 0 #ffffff, 0 2px 0 #b37b35;
+  font-size: 10px;
+}
+.shop-modal .shop-card[data-lack="1"] .shop-card-action {
+  width: auto;
+  background: linear-gradient(180deg, #e9e2d5, #c3b9a8);
+  box-shadow: inset 0 1px 0 #ffffff, 0 2px 0 #9c907e;
+}
+.shop-modal .shop-card[data-tone="gold"] .shop-card-name,
+.shop-modal .shop-card[data-tone="gold"] .shop-card-amount {
+  color: #8b512b;
+}
+
+/* 商城外框不再用 cover 拉伸角色背景，避免底部纹理变形。 */
+.modal-card.shop-modal {
+  background: linear-gradient(180deg, #fffdf5, #f7ead0);
+}
+.shop-modal .shop-panel {
+  border: 0;
+  border-image: none;
+  border-radius: 14px;
+  background: #fff9e9;
+}
+
+@media (max-width: 370px) {
+  .shop-modal .shop-card {
+    min-height: 130px;
+    padding-inline: 3px;
+  }
+  .shop-modal .shop-card-icon { width: 32px; height: 32px; }
 }

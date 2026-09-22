@@ -4160,7 +4160,7 @@ function showEquipmentGrowth(onBack = showHome) {
     button.className = `equipment-slot${item ? " filled" : ""}`;
     button.style.setProperty("--quality-color", item ? qualityInfo(item.quality).color : "#a7bab1");
     const slotQuality = item ? qualityInfo(item.quality) : null;
-    button.innerHTML = `<img class="equipment-slot-base" src="${ASSET}ui/character/equipment-slot.png" alt="" />${item
+    button.innerHTML = `<img class="equipment-slot-base" src="${ASSET}ui/character/equipment-slot-cao-wei.png" alt="" />${item
       ? `<span class="equipment-quality-frame"><img src="${ASSET}${slotQuality.asset}" alt="" /><img class="equipment-icon" src="${ASSET}${EQUIPMENT_ICONS[slot]}" alt="" /></span><b>${info.name}</b><small>${formatStatValue(item.value, info.stat)}</small>`
       : `<span class="equipment-slot-label">${info.name}</span>`}`;
     button.title = item ? `${equipmentName(item)} · ${info.name} · 点击卸下` : `${info.name}：空槽位`;
@@ -5406,8 +5406,9 @@ function showShop(onBack = showHome, noticeText = "") {
   const cardHtml = (group, amount, cost) => {
     const lack = state.yuanbao < cost;
     return `<button type="button" class="shop-card" data-tone="${group.tone}" data-buy data-kind="${group.kind}" data-amount="${amount}" data-cost="${cost}" data-lack="${lack ? 1 : 0}">
-        <img class="shop-card-icon" src="${ASSET}${group.icon}" alt="" />
+        <span class="shop-card-name">${group.label}</span>
         <span class="shop-card-amount">${short(amount)}${group.unit}</span>
+        <img class="shop-card-icon" src="${ASSET}${group.icon}" alt="${group.label}" />
         <span class="shop-card-price"><img src="${ASSET}home/premium.png" alt="元宝" />${cost}</span>
         <span class="shop-card-action">${lack ? "元宝不足" : "兑换"}</span>
       </button>`;
