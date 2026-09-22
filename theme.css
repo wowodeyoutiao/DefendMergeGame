@@ -504,6 +504,34 @@ button:not(:disabled):active { translate: 0 2px; }
 .hero-skill-strip { gap: 4px; }
 .hero-skill-strip img { display: block; width: 20px; height: 20px; opacity: 1; filter: none; }
 .hero-skill-info > strong { color: #4a3f5a; font-size: 10px; }
+.hero-skill-help {
+  min-width: 64px;
+  min-height: 36px;
+  padding: 2px 4px;
+  border: 1px solid #a676ff;
+  border-radius: 8px;
+  background: #fff6e0;
+  color: #563484;
+  font: inherit;
+  font-size: 11px;
+  text-align: left;
+  cursor: pointer;
+}
+.hero-skill-help > strong { display: flex; justify-content: space-between; gap: 3px; }
+.hero-skill-help > strong small { font-size: 9px; font-weight: 400; }
+
+button:focus-visible, [role="button"]:focus-visible {
+  outline: 2px solid #563484;
+  outline-offset: 2px;
+}
+
+@media (hover: none), (pointer: coarse) {
+  button:not(:disabled):active, [role="button"]:active {
+    outline: 2px solid #ffcf6f;
+    outline-offset: -2px;
+    filter: brightness(.9);
+  }
+}
 .skill-preview { position: relative; flex: 0 0 20px; width: 20px; height: 20px; border-radius: 50%; }
 .skill-preview.current { outline: 2px solid #ffcf6f; outline-offset: 1px; }
 .skill-preview small { position: absolute; inset: auto 0 -1px; color: #4a3f5a; font-size: 8px; text-align: center; text-shadow: none; line-height: 1; }
@@ -690,9 +718,16 @@ button:not(:disabled):active { translate: 0 2px; }
 }
 .card-choice[data-card-style="3"]::before { border-color: #8fc7ff; }
 
-.card-choice:hover, .card-choice:focus-visible {
+.card-choice:focus-visible {
   transform: translateY(-3px);
   box-shadow: 0 6px 0 #a3c4f2, 0 12px 20px #5a9eff44;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card-choice:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 0 #a3c4f2, 0 12px 20px #5a9eff44;
+  }
 }
 .card-choice:active { transform: translateY(1px); }
 
@@ -952,12 +987,18 @@ button:not(:disabled):active { translate: 0 2px; }
   transition: transform .14s ease, box-shadow .14s ease, color .14s ease, background .14s ease;
 }
 .forge-tab::before { content: "◆"; font-size: 7px; margin-right: 3px; opacity: .55; vertical-align: 1px; }
-.forge-tab:hover { transform: translateY(-2px); color: #ffffff; box-shadow: inset 0 1px 0 #a5d7dd44, 0 4px 9px #0b253044; }
+@media (hover: hover) and (pointer: fine) {
+  .forge-tab:hover { transform: translateY(-2px); color: #ffffff; box-shadow: inset 0 1px 0 #a5d7dd44, 0 4px 9px #0b253044; }
+}
 .forge-tab.active { color: #613511; background: linear-gradient(180deg, #ffe38a, #eaaa35); border-color: #8a511c; box-shadow: 0 2px 0 #8a511c, inset 0 1px 0 #fff4ba; transform: translateY(-1px); }
-.forge-tab.active:hover { transform: translateY(-2px); box-shadow: 0 4px 0 #8a511c, 0 6px 12px #0b253044; }
+@media (hover: hover) and (pointer: fine) {
+  .forge-tab.active:hover { transform: translateY(-2px); box-shadow: 0 4px 0 #8a511c, 0 6px 12px #0b253044; }
+}
 .forge-tab.locked { opacity: .55; cursor: not-allowed; filter: grayscale(.35); }
 .forge-tab.locked::before { opacity: .3; }
-.forge-tab.locked:hover { transform: none; box-shadow: inset 0 1px 0 #9dcbd133, 0 2px 0 #1a3540; }
+@media (hover: hover) and (pointer: fine) {
+  .forge-tab.locked:hover { transform: none; box-shadow: inset 0 1px 0 #9dcbd133, 0 2px 0 #1a3540; }
+}
 
 /* 武将切换页签（装备养成是按武将存档的，先选武将再养成） */
 .forge-warriors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
@@ -973,13 +1014,17 @@ button:not(:disabled):active { translate: 0 2px; }
 }
 .forge-warrior strong { font-size: 11px; font-weight: 900; }
 .forge-warrior small { font-size: 9px; font-weight: 700; opacity: .78; font-variant-numeric: tabular-nums; }
-.forge-warrior:hover { transform: translateY(-2px); color: #ffffff; box-shadow: inset 0 1px 0 #a5d7dd44, 0 4px 9px #0b253044; }
+@media (hover: hover) and (pointer: fine) {
+  .forge-warrior:hover { transform: translateY(-2px); color: #ffffff; box-shadow: inset 0 1px 0 #a5d7dd44, 0 4px 9px #0b253044; }
+}
 .forge-warrior.active {
   color: #613511; background: linear-gradient(180deg, #ffe38a, #eaaa35);
   border-color: #8a511c; box-shadow: 0 2px 0 #8a511c, inset 0 1px 0 #fff4ba; transform: translateY(-1px);
 }
 .forge-warrior.active small { opacity: .85; }
-.forge-warrior.active:hover { transform: translateY(-2px); box-shadow: 0 4px 0 #8a511c, 0 6px 12px #0b253044; }
+@media (hover: hover) and (pointer: fine) {
+  .forge-warrior.active:hover { transform: translateY(-2px); box-shadow: 0 4px 0 #8a511c, 0 6px 12px #0b253044; }
+}
 
 @media (max-width: 360px) {
   .forge-warrior { min-height: 32px; }
@@ -994,7 +1039,9 @@ button:not(:disabled):active { translate: 0 2px; }
   box-shadow: 0 2px 0 #8b5527;
   transition: transform .14s ease, box-shadow .14s ease;
 }
-.forge-help:hover { transform: translateY(-2px); box-shadow: 0 4px 8px #0b253055; }
+@media (hover: hover) and (pointer: fine) {
+  .forge-help:hover { transform: translateY(-2px); box-shadow: 0 4px 8px #0b253055; }
+}
 .forge-help:active { transform: translateY(0); }
 
 /* 钱包（金币 / 材料） */
@@ -1013,7 +1060,9 @@ button:not(:disabled):active { translate: 0 2px; }
   cursor: pointer; transition: transform .12s ease, filter .12s ease;
 }
 .forge-plus img { width: 100%; height: 100%; object-fit: contain; }
-.forge-plus:hover { transform: translateY(-1px); filter: brightness(1.08) drop-shadow(0 2px 3px #1d91b855); }
+@media (hover: hover) and (pointer: fine) {
+  .forge-plus:hover { transform: translateY(-1px); filter: brightness(1.08) drop-shadow(0 2px 3px #1d91b855); }
+}
 .forge-plus:active { transform: translateY(0) scale(.94); }
 
 /* 槽位网格 */
@@ -1046,7 +1095,9 @@ button:not(:disabled):active { translate: 0 2px; }
   text-shadow: 0 1px 0 #ffffff;
 }
 .forge-slot .forge-equip-icon { inset: 24%; width: 52%; height: 52%; }
-.forge-slot:hover { transform: translateY(-2px) scale(1.04); filter: drop-shadow(0 3px 5px #102933aa); }
+@media (hover: hover) and (pointer: fine) {
+  .forge-slot:hover { transform: translateY(-2px) scale(1.04); filter: drop-shadow(0 3px 5px #102933aa); }
+}
 .forge-slot:active { transform: translateY(0) scale(.97); }
 .forge-slot.active { transform: translateY(-2px) scale(1.06); filter: drop-shadow(0 3px 7px #ffd55d99); }
 .forge-slot.active .forge-slot-base { content: url("./public/assets/ui/forge/slot-round-active.png"); }
@@ -1095,17 +1146,25 @@ button:not(:disabled):active { translate: 0 2px; }
 .forge-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: stretch; }
 .forge-actions > * { flex: 1 1 auto; }
 .forge-master { min-height: 30px; min-width: 68px; padding: 0 8px; border: 2px solid #836126; border-radius: 9px; background: linear-gradient(180deg, #f1d46d, #c78227); color: #4d290e; text-shadow: 0 1px 0 #fff4c7; font-size: 11px; font-weight: 900; cursor: pointer; box-shadow: 0 3px 0 #593618, inset 0 1px 0 #fff2ad; transition: transform .14s ease, box-shadow .14s ease; }
-.forge-master:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #593618, 0 6px 10px #151b1e66; }
+@media (hover: hover) and (pointer: fine) {
+  .forge-master:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #593618, 0 6px 10px #151b1e66; }
+}
 .forge-master:active { transform: translateY(0); }
 .forge-primary { min-height: 40px; border: 2px solid #1d659c; border-radius: 10px; color: #ffffff; text-shadow: 0 1px 1px #164776; background: linear-gradient(180deg, #77caff, #3888dc); font-size: 14px; font-weight: 900; cursor: pointer; box-shadow: 0 3px 0 #195789, inset 0 2px 0 #c4ecff; transition: transform .14s ease, box-shadow .14s ease, filter .14s ease; }
-.forge-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #195789, 0 8px 14px #102d3f88; }
+@media (hover: hover) and (pointer: fine) {
+  .forge-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #195789, 0 8px 14px #102d3f88; }
+}
 .forge-primary:active { transform: translateY(0); box-shadow: 0 2px 0 #195789; }
 .forge-primary.alt { border-color: #b45f19; color: #5c2c0a; text-shadow: 0 1px 0 #fff3c1; background: linear-gradient(180deg, #ffe37c, #f29a27); box-shadow: 0 3px 0 #a34d13, inset 0 2px 0 #fff0b2; }
-.forge-primary.alt:hover { box-shadow: 0 5px 0 #a34d13, 0 8px 14px #102d3f88; }
+@media (hover: hover) and (pointer: fine) {
+  .forge-primary.alt:hover { box-shadow: 0 5px 0 #a34d13, 0 8px 14px #102d3f88; }
+}
 .forge-primary.alt:active { box-shadow: 0 2px 0 #a34d13; }
 .forge-primary:disabled { filter: grayscale(.6) opacity(.6); cursor: not-allowed; transform: none; box-shadow: 0 3px 0 #195789; }
 .forge-danger { min-height: 38px; border: 2px solid #a93429; border-radius: 10px; color: #fff; text-shadow: 0 1px 1px #762017; background: linear-gradient(180deg, #ff9a8b, #e94f43); font-size: 13px; font-weight: 900; cursor: pointer; box-shadow: 0 3px 0 #922d23; transition: transform .14s ease, box-shadow .14s ease; }
-.forge-danger:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #922d23, 0 8px 14px #102d3f88; }
+@media (hover: hover) and (pointer: fine) {
+  .forge-danger:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #922d23, 0 8px 14px #102d3f88; }
+}
 .forge-danger:active { transform: translateY(0); }
 
 .forge-auto { flex: 1 1 0; min-width: 0; display: flex; gap: 5px; align-items: stretch; }
@@ -1262,14 +1321,18 @@ button:not(:disabled):active { translate: 0 2px; }
   box-shadow: inset 0 1px 0 #ffffff;
   transition: transform .14s ease, box-shadow .14s ease, color .14s ease, background .14s ease;
 }
-.equipment-tabs button:hover { transform: translateY(-2px); color: #5a9eff; box-shadow: inset 0 1px 0 #ffffff, 0 4px 9px #5a9eff33; }
+@media (hover: hover) and (pointer: fine) {
+  .equipment-tabs button:hover { transform: translateY(-2px); color: #5a9eff; box-shadow: inset 0 1px 0 #ffffff, 0 4px 9px #5a9eff33; }
+}
 .equipment-tabs button.active {
   color: #ffffff;
   background: linear-gradient(135deg, #8fc7ff, #5a9eff);
   box-shadow: 0 2px 0 #4a8fe0;
   transform: translateY(-1px);
 }
-.equipment-tabs button.active:hover { transform: translateY(-2px); box-shadow: 0 4px 0 #4a8fe0, 0 6px 12px #5a9eff44; }
+@media (hover: hover) and (pointer: fine) {
+  .equipment-tabs button.active:hover { transform: translateY(-2px); box-shadow: 0 4px 0 #4a8fe0, 0 6px 12px #5a9eff44; }
+}
 
 .equipment-stage {
   display: grid; grid-template-columns: minmax(0,1fr) 132px minmax(0,1fr);
@@ -1291,7 +1354,9 @@ button:not(:disabled):active { translate: 0 2px; }
   box-shadow: 0 2px 0 #00000011;
   transition: transform .14s ease, box-shadow .14s ease;
 }
-.equipment-slot:hover { transform: translateY(-2px); box-shadow: 0 2px 0 #00000011, 0 6px 13px color-mix(in srgb, var(--quality-color) 42%, transparent); }
+@media (hover: hover) and (pointer: fine) {
+  .equipment-slot:hover { transform: translateY(-2px); box-shadow: 0 2px 0 #00000011, 0 6px 13px color-mix(in srgb, var(--quality-color) 42%, transparent); }
+}
 .equipment-slot:active { transform: translateY(0) scale(.98); }
 .equipment-slot b { align-self: center; font-size: 10px; line-height: 12px; font-weight: 800; text-align: center; overflow-wrap: anywhere; }
 .equipment-slot small { align-self: start; color: #8f84a3; font-size: 9px; line-height: 12px; text-align: center; white-space: nowrap; }
@@ -1351,7 +1416,9 @@ button:not(:disabled):active { translate: 0 2px; }
   background: linear-gradient(#ffffff, #f2f8ffcc);
   transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
 }
-.equipment-stats span:hover { transform: translateY(-2px); border-color: #8fc7ff; box-shadow: 0 6px 12px #5a9eff33; }
+@media (hover: hover) and (pointer: fine) {
+  .equipment-stats span:hover { transform: translateY(-2px); border-color: #8fc7ff; box-shadow: 0 6px 12px #5a9eff33; }
+}
 .equipment-stats b { color: #4a8fe0; font-size: 14px; font-weight: 900; }
 .equipment-stats small { color: #8f84a3; font-size: 9px; }
 
@@ -1368,13 +1435,17 @@ button:not(:disabled):active { translate: 0 2px; }
   transition: transform .14s ease, box-shadow .14s ease, filter .14s ease;
 }
 .equipment-auto-equip img { width: 22px; height: 22px; object-fit: contain; }
-.equipment-auto-equip:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.05); box-shadow: 0 4px 0 #4a8fe0, 0 9px 16px #5a9eff55; }
+@media (hover: hover) and (pointer: fine) {
+  .equipment-auto-equip:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.05); box-shadow: 0 4px 0 #4a8fe0, 0 9px 16px #5a9eff55; }
+}
 .equipment-auto-equip:active:not(:disabled) { transform: translateY(0) scale(.97); }
 .equipment-auto-equip.equipment-breakthrough {
   background: linear-gradient(135deg, #ffcf6f, #ff9a56);
   box-shadow: 0 2px 0 #e0863a, 0 3px 6px #ffcf6f44;
 }
-.equipment-auto-equip.equipment-breakthrough:hover:not(:disabled) { box-shadow: 0 4px 0 #e0863a, 0 9px 18px #ffcf6f66; }
+@media (hover: hover) and (pointer: fine) {
+  .equipment-auto-equip.equipment-breakthrough:hover:not(:disabled) { box-shadow: 0 4px 0 #e0863a, 0 9px 18px #ffcf6f66; }
+}
 .equipment-auto-equip:disabled { opacity: .5; cursor: not-allowed; }
 
 .equipment-equip-status { height: 32px; margin-bottom: 3px; overflow-y: auto; color: #4a3f5a; font-size: 11px; line-height: 16px; }
@@ -1398,7 +1469,9 @@ button:not(:disabled):active { translate: 0 2px; }
   cursor: pointer;
   transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
 }
-.equipment-compatible-list button:hover { transform: translateY(-2px); box-shadow: 0 6px 12px color-mix(in srgb, var(--quality-color) 40%, transparent); }
+@media (hover: hover) and (pointer: fine) {
+  .equipment-compatible-list button:hover { transform: translateY(-2px); box-shadow: 0 6px 12px color-mix(in srgb, var(--quality-color) 40%, transparent); }
+}
 .equipment-compatible-list button:active { transform: translateY(0) scale(.96); }
 .equipment-compatible-list .equipment-quality-frame { width: 39px; height: 39px; }
 .equipment-compatible-list .equipment-quality-frame .equipment-icon { inset: 6px; width: 27px; height: 27px; }
@@ -1545,7 +1618,9 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   box-shadow: 0 2px 0 #8fc7ff;
 }
 .bag-item { cursor: pointer; transition: transform .12s, filter .12s; }
-.bag-item:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-2px); }
+@media (hover: hover) and (pointer: fine) {
+  .bag-item:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-2px); }
+}
 .bag-item:focus-visible, .synthesis-input:focus-visible, .bag-back:focus-visible { outline: 3px solid #ffcf6f; outline-offset: 2px; }
 .bag-quality { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 .bag-item-icon { position: absolute; inset: 13%; width: 74%; height: 74%; object-fit: contain; filter: drop-shadow(0 2px 2px #00000033); pointer-events: none; }
@@ -1644,7 +1719,9 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   box-shadow: inset 0 2px 0 #ffffff, 0 2px 0 #8fc7ff;
   cursor: pointer; z-index: 2;
 }
-.synthesis-input:hover { filter: brightness(1.08); }
+@media (hover: hover) and (pointer: fine) {
+  .synthesis-input:hover { filter: brightness(1.08); }
+}
 .synthesis-plus { position: absolute; inset: 23%; width: 54%; height: 54%; object-fit: contain; }
 .synthesis-remove { position: absolute; right: -7%; top: -8%; width: 32%; height: 32%; }
 .synthesis-output { position: absolute; left: 50%; top: 47%; width: 27%; transform: translate(-50%, -42%); display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
@@ -3296,16 +3373,20 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   box-shadow: inset 0 1px 0 #ffffff, 0 2px 0 #b3c3d1;
   font-size: 12px;
 }
-.equipment-modal .equipment-tabs button:hover {
-  transform: translateY(-2px); color: #a9762a;
-  box-shadow: inset 0 1px 0 #ffffff, 0 4px 9px #e0a33a44;
+@media (hover: hover) and (pointer: fine) {
+  .equipment-modal .equipment-tabs button:hover {
+    transform: translateY(-2px); color: #a9762a;
+    box-shadow: inset 0 1px 0 #ffffff, 0 4px 9px #e0a33a44;
+  }
 }
 .equipment-modal .equipment-tabs button.active {
   color: #7a4a12;
   background: linear-gradient(180deg, #ffeeb6, #ffcf6f 52%, #f0a63f);
   box-shadow: inset 0 0 0 2px #fff6d8, 0 3px 0 #c9822c, 0 6px 12px #e0a33a55;
 }
-.equipment-modal .equipment-tabs button.active:hover { transform: translateY(-2px); }
+@media (hover: hover) and (pointer: fine) {
+  .equipment-modal .equipment-tabs button.active:hover { transform: translateY(-2px); }
+}
 
 /* ---------- 模型区 + 六槽位 ---------- */
 .equipment-modal .equipment-stage {
@@ -3426,7 +3507,9 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   cursor: pointer;
   transition: transform .14s ease, box-shadow .14s ease, filter .14s ease;
 }
-.equipment-modal .bt-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: inset 0 1px 0 #fff8dd, 0 5px 0 #c9822c, 0 9px 16px #e0a33a66; }
+@media (hover: hover) and (pointer: fine) {
+  .equipment-modal .bt-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: inset 0 1px 0 #fff8dd, 0 5px 0 #c9822c, 0 9px 16px #e0a33a66; }
+}
 .equipment-modal .bt-button:active:not(:disabled) { transform: translateY(1px) scale(.97); }
 .equipment-modal .bt-button:disabled {
   color: #9d9587;
@@ -3449,9 +3532,11 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   color: #ffffff; font-size: 12px;
 }
 .equipment-modal .equipment-auto-equip img { width: 18px; height: 18px; }
-.equipment-modal .equipment-auto-equip:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: inset 0 1px 0 #d8ffd9, 0 5px 0 #2b7d38, 0 9px 16px #349a4566;
+@media (hover: hover) and (pointer: fine) {
+  .equipment-modal .equipment-auto-equip:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: inset 0 1px 0 #d8ffd9, 0 5px 0 #2b7d38, 0 9px 16px #349a4566;
+  }
 }
 .equipment-modal .equipment-auto-equip.done {
   background: linear-gradient(180deg, #cfd8de, #a9b7c1);
@@ -3819,7 +3904,9 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   transition: transform .12s ease, filter .12s ease;
 }
 .resource-plus img { width: 100%; height: 100%; object-fit: contain; }
-.resource-plus:hover { transform: translateY(-1px); filter: brightness(1.08) drop-shadow(0 2px 3px #2874c755); }
+@media (hover: hover) and (pointer: fine) {
+  .resource-plus:hover { transform: translateY(-1px); filter: brightness(1.08) drop-shadow(0 2px 3px #2874c755); }
+}
 .resource-plus:active { transform: translateY(0) scale(.94); }
 .resource-pill .hud-icon { width: 21px; height: 21px; flex-basis: 21px; }
 .resource-pill .stamina-plus-icon { pointer-events: none; }

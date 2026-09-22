@@ -86,9 +86,14 @@ button {
   cursor: pointer;
 }
 
-.stamina-pill:hover,
 .stamina-pill:focus-visible {
   background: rgba(255, 236, 185, 0.2);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .stamina-pill:hover {
+    background: rgba(255, 236, 185, 0.2);
+  }
 }
 
 .stamina-plus-icon {
@@ -1393,10 +1398,16 @@ button {
   transition: transform 140ms ease, filter 140ms ease;
 }
 
-.card-choice:hover,
 .card-choice:focus-visible {
   transform: translateY(-4px);
   filter: brightness(1.06);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card-choice:hover {
+    transform: translateY(-4px);
+    filter: brightness(1.06);
+  }
 }
 
 .card-mark {

@@ -2514,6 +2514,14 @@ function showHeroSkillView(onBack = showHome) {
   modalDetail.appendChild(skills);
 }
 
+function showBattleSkillHelp() {
+  if (state.resolving || state.hintAd || state.adPlayback) return;
+  const status = getHeroSkillStatus();
+  stopLoop();
+  showHeroSkillView(showBattle);
+  modalBody.textContent = `${status.skill.name}：${status.message}。查看说明时战斗暂停，返回后继续。`;
+}
+
 function renderMonsters() {
   const rect = boardEl.getBoundingClientRect();
   const cell = rect.width / BOARD_SIZE || 56;
@@ -3801,7 +3809,7 @@ function isModalBackAction(action) {
 }
 
 function showModal(title, body, actions = [], options = {}) {
-  modalCard.classList.remove("card-draft", "growth-modal", "equipment-modal", "bag-modal", "bag-compact", "forge-modal", "shop-modal", "victory-modal", "army-report-modal", "daily-modal");
+  modalCard.classList.remove("card-draft", "growth-modal", "hero-skill-view-modal", "equipment-modal", "bag-modal", "bag-compact", "forge-modal", "shop-modal", "victory-modal", "army-report-modal", "daily-modal");
   renderModalArtwork(title);
   modalTitle.textContent = title;
   /* 面板可把 #modalBody 挪作他用（如武将界面顶栏的资源胶囊），每次开弹窗先复位 */
@@ -6113,6 +6121,7 @@ function resetGame(keepLevel = true, options = {}) {
 startWaveBtn.addEventListener("click", startWave);
 staminaBtn.addEventListener("click", showStaminaRefill);
 heroSkillBtn.addEventListener("click", releaseHeroSkill);
+document.getElementById("heroSkillHelpBtn").addEventListener("click", showBattleSkillHelp);
 speedBtn.addEventListener("click", () => {
   state.speed = state.speed === 1 ? 2 : 1;
   renderHud();
