@@ -4155,9 +4155,9 @@ function showEquipmentGrowth(onBack = showHome) {
     button.className = `equipment-slot${item ? " filled" : ""}`;
     button.style.setProperty("--quality-color", item ? qualityInfo(item.quality).color : "#a7bab1");
     const slotQuality = item ? qualityInfo(item.quality) : null;
-    button.innerHTML = item
+    button.innerHTML = `<img class="equipment-slot-base" src="${ASSET}ui/character/equipment-slot.png" alt="" />${item
       ? `<span class="equipment-quality-frame"><img src="${ASSET}${slotQuality.asset}" alt="" /><img class="equipment-icon" src="${ASSET}${EQUIPMENT_ICONS[slot]}" alt="" /></span><b>${info.name}</b><small>${formatStatValue(item.value, info.stat)}</small>`
-      : `<span class="equipment-quality-frame empty"><img class="equipment-slot-base" src="${ASSET}ui/character/equipment-slot.png" alt="" /><span class="equipment-slot-label">${info.name}</span></span>`;
+      : `<span class="equipment-slot-label">${info.name}</span>`}`;
     button.title = item ? `${equipmentName(item)} · ${info.name} · 点击卸下` : `${info.name}：空槽位`;
     button.setAttribute("aria-label", button.title);
     if (item) button.addEventListener("click", () => { unequipEquipment(slot, type); showEquipmentGrowth(onBack); });
@@ -5421,25 +5421,24 @@ function showShop(onBack = showHome, noticeText = "") {
         <span class="shop-group-owned">今日剩余 <b class="shop-ad-left">${adLeft}</b>/${SHOP_AD_DAILY_LIMIT}</span>
       </header>
       <button type="button" class="shop-ad-card" data-ad-yuanbao data-lack="${adLeft > 0 ? 0 : 1}"${adLeft > 0 ? "" : " disabled"}>
-        <img class="shop-ad-icon" src="${ASSET}home/premium.png" alt="" />
+        <img class="shop-ad-icon" src="${ASSET}home/reward-chest.png" alt="" />
         <span class="shop-ad-text">看完广告立得 <b>${SHOP_AD_YUANBAO}</b> 元宝</span>
         <span class="shop-ad-action">${adLeft > 0 ? "观看广告" : "今日已领完"}</span>
       </button>
     </section>`;
-  showModal("边塞商店", "", [], { backAction: () => {
+  showModal("商店", "", [], { backAction: () => {
     hideModal();
     onBack();
   } });
   modalCard.classList.add("shop-modal");
   modalDetail.innerHTML = `<div class="shop-panel">
     <div class="shop-topbar">
-      <span class="shop-title">边塞商店</span>
+      <span class="shop-title">商店</span>
       <span class="shop-wallets">
         <span class="shop-wallet"><img src="${ASSET}home/premium.png" alt="元宝" /><b class="shop-yuanbao">${state.yuanbao}</b></span>
         <span class="shop-wallet"><img src="${ASSET}icon-coin.png" alt="金币" /><b class="shop-coin">${formatCurrency(state.gold)}</b></span>
       </span>
     </div>
-    <p class="shop-hint">用元宝兑换养成材料。元宝来自通关结算与每日任务。</p>
     <div class="shop-body">${shopAdGroupHtml()}${groups.map(groupHtml).join("")}</div>
     <p class="shop-notice" role="status" aria-live="polite"></p>
     <p class="shop-rate">汇率：1 元宝 = 2 强化石 = 0.2 升星石 = 500 金币</p>

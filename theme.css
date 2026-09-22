@@ -3469,3 +3469,175 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   .equipment-modal .equipment-compatible-list { grid-auto-rows: 52px; }
   .equipment-modal p.bt-skill { display: none; }
 }
+
+/* 最终覆盖：六个装备部位始终保留槽位底图，商店标题栏固定在滚动区之外 */
+.equipment-modal .equipment-stage {
+  flex: 0 0 224px;
+  min-height: 224px;
+  overflow: visible;
+}
+.equipment-modal .equipment-slot {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  grid-template-rows: 1fr;
+}
+.equipment-modal .equipment-slot-base {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  opacity: .9;
+  pointer-events: none;
+}
+.equipment-modal .equipment-slot .equipment-quality-frame,
+.equipment-modal .equipment-slot .equipment-slot-label,
+.equipment-modal .equipment-slot b,
+.equipment-modal .equipment-slot small {
+  position: relative;
+  z-index: 1;
+}
+.equipment-modal .equipment-slot .equipment-quality-frame {
+  grid-row: 1;
+  align-self: center;
+  justify-self: center;
+}
+.equipment-modal .equipment-slot b,
+.equipment-modal .equipment-slot small {
+  display: none;
+}
+.equipment-modal .equipment-slot:not(.filled) {
+  border-color: #9fcceb;
+  background: #eaf6ffcc;
+}
+.equipment-modal .equipment-slot:not(.filled) .equipment-slot-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #668eaf;
+  font-size: 11px;
+  font-weight: 900;
+  text-shadow: 0 1px 0 #ffffff;
+}
+
+.shop-modal .modal-detail {
+  display: block;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+.shop-modal .shop-panel {
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  gap: 7px;
+  overflow: hidden;
+}
+.shop-modal .shop-topbar {
+  position: relative;
+  min-height: 42px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  justify-content: initial;
+  overflow: visible;
+}
+.shop-modal .shop-title {
+  grid-column: 2;
+  min-width: 0;
+  white-space: nowrap;
+}
+.shop-modal .shop-wallets {
+  position: static;
+  grid-column: 3;
+  justify-self: end;
+  min-width: 0;
+}
+.shop-modal .shop-body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  padding: 2px 2px 4px;
+}
+.shop-modal .shop-notice,
+.shop-modal .shop-rate {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-height: 740px) {
+  .equipment-modal .equipment-stage {
+    flex-basis: 178px;
+    min-height: 178px;
+  }
+  .equipment-modal .equipment-slot { grid-template-rows: 1fr; }
+  .equipment-modal .equipment-slot-base { opacity: .86; }
+}
+
+@media (max-width: 370px) {
+  .shop-modal .shop-topbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-height: 39px;
+  }
+  .shop-modal .shop-title {
+    grid-column: 1;
+    justify-self: start;
+    font-size: 21px;
+  }
+  .shop-modal .shop-wallets { grid-column: 2; }
+  .shop-modal .shop-wallet { min-width: 48px; padding-inline: 3px 5px; }
+  .shop-modal .shop-wallet b { font-size: 9px; }
+}
+
+/* 修正武将槽位在矮屏下被压成细条的问题：左右容器填满展示区，三行等高 */
+.equipment-modal .equipment-slots {
+  height: 100%;
+  min-height: 0;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  align-self: stretch;
+}
+.equipment-modal .equipment-slot {
+  height: auto;
+  min-height: 0;
+  align-self: stretch;
+  aspect-ratio: 1.48;
+}
+.equipment-modal .equipment-slot-base {
+  object-fit: fill;
+}
+@media (max-height: 740px) {
+  .equipment-modal .equipment-slots { gap: 5px; }
+  .equipment-modal .equipment-slot { aspect-ratio: 1.42; }
+}
+
+/* 武将槽位与模型保持等宽三列，避免槽位按内容收缩后破坏水平分布 */
+.equipment-modal .equipment-stage {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 7px;
+  align-items: stretch;
+}
+.equipment-modal .equipment-slots {
+  width: 100%;
+  min-width: 0;
+  justify-self: stretch;
+}
+.equipment-modal .equipment-slot {
+  width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+  aspect-ratio: 1.48;
+}
+.equipment-modal .equipment-model {
+  width: 100%;
+  min-width: 0;
+  justify-self: stretch;
+}
+@media (max-height: 740px) {
+  .equipment-modal .equipment-slot { aspect-ratio: 1.42; }
+}
