@@ -2720,9 +2720,11 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
 
 .home-stage-focus {
   inset: var(--home-top) 0 calc(var(--home-bottom) + 6px);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, .65fr) 132px minmax(0, 1fr) 72px 40px 58px;
+  justify-items: center;
+  align-items: stretch;
   gap: 2px;
   padding: 3px 8px 6px;
   overflow: hidden;
@@ -2732,6 +2734,8 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   position: relative;
   z-index: 2;
   flex: 0 0 106px;
+  min-height: 0;
+  max-height: 106px;
   width: min(74%, 318px);
   overflow: hidden;
   pointer-events: none;
@@ -3008,7 +3012,7 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
 
 .home-stage-cast {
   flex: 1 1 112px;
-  min-height: 104px;
+  min-height: 0;
   max-height: none;
   margin: 0;
 }
@@ -3035,9 +3039,9 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
 
 .home-difficulty {
   flex: 0 0 27px;
-  height: 27px;
+  height: 40px;
   width: 166px;
-  margin: 3px 0 2px;
+  margin: 0;
   border: 2px solid #77b8ed;
   background: #eaf6ffec;
   box-shadow: 0 2px 0 #2f72bb;
@@ -3053,7 +3057,7 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   grid-template-rows: 31px 14px;
   place-content: center;
   column-gap: 5px;
-  margin: 3px 0 0;
+  margin: 0;
   border: 3px solid #ffd7a0;
   border-radius: 32px;
 }
@@ -3110,36 +3114,36 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   .home-topbar { padding-block: 4px; }
   .profile-block { height: 52px; }
   .profile-avatar { width: 41px; height: 41px; flex-basis: 41px; }
-  .home-logo { flex-basis: 64px; width: 64%; }
+  .home-stage-focus { grid-template-rows: minmax(0, .65fr) 108px minmax(0, 1fr) 60px 40px 52px; }
+  .home-logo { max-height: 64px; width: 64%; }
   .home-stage-overview { flex-basis: 108px; }
   .home-stage-switcher, .home-stage-title { height: 108px; }
   .home-stage-map { width: 75px; height: 75px; flex-basis: 75px; }
   .home-quick-task { top: 90px; height: 56px; grid-template-rows: 14px 14px 8px 10px; }
   .home-shortcuts { top: 78px; transform: scale(.9); transform-origin: left top; }
-  .home-stage-cast { min-height: 80px; max-height: none; }
+  .home-stage-cast { min-height: 0; max-height: none; }
   .home-warrior-left { height: 95px; }
   .home-warrior-center { height: 108px; }
   .home-warrior-right { height: 94px; }
   .home-reward-row { flex-basis: 60px; min-height: 60px; }
   .home-reward-row div { grid-template-rows: 32px 13px 9px; }
   .home-reward-row img { width: 36px; height: 32px; }
-  .home-difficulty { height: 25px; flex-basis: 25px; }
-  .home-start-button { height: 48px; flex-basis: 48px; grid-template-rows: 26px 12px; }
+  .home-difficulty { height: 40px; }
+  .home-start-button { height: 52px; grid-template-rows: 26px 12px; }
   .home-start-button > span { font-size: 18px; }
   .home-bottom-nav { height: var(--home-bottom); }
 }
 
-@media (max-width: 480px) {
-  :root[data-host-compact] .home-logo { flex-basis: 36px; min-height: 36px; }
-  :root[data-host-compact] .home-stage-overview { flex-basis: 96px; min-height: 96px; }
-  :root[data-host-compact] .home-stage-switcher,
-  :root[data-host-compact] .home-stage-title { height: 96px; }
-  :root[data-host-compact] .home-stage-cast { min-height: 40px; flex-basis: 40px; }
-  :root[data-host-compact] .home-warrior-left,
-  :root[data-host-compact] .home-warrior-center,
-  :root[data-host-compact] .home-warrior-right { height: 66px; }
-  :root[data-host-compact] .home-quick-task { top: 68px; }
+@media (max-height: 560px) {
+  .home-stage-focus { grid-template-rows: minmax(0, .65fr) 96px minmax(0, 1fr) 60px 40px 52px; }
+  .home-logo { max-height: 36px; }
+  .home-stage-switcher, .home-stage-title { height: 96px; }
+  .home-quick-task { top: 68px; }
 }
+
+.home-stage-cast { pointer-events: none; overflow: hidden; }
+.home-stage-cast .home-warrior { max-height: 100%; }
+.home-difficulty button { min-height: 0; }
 
 /* 军报弹窗 */
 .army-report-modal .modal-detail { width: 100%; }
