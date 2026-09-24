@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 const root = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const assetRoot = resolve(join(root, "public", "assets"));
-const entryFiles = new Set(["index.html", "app.js", "styles.css", "theme.css"]);
+const entryFiles = new Set(["index.html", "app.js", "safe-area.js", "styles.css", "theme.css"]);
 const allowedExtensions = new Set([".png", ".jpg", ".jpeg", ".gif", ".webp", ".svg", ".woff", ".woff2", ".mp3", ".ogg", ".wav"]);
 const mimeTypes = {
   ".css": "text/css; charset=utf-8",

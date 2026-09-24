@@ -30,8 +30,8 @@
   --ui-panel-edge: #dcc89a;
   --frame:       #7a9fd6;           /* 外框：柔蓝 */
 
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: max(env(safe-area-inset-top, 0px), var(--host-safe-top, 0px));
+  --safe-bottom: max(env(safe-area-inset-bottom, 0px), var(--host-safe-bottom, 0px));
   --viewport-height: calc(100dvh - var(--safe-top) - var(--safe-bottom));
   --app-height: max(560px, min(860px, calc(var(--viewport-height) - 24px)));
   --battle-chrome: 244px;
@@ -64,6 +64,24 @@ button:not(:disabled):active { translate: 0 2px; }
   padding: calc(12px + var(--safe-top)) 0 calc(12px + var(--safe-bottom));
 }
 .side-panel { display: none; }
+.host-capsule-preview { display: none; }
+:root[data-host-preview] .host-capsule-preview {
+  position: fixed;
+  z-index: 1000;
+  top: 56px;
+  right: 12px;
+  width: 84px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  border: 1px solid #ffffff55;
+  border-radius: 18px;
+  background: #172d38aa;
+  color: white;
+  font-size: 18px;
+  pointer-events: none;
+}
 
 .home-screen, .game-screen {
   width: 100%;
@@ -1811,6 +1829,10 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
 /* ========== 媒体查询 ========== */
 @media (max-width: 480px) {
   :root { --app-height: max(560px, var(--viewport-height)); }
+  :root[data-host-safe-area] {
+    --app-height: max(460px, var(--viewport-height));
+    --approach-min: clamp(64px, calc((var(--app-height) - var(--battle-chrome)) / 4), 176px);
+  }
   body { display: block; }
   .phone-shell { display: block; width: 100%; padding: var(--safe-top) env(safe-area-inset-right, 0px) var(--safe-bottom) env(safe-area-inset-left, 0px); min-height: 100dvh; }
   .home-screen, .game-screen { width: 100%; border: 0; border-radius: 0; box-shadow: none; }
@@ -3105,6 +3127,18 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   .home-start-button { height: 48px; flex-basis: 48px; grid-template-rows: 26px 12px; }
   .home-start-button > span { font-size: 18px; }
   .home-bottom-nav { height: var(--home-bottom); }
+}
+
+@media (max-width: 480px) {
+  :root[data-host-compact] .home-logo { flex-basis: 36px; min-height: 36px; }
+  :root[data-host-compact] .home-stage-overview { flex-basis: 96px; min-height: 96px; }
+  :root[data-host-compact] .home-stage-switcher,
+  :root[data-host-compact] .home-stage-title { height: 96px; }
+  :root[data-host-compact] .home-stage-cast { min-height: 40px; flex-basis: 40px; }
+  :root[data-host-compact] .home-warrior-left,
+  :root[data-host-compact] .home-warrior-center,
+  :root[data-host-compact] .home-warrior-right { height: 66px; }
+  :root[data-host-compact] .home-quick-task { top: 68px; }
 }
 
 /* 军报弹窗 */

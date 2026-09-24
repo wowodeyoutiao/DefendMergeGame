@@ -9,7 +9,7 @@ if ([IO.Path]::GetFileName($Name) -ne $Name -or !($Name.EndsWith('.zip'))) {
     throw 'Name must be a ZIP filename without a directory.'
 }
 $destination = Join-Path $project $Name
-$files = @('index.html', 'app.js', 'styles.css', 'theme.css', 'README.md', 'assets-review.html', 'forge-preview.html') |
+$files = @('index.html', 'app.js', 'safe-area.js', 'styles.css', 'theme.css', 'README.md', 'assets-review.html', 'forge-preview.html') |
     Where-Object { Test-Path -LiteralPath (Join-Path $project $_) } |
     ForEach-Object { Get-Item -LiteralPath (Join-Path $project $_) }
 foreach ($directory in @('public', 'docs', 'tools', 'android', 'asset-contact-sheets', 'outputs')) {

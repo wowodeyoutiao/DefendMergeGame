@@ -35,7 +35,7 @@ foreach ($folder in @($assets, $resources, $classes, $dex, $output, $signing)) {
     New-Item -ItemType Directory -Path $folder -Force | Out-Null
 }
 
-foreach ($entry in @('index.html', 'app.js', 'styles.css', 'theme.css')) {
+foreach ($entry in @('index.html', 'app.js', 'safe-area.js', 'styles.css', 'theme.css')) {
     Copy-Item -LiteralPath (Join-Path $project $entry) -Destination $assets
 }
 $public = Join-Path $project 'public'
