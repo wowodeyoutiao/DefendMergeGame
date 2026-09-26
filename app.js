@@ -1681,6 +1681,10 @@ function renderBoard() {
         item.style.setProperty("--supply-distance", `${(BOARD_SIZE - r) * 112}%`);
         item.style.setProperty("--supply-delay", `${(BOARD_SIZE - 1 - r) * 35}ms`);
       }
+      if (piece.rising) {
+        item.classList.add("rising");
+        item.style.setProperty("--rise-distance", `${(piece.riseDistance || 1) * 112}%`);
+      }
       item.draggable = state.phase === "setup" && !state.resolving;
       item.addEventListener("dragstart", (event) => {
         if (state.phase !== "setup" || state.resolving) return event.preventDefault();
@@ -2652,19 +2656,30 @@ function handleCellClick(index) {
   tryMove(state.selected, index);
 }
 
+// 换位只允许横向或纵向相邻：同一行且列差 1，或同一列且行差 1。对角相邻一律不生效。
 function areAdjacentCells(from, to) {
   const cellCount = BOARD_SIZE * BOARD_SIZE;
   if (!Number.isInteger(from) || !Number.isInteger(to)
     || from < 0 || to < 0 || from >= cellCount || to >= cellCount) return false;
-  const columnDistance = Math.abs(from % BOARD_SIZE - to % BOARD_SIZE);
-  const rowDistance = Math.abs(Math.floor(from / BOARD_SIZE) - Math.floor(to / BOARD_SIZE));
-  return columnDistance + rowDistance === 1;
+  const fromColumn = from % BOARD_SIZE;
+  const toColumn = to % BOARD_SIZE;
+  const fromRow = Math.floor(from / BOARD_SIZE);
+  const toRow = Math.floor(to / BOARD_SIZE);
+  if (fromRow === toRow) return Math.abs(fromColumn - toColumn) === 1;
+  if (fromColumn === toColumn) return Math.abs(fromRow - toRow) === 1;
+  return false;
 }
 
 async function tryMove(from, to) {
-  if (state.phase !== "setup" || state.resolving || !areAdjacentCells(from, to)) {
+  if (state.phase !== "setup" || state.resolving) {
     state.selected = null;
     renderBoard();
+    return;
+  }
+  if (!areAdjacentCells(from, to)) {
+    state.selected = null;
+    renderBoard();
+    tipText.textContent = "只能与上下左右相邻的棋子交换，斜向换位不生效，也不消耗步数。";
     return;
   }
   const dragged = state.board[from];
@@ -2815,6 +2830,12 @@ function canRequestBoardShuffle() {
 
 function createShuffledBoard(board) {
   if (board.length !== BOARD_SIZE * BOARD_SIZE || board.some((piece) => !piece)) return null;
+  board.forEach((piece) => {
+    if (!piece) return;
+    delete piece.rising;
+    delete piece.riseDistance;
+    delete piece.entering;
+  });
   const pieceKey = (piece) => `${piece.type}:${piece.tier || 1}`;
   const groups = new Map();
   board.forEach((piece) => {
@@ -2940,34 +2961,67 @@ function eliminateMatches(matches, { chain = 1 } = {}) {
   return { refundedSteps };
 }
 
+// 递补规则：消除产生的空位由该列下方的棋子逐格向上顶替，缺口留在列底部，
+// 再由棋盘底部生成新棋子补入。每列自上而下收集幸存棋子，再自上而下写回，
+// 因此原有棋子的相对顺序保持不变，且永远是"下面的往上补"。
 function refillBoardFromBottom() {
   const suppliedPieces = [];
-  state.board.forEach((piece, index) => {
-    if (piece) return;
-    const suppliedPiece = { ...newPiece(), entering: true };
-    if (WARRIORS.some(({ type: warriorType }) => warriorType === suppliedPiece.type)) {
-      suppliedPiece.rangeFlash = true;
+  const movedPieces = [];
+  for (let column = 0; column < BOARD_SIZE; column += 1) {
+    const survivors = [];
+    for (let row = 0; row < BOARD_SIZE; row += 1) {
+      const index = row * BOARD_SIZE + column;
+      const piece = state.board[index];
+      if (piece) survivors.push({ piece, row });
+      state.board[index] = null;
     }
-    state.board[index] = suppliedPiece;
-    suppliedPieces.push(suppliedPiece);
-  });
-  if (!suppliedPieces.length) return;
+    let writeRow = 0;
+    survivors.forEach(({ piece, row }) => {
+      state.board[writeRow * BOARD_SIZE + column] = piece;
+      if (writeRow !== row) {
+        piece.rising = true;
+        piece.riseDistance = row - writeRow;
+        movedPieces.push(piece);
+      }
+      writeRow += 1;
+    });
+    while (writeRow < BOARD_SIZE) {
+      const suppliedPiece = { ...newPiece(), entering: true };
+      if (WARRIORS.some(({ type: warriorType }) => warriorType === suppliedPiece.type)) {
+        suppliedPiece.rangeFlash = true;
+      }
+      state.board[writeRow * BOARD_SIZE + column] = suppliedPiece;
+      suppliedPieces.push(suppliedPiece);
+      writeRow += 1;
+    }
+  }
+  if (!suppliedPieces.length && !movedPieces.length) return;
   setTimeout(() => {
     suppliedPieces.forEach((piece) => {
       delete piece.entering;
+    });
+    movedPieces.forEach((piece) => {
+      delete piece.rising;
+      delete piece.riseDistance;
     });
   }, 750);
 }
 
 function finishBoardSupplyAnimations() {
   state.board.forEach((piece) => {
-    if (piece) delete piece.entering;
+    if (!piece) return;
+    delete piece.entering;
+    delete piece.rising;
+    delete piece.riseDistance;
   });
 }
 
 function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+// 递补后棋子整列下沉会更容易形成新连线，给自动连锁设一个安全阀，避免极端随机局面卡住操作期。
+const MAX_AUTO_CHAIN = 15;
 
 async function resolveBoardAfterMove(preferredTarget = null) {
   state.resolving = true;
@@ -2976,7 +3030,7 @@ async function resolveBoardAfterMove(preferredTarget = null) {
   let chain = 0;
   render();
 
-  while (state.phase === "setup" && resolutionId === state.resolutionId) {
+  while (state.phase === "setup" && resolutionId === state.resolutionId && chain < MAX_AUTO_CHAIN) {
     const matches = collectAllMatches(chain === 0 ? preferredTarget : null);
     if (!matches.length) break;
     chain += 1;
