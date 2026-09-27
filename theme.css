@@ -959,12 +959,30 @@ button:focus-visible, [role="button"]:focus-visible {
   grid-template-rows: auto auto auto minmax(0, 1fr) auto;
   overflow: hidden;
   padding: 8px 10px 7px;
-  background: linear-gradient(165deg, #fff4d6, #d2a965);
-  box-shadow: inset 0 0 0 3px #fff8e7, inset 0 0 0 6px #8b562b, 0 5px 0 #613717, 0 20px 60px #00000066;
+  position: relative;
+  background: linear-gradient(172deg, #ffffff 0%, #eef7ff 42%, #fdf5e4 100%);
+  box-shadow: inset 0 0 0 3px #ffffff, inset 0 0 0 6px #ffcf6f, 0 5px 0 #e0863a, 0 20px 60px #00000066;
+  /* 冰饰：全部内联 SVG，无新增素材请求 */
+  --ice-flake: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23ffffff' stroke-width='7' stroke-linecap='round'%3E%3Cpath d='M60 14V106M20 37L100 83M100 37L20 83'/%3E%3Cg stroke-width='5'%3E%3Cpath d='M50 27L60 14L70 27M50 93L60 106L70 93M31 47L20 37L37 38M89 73L100 83L83 82M89 47L100 37L83 38M31 73L20 83L37 82'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  --ice-icicle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 18' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cpattern id='p' width='20' height='18' patternUnits='userSpaceOnUse'%3E%3Cpath d='M0 0H20L10 17Z' fill='%23ffffff'/%3E%3Cpath d='M3 0H17L10 11Z' fill='%23dcefff'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='200' height='18' fill='url(%23p)'/%3E%3C/svg%3E");
+  --ice-wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 34' preserveAspectRatio='none'%3E%3Cpath d='M0 15C20 3 40 3 60 15S100 27 120 15S160 3 180 15S220 27 240 15' fill='none' stroke='%23ffffff' stroke-width='6'/%3E%3Cpath d='M0 27C20 15 40 15 60 27S100 39 120 27S160 15 180 27S220 39 240 27' fill='none' stroke='%23ffffff' stroke-width='3.5' opacity='.6'/%3E%3C/svg%3E");
+}
+/* 卡片顶部两角冰花（标题两侧留白处，不压内容） */
+.modal-card.forge-modal::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--ice-flake), var(--ice-flake);
+  background-position: left 10px top 9px, right 10px top 9px;
+  background-size: 25px 25px, 25px 25px;
+  background-repeat: no-repeat;
+  opacity: .5;
 }
 .forge-modal .modal-art { width: 30px; height: 30px; margin-bottom: 0; }
-.forge-modal h2 { margin: 0; font-size: 16px; color: #68401f; text-shadow: 0 1px 0 #fffdf4; }
-.forge-modal > p { margin: 0 0 3px; font-size: 10px; line-height: 1.25; color: #88643b; }
+.forge-modal h2 { margin: 0; font-size: 18px; color: #c96822; text-shadow: 0 2px 0 #ffffff99; }
+.forge-modal > p { margin: 0 0 3px; font-size: 10px; line-height: 1.25; color: #8f84a3; }
 .forge-modal .modal-detail {
   display: block;
   min-height: 0;
@@ -981,15 +999,71 @@ button:focus-visible, [role="button"]:focus-visible {
 .forge-modal .modal-actions > button { min-height: 30px; }
 
 .forge-panel {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 7px;
   padding: 7px;
-  border: 2px solid #8e572b;
+  border: 2px solid #8fc7ff;
   border-radius: 15px;
-  background: linear-gradient(180deg, #466b76, #274856 56%, #243f4a);
-  box-shadow: inset 0 2px 0 #8ab5bd66, inset 0 -3px 0 #172e38, 0 3px 0 #8e572b, 0 10px 18px #5e361f44;
+  background:
+    linear-gradient(90deg, #ffffff55 0%, #ffffff00 11%, #ffffff00 89%, #ffffff55 100%),
+    linear-gradient(180deg, #f5fbff 0%, #d5e8fa 24%, #a9cef2 58%, #8dbce8 100%);
+  box-shadow:
+    inset 0 0 0 1px #ffffff,
+    inset 0 0 0 4px #ffffff3d,
+    inset 0 -3px 0 #7fb0e2,
+    0 3px 0 #6ea9e0,
+    0 10px 18px #5a9eff30;
   animation: forge-panel-in .26s cubic-bezier(.34, 1.56, .64, 1) both;
+}
+/* 内容一律压在装饰层之上 */
+.forge-panel > * { position: relative; z-index: 1; }
+/* 装饰层 A：顶部冰檐 + 中央大雪花 + 散布小雪花 + 斜向冰面高光 */
+.forge-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(180deg, #ffffffb3, #ffffff00),
+    var(--ice-flake),
+    var(--ice-flake),
+    var(--ice-flake),
+    var(--ice-flake),
+    linear-gradient(134deg, #ffffff00 44%, #ffffff33 50%, #ffffff00 56%);
+  background-position:
+    left 0 top 0,
+    center 42%,
+    left 16% top 20%,
+    right 14% top 56%,
+    left 26% bottom 8%,
+    center;
+  background-size:
+    100% 26px,
+    200px 200px,
+    22px 22px,
+    22px 22px,
+    18px 18px,
+    100% 100%;
+  background-repeat: no-repeat;
+  opacity: .92;
+}
+/* 装饰层 B：底部双层冰波 + 深蓝收底 */
+.forge-panel::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: -2px; right: -2px; bottom: -2px; height: 36px;
+  pointer-events: none;
+  background-image:
+    var(--ice-wave),
+    linear-gradient(180deg, #ffffff00, #6fa8dd66);
+  background-position: bottom center, bottom center;
+  background-size: 100% 34px, 100% 36px;
+  background-repeat: no-repeat;
 }
 @keyframes forge-panel-in {
   0% { opacity: 0; transform: translateY(8px) scale(.985); }
@@ -997,22 +1071,22 @@ button:focus-visible, [role="button"]:focus-visible {
 }
 
 /* 顶部：钱包 + 帮助；内容区；底部：页签 */
-.forge-top { display: flex; align-items: center; gap: 6px; padding: 4px 5px; border-radius: 10px; background: #18344199; box-shadow: inset 0 1px 0 #c7eced22; }
+.forge-top { display: flex; align-items: center; gap: 6px; padding: 4px 5px; border-radius: 10px; border: 2px solid #a9cdfb; background: linear-gradient(180deg, #ffffff, #f4fbff); box-shadow: inset 0 1px 0 #ffffff, 0 2px 0 #b7d6f0; }
 .forge-top .forge-wallet { flex: 1; }
 .forge-stage { display: flex; flex-direction: column; gap: 7px; }
-.forge-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; margin-bottom: 0; padding-bottom: 6px; border-bottom: 1px solid #91bdc22e; }
+.forge-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; margin-bottom: 0; padding-bottom: 6px; border-bottom: 1px solid #a9cdfb66; }
 .forge-tab {
   min-width: 0; min-height: 30px;
-  border: 2px solid #315664; border-radius: 9px;
-  color: #bcd6d4; background: linear-gradient(180deg, #426878, #294d5a);
+  border: 2px solid #a9cdfb; border-radius: 10px;
+  color: #5d7186; background: linear-gradient(180deg, #ffffff, #f2f8ff);
   font-size: 11px; font-weight: 800;
   cursor: pointer;
-  box-shadow: inset 0 1px 0 #9dcbd133, 0 2px 0 #1a3540;
+  box-shadow: inset 0 1px 0 #ffffff, 0 2px 0 #b7d6f0;
   transition: transform .14s ease, box-shadow .14s ease, color .14s ease, background .14s ease;
 }
 .forge-tab::before { content: "◆"; font-size: 7px; margin-right: 3px; opacity: .55; vertical-align: 1px; }
 @media (hover: hover) and (pointer: fine) {
-  .forge-tab:hover { transform: translateY(-2px); color: #ffffff; box-shadow: inset 0 1px 0 #a5d7dd44, 0 4px 9px #0b253044; }
+  .forge-tab:hover { transform: translateY(-2px); color: #2f7fd6; box-shadow: inset 0 1px 0 #ffffff, 0 4px 9px #2f7fd63d; }
 }
 .forge-tab.active { color: #613511; background: linear-gradient(180deg, #ffe38a, #eaaa35); border-color: #8a511c; box-shadow: 0 2px 0 #8a511c, inset 0 1px 0 #fff4ba; transform: translateY(-1px); }
 @media (hover: hover) and (pointer: fine) {
@@ -1021,7 +1095,7 @@ button:focus-visible, [role="button"]:focus-visible {
 .forge-tab.locked { opacity: .55; cursor: not-allowed; filter: grayscale(.35); }
 .forge-tab.locked::before { opacity: .3; }
 @media (hover: hover) and (pointer: fine) {
-  .forge-tab.locked:hover { transform: none; box-shadow: inset 0 1px 0 #9dcbd133, 0 2px 0 #1a3540; }
+  .forge-tab.locked:hover { transform: none; color: #5d7186; box-shadow: inset 0 1px 0 #ffffff, 0 2px 0 #b7d6f0; }
 }
 
 /* 武将切换页签（装备养成是按武将存档的，先选武将再养成） */
@@ -1030,16 +1104,16 @@ button:focus-visible, [role="button"]:focus-visible {
   min-width: 0; min-height: 34px;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 1px; padding: 3px 2px;
-  border: 2px solid #315664; border-radius: 9px;
-  color: #bcd6d4; background: linear-gradient(180deg, #426878, #294d5a);
+  border: 2px solid #a9cdfb; border-radius: 10px;
+  color: #5d7186; background: linear-gradient(180deg, #ffffff, #f2f8ff);
   font-size: 11px; font-weight: 800; line-height: 1.1; cursor: pointer;
-  box-shadow: inset 0 1px 0 #9dcbd133, 0 2px 0 #1a3540;
+  box-shadow: inset 0 1px 0 #ffffff, 0 2px 0 #b7d6f0;
   transition: transform .14s ease, box-shadow .14s ease, color .14s ease, background .14s ease;
 }
 .forge-warrior strong { font-size: 11px; font-weight: 900; }
 .forge-warrior small { font-size: 9px; font-weight: 700; opacity: .78; font-variant-numeric: tabular-nums; }
 @media (hover: hover) and (pointer: fine) {
-  .forge-warrior:hover { transform: translateY(-2px); color: #ffffff; box-shadow: inset 0 1px 0 #a5d7dd44, 0 4px 9px #0b253044; }
+  .forge-warrior:hover { transform: translateY(-2px); color: #2f7fd6; box-shadow: inset 0 1px 0 #ffffff, 0 4px 9px #2f7fd63d; }
 }
 .forge-warrior.active {
   color: #613511; background: linear-gradient(180deg, #ffe38a, #eaaa35);
@@ -1057,14 +1131,14 @@ button:focus-visible, [role="button"]:focus-visible {
 }
 .forge-help {
   flex: 0 0 auto; width: 26px; height: 26px;
-  border: 2px solid #e6b854; border-radius: 50%;
-  background: linear-gradient(180deg, #fff2b5, #e9a737); color: #6d3d18;
+  border: 2px solid #ffffff; border-radius: 50%;
+  background: linear-gradient(135deg, #8fc7ff, #5a9eff); color: #ffffff;
   font-size: 14px; font-weight: 900; cursor: pointer;
-  box-shadow: 0 2px 0 #8b5527;
+  box-shadow: 0 2px 0 #4a8fe0;
   transition: transform .14s ease, box-shadow .14s ease;
 }
 @media (hover: hover) and (pointer: fine) {
-  .forge-help:hover { transform: translateY(-2px); box-shadow: 0 4px 8px #0b253055; }
+  .forge-help:hover { transform: translateY(-2px); box-shadow: 0 4px 8px #4a8fe055; }
 }
 .forge-help:active { transform: translateY(0); }
 
@@ -1072,8 +1146,9 @@ button:focus-visible, [role="button"]:focus-visible {
 .forge-wallet { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
 .forge-money {
   display: inline-flex; align-items: center; gap: 3px;
-  color: #fdf4ce;
+  color: #3d5872;
   font-size: 12px; font-weight: 800;
+  text-shadow: 0 1px 0 #ffffff;
 }
 .forge-money img { width: 16px; height: 16px; object-fit: contain; }
 .forge-money b { font-variant-numeric: tabular-nums; }
@@ -1096,12 +1171,14 @@ button:focus-visible, [role="button"]:focus-visible {
   display: flex; align-items: center; justify-content: center;
   aspect-ratio: 1 / 1;
   min-height: 0; padding: 0;
-  border: 0; border-radius: 50%;
-  background: transparent;
+  border: 2px solid #a9cdfb; border-radius: 14px;
+  background: radial-gradient(circle at 50% 28%, #ffffff, #eaf5ff);
+  box-shadow: inset 0 1px 0 #ffffff, 0 2px 0 #b7d6f0;
   cursor: pointer; text-align: center; overflow: visible;
-  transition: transform .14s ease, filter .14s ease;
+  transition: transform .14s ease, filter .14s ease, border-color .14s ease, box-shadow .14s ease;
 }
-.forge-slot-base, .forge-slot-glow { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+.forge-slot-base { display: none; }
+.forge-slot-glow { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 .forge-slot-glow { z-index: 1; opacity: 0; transform: scale(.86); transition: opacity .14s ease, transform .14s ease; }
 .forge-slot .forge-quality-frame { position: relative; z-index: 2; width: 58%; height: 58%; margin-top: -6%; }
 .forge-quality-frame { position: relative; display: block; }
@@ -1120,22 +1197,31 @@ button:focus-visible, [role="button"]:focus-visible {
 }
 .forge-slot .forge-equip-icon { inset: 24%; width: 52%; height: 52%; }
 @media (hover: hover) and (pointer: fine) {
-  .forge-slot:hover { transform: translateY(-2px) scale(1.04); filter: drop-shadow(0 3px 5px #102933aa); }
+  .forge-slot:hover { transform: translateY(-2px) scale(1.04); filter: drop-shadow(0 3px 5px #5a9eff55); }
 }
 .forge-slot:active { transform: translateY(0) scale(.97); }
-.forge-slot.active { transform: translateY(-2px) scale(1.06); filter: drop-shadow(0 3px 7px #ffd55d99); }
-.forge-slot.active .forge-slot-base { content: url("./public/assets/ui/forge/slot-round-active.png"); }
+.forge-slot.active { transform: translateY(-2px) scale(1.06); border-color: #ffb648; box-shadow: 0 3px 0 #e0863a, 0 0 0 3px #ffe6b0; }
 .forge-slot.active .forge-slot-glow { opacity: 1; transform: scale(1.08); }
-.forge-slot-enh { position: absolute; z-index: 3; top: 15%; left: 11%; font-size: 9px; font-weight: 900; color: #fff; text-shadow: 0 1px 2px #000000cc; }
-.forge-slot-star { position: absolute; z-index: 3; bottom: 13%; right: 9%; font-size: 9px; font-weight: 900; color: #ffe08a; text-shadow: 0 1px 2px #000000cc; }
-.forge-slot-label { position: absolute; z-index: 3; bottom: 1%; left: 50%; transform: translateX(-50%); color: #fceab6; font-size: 8px; font-weight: 900; line-height: 1; text-shadow: 0 1px 2px #1d2023; white-space: nowrap; pointer-events: none; }
+.forge-slot-enh { position: absolute; z-index: 3; top: 12%; left: 9%; font-size: 9px; font-weight: 900; color: #c96822; text-shadow: 0 1px 0 #ffffff; }
+.forge-slot-star { position: absolute; z-index: 3; bottom: 12%; right: 8%; font-size: 9px; font-weight: 900; color: #d98b00; text-shadow: 0 1px 0 #ffffff; }
+.forge-slot-label { position: absolute; z-index: 3; bottom: 1%; left: 50%; transform: translateX(-50%); color: #7a6a52; font-size: 8px; font-weight: 900; line-height: 1; text-shadow: 0 1px 0 #ffffff; white-space: nowrap; pointer-events: none; }
 
 /* 炉台与数值对比 */
-.forge-item-name { position: relative; display: flex; align-items: center; justify-content: center; min-height: 18px; text-align: center; color: #fff3c4; font-size: 13px; font-weight: 900; letter-spacing: .04em; }
-.forge-item-name::before, .forge-item-name::after { content: ""; flex: 1; max-width: 94px; height: 14px; background: url("./public/assets/ui/forge/forge-divider.png") center / 100% 100% no-repeat; opacity: .9; }
+.forge-item-name { position: relative; display: flex; align-items: center; justify-content: center; min-height: 18px; text-align: center; color: #aa5a1c; font-size: 13px; font-weight: 900; letter-spacing: .04em; text-shadow: 0 1px 0 #ffffff; }
+.forge-item-name::before, .forge-item-name::after { content: ""; flex: 1; max-width: 94px; height: 14px; background: url("./public/assets/ui/forge/forge-divider.png") center / 100% 100% no-repeat; opacity: .55; }
 .forge-item-name::after { transform: scaleX(-1); }
 .forge-item-name span { min-width: 88px; padding: 0 8px; }
-.forge-craft { position: relative; display: flex; align-items: center; justify-content: center; min-height: 128px; overflow: hidden; border: 2px solid #163843; border-radius: 13px; background: #1b3642; box-shadow: inset 0 0 0 2px #ffffff12, 0 2px 0 #18303a; }
+.forge-craft { position: relative; display: flex; align-items: center; justify-content: center; min-height: 128px; overflow: hidden; border: 2px solid #8fc7ff; border-radius: 13px; background: #1b3642; box-shadow: inset 0 0 0 2px #ffffff26, 0 2px 0 #7fb3ea, 0 6px 12px #2f7fd62e; }
+/* 炉台顶部冰檐：深色插画底上白冰凌最显眼，且不与内容争位 */
+.forge-craft::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  left: 0; right: 0; top: 0; height: 16px;
+  pointer-events: none;
+  background: var(--ice-icicle) top center / 100% 16px no-repeat;
+  opacity: .9;
+}
 .forge-hearth { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 48%; opacity: .94; }
 .forge-hearth-glow { position: absolute; z-index: 1; width: 95px; height: 70px; border-radius: 50%; background: #ffa32955; filter: blur(13px); animation: forge-hearth-breath 1.45s ease-in-out infinite alternate; }
 @keyframes forge-hearth-breath { from { transform: scale(.9); opacity: .58; } to { transform: scale(1.18); opacity: .9; } }
@@ -1145,25 +1231,25 @@ button:focus-visible, [role="button"]:focus-visible {
 .forge-hero-frame .forge-quality-frame { width: 63px; height: 63px; }
 .forge-hero-name { color: #fff5d8; font-size: 10px; font-weight: 900; text-shadow: 0 1px 2px #3a1708; }
 .forge-compare { display: grid; grid-template-columns: 1fr 42px 1fr; align-items: center; gap: 4px; }
-.forge-metric { display: flex; flex-direction: column; align-items: center; gap: 1px; min-height: 53px; padding: 4px; border: 1px solid #769ca0; border-radius: 9px; background: linear-gradient(180deg, #f7f0d8, #dce9db); box-shadow: inset 0 1px 0 #ffffff; }
-.forge-metric.next { border-color: #e8b851; background: linear-gradient(180deg, #fff3c7, #f2d784); }
-.forge-metric span { font-size: 9px; font-weight: 800; color: #66706a; }
+.forge-metric { display: flex; flex-direction: column; align-items: center; gap: 1px; min-height: 53px; padding: 4px; border: 2px solid #a9cdfb; border-radius: 10px; background: linear-gradient(180deg, #ffffff, #f7fcff); box-shadow: inset 0 1px 0 #ffffff, 0 2px 0 #b7d6f0; }
+.forge-metric.next { border-color: #e8b851; background: linear-gradient(180deg, #fff3c7, #f2d784); box-shadow: inset 0 1px 0 #fff9e0, 0 2px 0 #c99a2e; }
+.forge-metric span { font-size: 9px; font-weight: 800; color: #6b7c8f; }
 .forge-metric strong { font-size: 15px; color: #aa5a1c; font-variant-numeric: tabular-nums; }
-.forge-metric em { font-size: 9px; font-style: normal; color: #68736d; }
+.forge-metric em { font-size: 9px; font-style: normal; color: #7b8b7a; }
 .forge-arrow { display: flex; align-items: center; justify-content: center; }
 .forge-arrow img { width: 35px; height: auto; object-fit: contain; filter: drop-shadow(0 1px 1px #61381788); }
 
-.forge-rate { margin: -2px 0 0; text-align: center; color: #d9eddf; font-size: 11px; font-weight: 800; }
-.forge-rate b { color: #ffdf78; font-size: 12px; }
+.forge-rate { margin: -2px 0 0; text-align: center; color: #3d5872; font-size: 11px; font-weight: 800; text-shadow: 0 1px 0 #ffffff; }
+.forge-rate b { color: #c96822; font-size: 12px; }
 
-.forge-cost { position: relative; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px 8px; min-height: 29px; padding: 1px 6px; background: url("./public/assets/ui/forge/cost-ribbon.png") center / 100% 100% no-repeat; }
-.forge-cost span { display: inline-flex; align-items: center; gap: 3px; color: #fff4d6; font-size: 11px; font-weight: 800; text-shadow: 0 1px 1px #39200e; }
-.forge-cost span.forge-cost-label { color: #ffe1a3; font-size: 10px; }
+.forge-cost { position: relative; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px 8px; min-height: 29px; padding: 1px 6px; border: 2px solid #a9cdfb; border-radius: 12px; background: linear-gradient(180deg, #ffffff, #f7fcff); box-shadow: inset 0 1px 0 #ffffff, 0 2px 0 #b7d6f0; }
+.forge-cost span { display: inline-flex; align-items: center; gap: 3px; color: #3d5872; font-size: 11px; font-weight: 800; text-shadow: 0 1px 0 #ffffff; }
+.forge-cost span.forge-cost-label { color: #6b7c8f; font-size: 10px; }
 .forge-cost img { width: 15px; height: 15px; object-fit: contain; }
-.forge-cost span.lack { color: #ffb0a6; }
+.forge-cost span.lack { color: #e2544a; }
 
-.forge-tip { margin: 0; color: #c1e3cf; font-size: 9px; line-height: 1.3; font-weight: 700; text-align: center; }
-.forge-notice { margin: 0; color: #fff0a6; font-size: 11px; font-weight: 900; text-align: center; }
+.forge-tip { margin: 0; color: #5b6f85; font-size: 9px; line-height: 1.3; font-weight: 700; text-align: center; text-shadow: 0 1px 0 #ffffff; }
+.forge-notice { margin: 0; color: #c96822; font-size: 11px; font-weight: 900; text-align: center; text-shadow: 0 1px 0 #ffffff; }
 .forge-notice:empty { display: none; }
 
 /* 操作区 */
@@ -1174,17 +1260,17 @@ button:focus-visible, [role="button"]:focus-visible {
   .forge-master:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #593618, 0 6px 10px #151b1e66; }
 }
 .forge-master:active { transform: translateY(0); }
-.forge-primary { min-height: 40px; border: 2px solid #1d659c; border-radius: 10px; color: #ffffff; text-shadow: 0 1px 1px #164776; background: linear-gradient(180deg, #77caff, #3888dc); font-size: 14px; font-weight: 900; cursor: pointer; box-shadow: 0 3px 0 #195789, inset 0 2px 0 #c4ecff; transition: transform .14s ease, box-shadow .14s ease, filter .14s ease; }
+.forge-primary { min-height: 40px; border: 0; border-radius: 12px; color: #ffffff; text-shadow: 0 2px 0 #d63a4a; background: linear-gradient(135deg, #ff9a56, #ff5b5b); font-size: 14px; font-weight: 900; cursor: pointer; box-shadow: 0 3px 0 #d63a4a, 0 5px 12px #ff5b5b44; transition: transform .14s ease, box-shadow .14s ease, filter .14s ease; }
 @media (hover: hover) and (pointer: fine) {
-  .forge-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #195789, 0 8px 14px #102d3f88; }
+  .forge-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #d63a4a, 0 8px 14px #ff5b5b55; }
 }
-.forge-primary:active { transform: translateY(0); box-shadow: 0 2px 0 #195789; }
+.forge-primary:active { transform: translateY(0); box-shadow: 0 2px 0 #d63a4a; }
 .forge-primary.alt { border-color: #b45f19; color: #5c2c0a; text-shadow: 0 1px 0 #fff3c1; background: linear-gradient(180deg, #ffe37c, #f29a27); box-shadow: 0 3px 0 #a34d13, inset 0 2px 0 #fff0b2; }
 @media (hover: hover) and (pointer: fine) {
   .forge-primary.alt:hover { box-shadow: 0 5px 0 #a34d13, 0 8px 14px #102d3f88; }
 }
 .forge-primary.alt:active { box-shadow: 0 2px 0 #a34d13; }
-.forge-primary:disabled { filter: grayscale(.6) opacity(.6); cursor: not-allowed; transform: none; box-shadow: 0 3px 0 #195789; }
+.forge-primary:disabled { filter: grayscale(.6) opacity(.6); cursor: not-allowed; transform: none; box-shadow: 0 3px 0 #d63a4a; }
 .forge-danger { min-height: 38px; border: 2px solid #a93429; border-radius: 10px; color: #fff; text-shadow: 0 1px 1px #762017; background: linear-gradient(180deg, #ff9a8b, #e94f43); font-size: 13px; font-weight: 900; cursor: pointer; box-shadow: 0 3px 0 #922d23; transition: transform .14s ease, box-shadow .14s ease; }
 @media (hover: hover) and (pointer: fine) {
   .forge-danger:hover { transform: translateY(-2px); box-shadow: 0 5px 0 #922d23, 0 8px 14px #102d3f88; }
@@ -1193,32 +1279,32 @@ button:focus-visible, [role="button"]:focus-visible {
 
 .forge-auto { flex: 1 1 0; min-width: 0; display: flex; gap: 5px; align-items: stretch; }
 .forge-auto .forge-primary { flex: 1; min-width: 0; font-size: 12px; }
-.forge-target-select { flex: 0 0 auto; min-width: 76px; border: 2px solid #24566b; border-radius: 10px; background: #eef4e9; color: #37505a; font-size: 12px; font-weight: 800; padding: 0 5px; cursor: pointer; box-shadow: inset 0 1px 0 #fff; }
+.forge-target-select { flex: 0 0 auto; min-width: 76px; border: 2px solid #a9cdfb; border-radius: 10px; background: linear-gradient(180deg, #ffffff, #f7fcff); color: #37505a; font-size: 12px; font-weight: 800; padding: 0 5px; cursor: pointer; box-shadow: inset 0 1px 0 #ffffff, 0 2px 0 #b7d6f0; }
 
-.forge-maxed { text-align: center; color: #ffebba; font-size: 11px; font-weight: 800; padding: 6px; border-radius: 9px; background: #18384499; }
+.forge-maxed { text-align: center; color: #3d5872; font-size: 11px; font-weight: 800; padding: 6px; border-radius: 10px; border: 2px solid #a9cdfb; background: linear-gradient(180deg, #ffffff, #f7fcff); }
 
 /* 未开放占位 */
 .forge-locked { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 24px 14px; }
 .forge-locked img { width: 52px; height: 52px; object-fit: contain; opacity: .85; }
-.forge-locked strong { font-size: 15px; color: #fff3c4; }
-.forge-locked span { font-size: 11px; line-height: 1.6; color: #c7dcda; max-width: 240px; }
+.forge-locked strong { font-size: 15px; color: #c96822; }
+.forge-locked span { font-size: 11px; line-height: 1.6; color: #6b7c8f; max-width: 240px; }
 
 /* 大师面板 */
 .forge-master-panel { display: flex; flex-direction: column; gap: 10px; padding: 4px; }
-.forge-master-hint { margin: 0; font-size: 11px; line-height: 1.5; color: #a08761; text-align: center; }
+.forge-master-hint { margin: 0; font-size: 11px; line-height: 1.5; color: #6b7c8f; text-align: center; }
 .forge-master-list { display: flex; flex-direction: column; gap: 6px; }
-.forge-master-row { display: grid; grid-template-columns: 1fr 1fr auto; align-items: center; gap: 6px; padding: 9px 10px; border-radius: 12px; border: 2px solid #eadfca; background: #fffdf6; }
+.forge-master-row { display: grid; grid-template-columns: 1fr 1fr auto; align-items: center; gap: 6px; padding: 9px 10px; border-radius: 12px; border: 2px solid #cfe4f7; background: linear-gradient(180deg, #ffffff, #f7fcff); }
 .forge-master-row.active { border-color: #63b02e; background: linear-gradient(135deg, #f1fbe4, #e0f5c8); box-shadow: 0 2px 0 #a8de66; }
-.forge-master-req { font-size: 11px; font-weight: 800; color: #6b4623; }
-.forge-master-gain { font-size: 11px; font-weight: 800; color: #c07a2a; }
-.forge-master-state { font-size: 10px; font-weight: 900; color: #c2b79f; }
+.forge-master-req { font-size: 11px; font-weight: 800; color: #3d5872; }
+.forge-master-gain { font-size: 11px; font-weight: 800; color: #c96822; }
+.forge-master-state { font-size: 10px; font-weight: 900; color: #9aa7b4; }
 .forge-master-row.active .forge-master-state { color: #4c8a1e; }
 
 /* 规则面板 */
 .forge-rules { display: flex; flex-direction: column; gap: 10px; padding: 4px; }
-.forge-rules section { padding: 10px 12px; border-radius: 14px; border: 2px solid #eadfca; background: #fffdf6; }
-.forge-rules h4 { margin: 0 0 5px; font-size: 13px; color: #8a5f2c; }
-.forge-rules p { margin: 0; font-size: 11px; line-height: 1.6; color: #7a6a52; }
+.forge-rules section { padding: 10px 12px; border-radius: 14px; border: 2px solid #cfe4f7; background: linear-gradient(180deg, #ffffff, #f7fcff); }
+.forge-rules h4 { margin: 0 0 5px; font-size: 13px; color: #c96822; }
+.forge-rules p { margin: 0; font-size: 11px; line-height: 1.6; color: #6b7c8f; }
 
 .equipment-panel {
   position: relative;
@@ -1994,9 +2080,13 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
 .forge-power {
   position: relative;
   display: flex; align-items: center; justify-content: center; gap: 6px;
-  min-height: 24px; padding: 1px 8px; margin: 0;
+  min-height: 30px; padding: 1px 8px; margin: 0;
+  border: 2px solid #a9cdfb; border-radius: 12px;
+  background: linear-gradient(180deg, #ffffff, #f7fcff);
+  box-shadow: inset 0 1px 0 #ffffff, 0 2px 0 #b7d6f0;
 }
-.forge-power-banner { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; object-fit: fill; opacity: .96; border-radius: 8px; }
+/* 原深色丝带素材废弃，改白底浅蓝条 */
+.forge-power-banner { display: none; }
 .forge-power-title { position: relative; z-index: 1; height: 15px; width: auto; object-fit: contain; }
 .forge-power-body { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 3px; min-width: 92px; }
 .forge-power-icon { height: 15px; width: auto; object-fit: contain; }
@@ -2005,8 +2095,8 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
 .forge-power-float {
   position: absolute; left: 50%; top: -4px; z-index: 6;
   transform: translateX(-50%);
-  color: #ffdf6a; font-size: 14px; font-weight: 900;
-  text-shadow: 0 1px 2px #7a2e00, 0 0 8px #ffb000aa;
+  color: #e0863a; font-size: 14px; font-weight: 900;
+  text-shadow: 0 1px 0 #ffffff, 0 0 8px #ffb000aa;
   animation: forge-power-float .9s ease-out forwards;
   pointer-events: none;
 }
