@@ -17,6 +17,15 @@
 - **递补方向是"从下向上"**：消除产生空位后，该列**下方**棋子逐格上顶，缺口留在**列底部**，由棋盘底部生成新棋子补入。上方棋子必须原地不动。**不是重力下沉**——第一版按品类常识做成了下沉，被推翻过。
 - 实现要点：`refillBoardFromBottom` 每列自上而下收集幸存棋子再自上而下写回（保证列内相对顺序不变）；上顶棋子标 `rising` + `riseDistance`（原行 − 新行），`styles.css` 用 `riseToVacancy` 做自下往上滑动。
 
+## 界面风格（超哥定案）
+
+- **主界面语言**：弹窗卡片白→奶白 + 金圈 `#ffcf6f` + 橙厚底 `#e0863a`，主按钮橙红 `#ff9a56→#ff5b5b`，次按钮蓝 `#8fc7ff→#5a9eff`，白内容块描边 `#a9cdfb` + 厚底 `#b7d6f0`。
+- **装备打造界面已改成深冰蓝底板（2026-09-27 超哥确认）**：底板 `linear-gradient(180deg,#f5fbff,#d5e8fa 24%,#a9cef2 58%,#8dbce8)`，冰饰（雪花 / 冰凌 / 波浪）全部是**内联 SVG**（变量 `--ice-flake` / `--ice-icicle` / `--ice-wave` 定义在 `.modal-card.forge-modal` 上供子元素继承），零素材请求。原来的墨青内胆 + 棕木框已废。
+  - **装饰层叠序是坑**：`.forge-panel::before/::after` 用 absolute z-index 0 做装饰时，必须配 `.forge-panel > * { position:relative; z-index:1 }`，否则伪元素会盖在内容上面；负 z-index 不行（panel 不是 stacking context，会沉到卡片背景之后）。
+  - 装饰要放在**内容缝隙和深色区**才看得见：面板顶部会被钱包条遮满，最显眼的是炉台（`forge-craft`，深色插画）顶部的白色冰檐。
+  - 已废弃（CSS `display:none`，文件保留未删）：`slot-round.png` / `slot-round-active.png` / `power-banner.png` / `cost-ribbon.png`。炉台 `forge-hearth.png`、分隔 `forge-divider.png`、升级箭头、品质底框保留。
+- 商店界面仍是棕木 / 土金风格（超哥没提，未动）—— 若要统一请先问。
+
 ## 工程约定
 
 - 纯静态工程，零构建零 npm 依赖；`node tools/serve.mjs --port 5173` 起本地试玩。
