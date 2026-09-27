@@ -30,4 +30,5 @@
 - 存档在 localStorage（键 `defend-merge-progress-v1`），换浏览器/域名/端口会丢档。
 - **存档读入必须做清洗**：`loadProgress` 里装备相关字段走 `sanitizeEquipmentItem` + `isPlainObject`，id 去重且 `equipmentNextId` 严格大于所有已用 id。不要退回"直接赋值 / 展开覆盖"的旧写法——存档被外部改过或写入中断时，脏数据会被原样写回，玩家永远恢复不了。
 - 激励广告仍是本地模拟，未接微信/抖音 SDK。
+- **超哥是靠 IDE 的「变更 / Source Control」列表核对改动的**：直接 `git commit` 之后工作区变干净，他会以为"工程里没有任何改动"。所以**提交前先明确告知要提交哪些文件、或者先让他过一眼 diff**，提交后再主动给出 `git show <hash> --stat` 之类的证据，别让他自己去猜。2026-09-27 封版时就踩过一次。
 - **金色（第 7 档）装备：已定案不改（超哥，2026-09-27 封版）**。金色装备主线第 61 关起 / 挑战模式可掉落（权重 0.005），但武将品质上限是 6（`MAX_WARRIOR_QUALITY`），穿戴又要求品质完全相等，合成也显式拒绝第 7 档，所以金色装备当前只能卖 40 金币。**这是刻意留作后续版本，不是缺陷——不要再提议改 `MAX_WARRIOR_QUALITY`，也不要再把它当问题提出来。** `docs/equipment-growth.md` 已写明该约定；`tools/verify/regression-dom.mjs` 的「已定案设计：金色（第 7 档）」段落有断言锁定当前行为，日后放开品质上限会立刻被测出来。
