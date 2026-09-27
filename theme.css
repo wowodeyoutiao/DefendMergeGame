@@ -644,6 +644,12 @@ button:focus-visible, [role="button"]:focus-visible {
     0 20px 60px #00000055;
   animation: dialogEnter 220ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
+/* 弹窗入场：配合上面带越界的 cubic-bezier，从略小略下淡入后回弹到位。
+   此前只写了 animation 引用却没定义关键帧，弹窗实际是硬出现的。 */
+@keyframes dialogEnter {
+  from { opacity: 0; transform: translateY(12px) scale(.94); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
 .modal-back-button {
   position: absolute;
   top: 9px;
@@ -1762,6 +1768,11 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   box-shadow: inset 0 0 0 3px #ffcf6f, 0 4px 0 #e0863a;
 }
 .synthesis-reward .bag-item-display { width: 87px; height: 87px; animation: equipmentRewardPop .38s ease-out; }
+/* 合成产出入场：从中心弹出。此前只写了 animation 引用却没定义关键帧。 */
+@keyframes equipmentRewardPop {
+  from { opacity: 0; transform: scale(.6); }
+  to { opacity: 1; transform: scale(1); }
+}
 .synthesis-reward.failed { filter: grayscale(.7); }
 .synthesis-reward.failed > img { width: 68px; height: 68px; opacity: .65; }
 .bag-modal .bag-result > p { margin: 0; color: #4a3f5a; font-size: 12px; }

@@ -12,6 +12,7 @@ node tools/serve.mjs --port 5173
 
 ## 当前包含
 
+- 2026-09-27 装备图标全套接入：从 `art/Icon` 导入 70 张图标（6 部位 × 7 品质，武器与衣服再分 3 职业）到 `public/assets/equipment/`，装备图标改为按「部位 + 品质 + 职业」查表；**品质由品质底框单独表达，素材配色不参与**。武器与衣服绑定职业，只有对应武将能穿戴，掉落与合成时职业三职业等概率随机。导入脚本 `tools/import-equipment-icons.mjs`，规则见 `docs/equipment-growth.md`
 - 2026-09-08 统一 Q 版皮肤：明亮青绿场景、珊瑚主按钮、分类 Buff 图标与统一弹窗；美术说明见 `docs/art-direction.md`
 - 2026-09-08 战斗飘字：接入美术库中的“怪物掉血”位图数字，每次命中都在对应怪物头顶显示动态伤害数字
 
@@ -85,6 +86,6 @@ demo 使用的 PNG 已从 `D:\wly\wly\wly\trunk\art\UI切图` 复制到当前工
 - `public/assets/monsters/actions/`：按章节引用的怪物与 Boss 待机、行走、攻击 GIF
 - `public/assets/ui/`：卡牌、面板、体力和增益图标
 - `public/assets/home/`：主界面导航、任务、军报、货币和宝箱资源
-- `public/assets/equipment/`：从 `UI切图/icon武器` 与 `UI切图/icon装备` 筛选的装备部位图标
+- `public/assets/equipment/`：装备本体图标，按 `{部位}[-{职业}]-{品质}.png` 命名，共 70 张（`art/Icon` 为原始素材，导入脚本见 `tools/import-equipment-icons.mjs`）
 - `public/assets/ui/equipment/`、`public/assets/ui/character/`：品质底图、角色页背景、装备槽和页签素材
 - `public/assets/ui/bag/`：包裹皮革外框、方形品质底图、材料槽、选中标记与合成效果素材

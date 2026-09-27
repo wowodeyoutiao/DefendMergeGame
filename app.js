@@ -127,16 +127,18 @@ const HINT_AD_DURATION_MS = 3000;
 const REWARDED_AD_DURATION_MS = 2000;
 // DEPRECATED · 未生效，勿调（引导进度走 PROGRESS_STORAGE_KEY 一并存档）
 const TUTORIAL_STORAGE_KEY = "defend-merge-tutorial-v1";
+/* 六部位。warriorBound = true 的武器 / 衣服按武将职业区分图标且只能由对应武将穿戴，
+   其余四个部位全职业通用。 */
 const EQUIPMENT_SLOTS = [
-  { id: "weapon", name: "武器", stat: "attack", label: "攻击力" },
-  { id: "armor", name: "衣服", stat: "crit", label: "暴击值" },
+  { id: "weapon", name: "武器", stat: "attack", label: "攻击力", warriorBound: true },
+  { id: "armor", name: "衣服", stat: "crit", label: "暴击值", warriorBound: true },
   { id: "helmet", name: "头盔", stat: "hit", label: "命中值" },
-  { id: "necklace", name: "护腕", stat: "attack", label: "攻击力" },
-  { id: "ring", name: "饰品", stat: "attack", label: "攻击力" },
+  { id: "necklace", name: "项链", stat: "attack", label: "攻击力" },
+  { id: "ring", name: "戒指", stat: "attack", label: "攻击力" },
   { id: "boots", name: "靴子", stat: "speed", label: "攻速" },
 ];
 /* 武将成长面板的六槽位左右分列（2026-09-22 超哥对齐 UI 示意图）：
-   左列 武器 / 头盔 / 衣服，右列 护腕 / 靴子 / 饰品。
+   左列 武器 / 头盔 / 衣服，右列 项链 / 靴子 / 戒指。
    只决定展示顺序与分组，槽位 id、图标、掉落 / 合成规则均不变。 */
 const EQUIPMENT_SLOT_COLUMNS = {
   left: ["weapon", "helmet", "armor"],
@@ -190,14 +192,50 @@ const EQUIPMENT_DROP_TABLES = [
   { minLevel: 81, weights: [0.43, 0.26, 0.18, 0.09, 0.035, 0.0045, 0.0005] },
   { minLevel: 121, weights: [0.32, 0.25, 0.2, 0.13, 0.07, 0.025, 0.005] },
 ];
-const EQUIPMENT_ICONS = {
-  weapon: "equipment/weapon.png",
-  armor: "equipment/armor.png",
-  helmet: "equipment/helmet.png",
-  necklace: "equipment/necklace.png",
-  ring: "equipment/ring.png",
-  boots: "equipment/boots.png",
-};
+/* ========== 装备图标（2026-09-27 接入 art/Icon 全套 70 张）==========
+   文件规则：{slot}[-{role}]-{quality}.png，quality 1=白 2=绿 3=蓝 4=紫 5=橙 6=红 7=金。
+   武器与衣服按武将职业区分（role 取 WARRIORS 的 modelRole：fan=warrior、sword=mage、rock=priest），
+   头盔 / 项链 / 戒指 / 靴子 四个部位全职业通用。
+   导入脚本：tools/import-equipment-icons.mjs */
+function warriorModelRole(warriorType) {
+  const warrior = WARRIORS.find((entry) => entry.type === warriorType);
+  return warrior ? warrior.modelRole : "warrior";
+}
+
+function warriorShortName(warriorType) {
+  const warrior = WARRIORS.find((entry) => entry.type === warriorType);
+  return warrior ? warrior.name.replace(/^[男女]/, "") : "";
+}
+
+function getEquipmentIcon(slot, quality = 1, warriorType = state.selectedWarriorType) {
+  const level = Math.max(1, Math.min(EQUIPMENT_QUALITY.length, Math.round(quality) || 1));
+  if (slotInfo(slot).warriorBound) {
+    return `equipment/${slot}-${warriorModelRole(warriorType)}-${level}.png`;
+  }
+  return `equipment/${slot}-${level}.png`;
+}
+
+/* 武器 / 衣服只有对应武将能穿戴。旧存档里没有 warrior 字段的同部位装备保持通用，
+   避免版本升级后既有装备全部失效。 */
+function equipmentFitsWarrior(item, warriorType) {
+  if (!item || !slotInfo(item.slot).warriorBound) return true;
+  if (!item.warrior) return true;
+  return item.warrior === warriorType;
+}
+
+function equipmentWarriorTag(item) {
+  if (!item || !slotInfo(item.slot).warriorBound || !item.warrior) return "";
+  return warriorShortName(item.warrior);
+}
+
+/* 图标只表达"这是哪件装备"（部位 + 武器/衣服的职业），品质一律由品质底框承担，
+   素材配色不参与品质表达（2026-09-27 超哥定案）。
+   统一出口：老存档里没有 warrior 字段的武器 / 衣服固定取第一个职业的美术，
+   保证同一件装备在成长页、包裹、合成台、打造台四处长得完全一样。 */
+function equipmentArtType(item) {
+  if (!item) return state.selectedWarriorType;
+  return item.warrior || WARRIORS[0].type;
+}
 /* ========== 装备打造（成长页签）：强化 / 升星 / 洗炼 / 魂石 ==========
    规格来源：《我来野》打造模块-装备系统
    - 强化：消耗金币+强化石，针对装备槽位，无成功率，等级上限 = 角色等级 × 2
@@ -885,6 +923,7 @@ const state = {
   equipmentDropGranted: false,
   equipmentDropMisses: 0,
   lastEquipmentDrop: null,
+  lastChallengeEquipmentDrops: [],
   settlementAdEquipmentDropGranted: false,
   lastSettlementAdEquipmentDrop: null,
   settlementAdHeroExpGranted: false,
@@ -1028,6 +1067,39 @@ function saveProgress() {
   }
 }
 
+/* ========== 存档清洗：装备相关字段 ==========
+   存档可能来自旧版本、被外部工具改过，或者写入过程被中断，所以装备字段必须
+   逐项校验后才能进内存。不清洗会有两个直接后果：
+   1) 包裹里出现 null / 非对象 / 部位非法的条目时，渲染与合成界面直接抛错；
+      更糟的是脏数据会被原样写回存档，玩家自己永远恢复不了。
+   2) equipmentNextId 缺失或小于包裹里已有的最大 id 时，新生成的装备会复用
+      已有 id，之后按 id 穿戴 / 出售就会选错装备。
+   清洗策略：无法修复的条目丢弃；缺失字段回落到该部位该品质的默认值；
+   id 去重，且 nextId 严格大于所有已用 id。 */
+function sanitizeEquipmentItem(raw) {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  if (!EQUIPMENT_SLOTS.some((entry) => entry.id === raw.slot)) return null;
+  const quality = Number.isSafeInteger(raw.quality)
+    ? Math.max(1, Math.min(EQUIPMENT_QUALITY.length, raw.quality)) : 1;
+  const base = EQUIPMENT_BASE_VALUES[raw.slot] || 1;
+  const item = {
+    id: Number.isSafeInteger(raw.id) && raw.id > 0 ? raw.id : 0,
+    slot: raw.slot,
+    quality,
+    value: Number.isFinite(raw.value) && raw.value > 0
+      ? Math.round(raw.value)
+      : Math.round(base * qualityInfo(quality).coefficient),
+  };
+  if (slotInfo(raw.slot).warriorBound && WARRIORS.some((entry) => entry.type === raw.warrior)) {
+    item.warrior = raw.warrior;
+  }
+  return item;
+}
+
+function isPlainObject(value) {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
 function loadProgress() {
   try {
     const progress = JSON.parse(localStorage.getItem(PROGRESS_STORAGE_KEY) || "null");
@@ -1106,12 +1178,63 @@ function loadProgress() {
         if (Number.isSafeInteger(value)) state.mainQuestStats[key] = Math.max(0, value);
       });
     }
-    state.equipmentInventory = Array.isArray(progress.equipmentInventory) ? progress.equipmentInventory : [];
-    state.equipmentNextId = Number.isSafeInteger(progress.equipmentNextId) ? progress.equipmentNextId : 1;
-    state.warriorEquipment = { ...state.warriorEquipment, ...(progress.warriorEquipment || {}) };
-    state.warriorQuality = { ...state.warriorQuality, ...(progress.warriorQuality || {}) };
+    /* 装备：逐项清洗，并保证 id 唯一、nextId 严格大于所有已用 id */
+    const usedIds = new Set();
+    let maxEquipmentId = 0;
+    const claimEquipmentId = (item) => {
+      if (item.id > 0 && !usedIds.has(item.id)) {
+        usedIds.add(item.id);
+        maxEquipmentId = Math.max(maxEquipmentId, item.id);
+        return;
+      }
+      let candidate = maxEquipmentId + 1;
+      while (candidate < 1 || usedIds.has(candidate)) candidate += 1;
+      item.id = candidate;
+      usedIds.add(candidate);
+      maxEquipmentId = candidate;
+    };
+    state.equipmentInventory = (Array.isArray(progress.equipmentInventory) ? progress.equipmentInventory : [])
+      .map((raw) => sanitizeEquipmentItem(raw))
+      .filter(Boolean);
+    state.equipmentInventory.forEach(claimEquipmentId);
+    const savedWorn = isPlainObject(progress.warriorEquipment) ? progress.warriorEquipment : {};
+    state.warriorEquipment = {};
+    WARRIORS.forEach(({ type }) => {
+      const kept = {};
+      const slots = savedWorn[type];
+      if (isPlainObject(slots)) {
+        EQUIPMENT_SLOTS.forEach(({ id }) => {
+          const item = sanitizeEquipmentItem(slots[id]);
+          if (!item || item.slot !== id) return;
+          claimEquipmentId(item);
+          kept[id] = item;
+        });
+      }
+      state.warriorEquipment[type] = kept;
+    });
+    state.equipmentNextId = Math.max(1, maxEquipmentId + 1,
+      Number.isSafeInteger(progress.equipmentNextId) ? progress.equipmentNextId : 1);
+    /* 武将品质：上界用品质档数而非 MAX_WARRIOR_QUALITY，
+       避免把旧存档里已有的金色（第 7 档）倒扣回红色。 */
+    const savedQuality = isPlainObject(progress.warriorQuality) ? progress.warriorQuality : {};
+    state.warriorQuality = {};
+    WARRIORS.forEach(({ type }) => {
+      const value = savedQuality[type];
+      state.warriorQuality[type] = Number.isSafeInteger(value)
+        ? Math.max(1, Math.min(EQUIPMENT_QUALITY.length, value)) : 1;
+    });
     if (WARRIORS.some((entry) => entry.type === progress.selectedWarriorType)) state.selectedWarriorType = progress.selectedWarriorType;
-    state.warriorPermanentStats = { ...state.warriorPermanentStats, ...(progress.warriorPermanentStats || {}) };
+    /* 永久属性：必须是有限非负数，否则 NaN 会顺着伤害公式扩散出去 */
+    const savedPermanent = isPlainObject(progress.warriorPermanentStats) ? progress.warriorPermanentStats : {};
+    state.warriorPermanentStats = {};
+    WARRIORS.forEach(({ type }) => {
+      const source = isPlainObject(savedPermanent[type]) ? savedPermanent[type] : {};
+      state.warriorPermanentStats[type] = Object.fromEntries(
+        ["attack", "crit", "hit", "speed"].map((key) => [
+          key, Number.isFinite(source[key]) ? Math.max(0, source[key]) : 0,
+        ]),
+      );
+    });
     state.equipmentDropMisses = Number.isSafeInteger(progress.equipmentDropMisses)
       ? Math.max(0, progress.equipmentDropMisses) : 0;
     state.forgeEnhanceStone = readInteger("forgeEnhanceStone", state.forgeEnhanceStone, 0, Number.MAX_SAFE_INTEGER);
@@ -1751,7 +1874,7 @@ function slotInfo(slot) {
 
 function equipmentName(equipment) {
   const quality = qualityInfo(equipment.quality);
-  return `${quality.prefix}${slotInfo(equipment.slot).name}`;
+  return `${quality.prefix}${equipmentWarriorTag(equipment)}${slotInfo(equipment.slot).name}`;
 }
 
 function formatStatValue(value, stat) {
@@ -1773,16 +1896,22 @@ function chooseEquipmentQuality() {
   }) + 1;
 }
 
-function createEquipment(slot, quality) {
-  const info = slotInfo(slot);
+/* 武器 / 衣服创建时绑定职业；warriorType 未指定时随机分配一件，保证图标与可穿戴武将始终一致。 */
+function createEquipment(slot, quality, warriorType) {
   const qualityData = qualityInfo(quality);
   const base = EQUIPMENT_BASE_VALUES[slot] || 1;
-  return {
+  const item = {
     id: state.equipmentNextId++,
     slot,
     quality,
     value: Math.round(base * qualityData.coefficient),
   };
+  if (slotInfo(slot).warriorBound) {
+    item.warrior = WARRIORS.some(({ type }) => type === warriorType)
+      ? warriorType
+      : rand(WARRIORS).type;
+  }
+  return item;
 }
 
 function warriorEquipmentFor(type) {
@@ -1866,6 +1995,7 @@ function equipEquipment(equipmentId, type = state.selectedWarriorType) {
   const equipment = state.equipmentInventory[index];
   const quality = state.warriorQuality[type] || 1;
   if (equipment.quality !== quality) return false;
+  if (!equipmentFitsWarrior(equipment, type)) return false;
   const worn = warriorEquipmentFor(type);
   if (worn[equipment.slot]) state.equipmentInventory.push(worn[equipment.slot]);
   worn[equipment.slot] = equipment;
@@ -1879,7 +2009,9 @@ function getAutoEquipCandidates(type = state.selectedWarriorType) {
   const quality = state.warriorQuality[type] || 1;
   const worn = warriorEquipmentFor(type);
   return EQUIPMENT_SLOTS.filter(({ id }) => !worn[id])
-    .map(({ id }) => state.equipmentInventory.find((item) => item.slot === id && item.quality === quality))
+    .map(({ id }) => state.equipmentInventory.find((item) => item.slot === id
+      && item.quality === quality
+      && equipmentFitsWarrior(item, type)))
     .filter(Boolean);
 }
 
@@ -4311,7 +4443,7 @@ function showEquipmentGrowth(onBack = showHome) {
       <p class="bt-skill">突破技能：${previewData.skillText}</p>
     </section>
     <div class="equipment-compatible">
-      <div class="equipment-compatible-header"><strong>可穿戴装备</strong><button class="equipment-auto-equip" type="button" title="为当前武将补齐同品质的空装备位"><img src="${ASSET}${EQUIPMENT_ICONS.armor}" alt="" />一键穿戴</button></div>
+      <div class="equipment-compatible-header"><strong>可穿戴装备</strong><button class="equipment-auto-equip" type="button" title="为当前武将补齐同品质的空装备位"><img src="${ASSET}${getEquipmentIcon("armor", 1, type)}" alt="" />一键穿戴</button></div>
       <div class="equipment-equip-status" role="status" aria-live="polite"></div>
       <div class="equipment-compatible-list" role="region" aria-label="可穿戴装备" tabindex="0"></div>
     </div>`;
@@ -4325,7 +4457,7 @@ function showEquipmentGrowth(onBack = showHome) {
     button.style.setProperty("--quality-color", item ? qualityInfo(item.quality).color : "#a7bab1");
     const slotQuality = item ? qualityInfo(item.quality) : null;
     button.innerHTML = `<img class="equipment-slot-base" src="${ASSET}ui/character/equipment-slot-cao-wei.png" alt="" />${item
-      ? `<span class="equipment-quality-frame"><img src="${ASSET}${slotQuality.asset}" alt="" /><img class="equipment-icon" src="${ASSET}${EQUIPMENT_ICONS[slot]}" alt="" /></span><b>${info.name}</b><small>${formatStatValue(item.value, info.stat)}</small>`
+      ? `<span class="equipment-quality-frame"><img src="${ASSET}${slotQuality.asset}" alt="" /><img class="equipment-icon" src="${ASSET}${getEquipmentIcon(slot, item.quality, equipmentArtType(item))}" alt="" /></span><b>${info.name}</b><small>${formatStatValue(item.value, info.stat)}</small>`
       : `<span class="equipment-slot-label">${info.name}</span>`}`;
     button.title = item ? `${equipmentName(item)} · ${info.name} · 点击卸下` : `${info.name}：空槽位`;
     button.setAttribute("aria-label", button.title);
@@ -4339,25 +4471,25 @@ function showEquipmentGrowth(onBack = showHome) {
   const bonuses = getWarriorCombatStats(type);
   Object.keys(bonuses).forEach((stat) => { const element = panel.querySelector(`[data-stat="${stat}"]`); if (element) element.textContent = formatStatValue(bonuses[stat], stat); });
 
-  const compatible = state.equipmentInventory.filter((item) => item.quality === quality);
+  const compatible = state.equipmentInventory.filter((item) => item.quality === quality && equipmentFitsWarrior(item, type));
   const compatibleList = panel.querySelector(".equipment-compatible-list");
   compatible.forEach((item) => {
     const button = document.createElement("button");
     button.type = "button";
     button.style.setProperty("--quality-color", qualityData.color);
-    button.innerHTML = `<span class="equipment-quality-frame"><img src="${ASSET}${qualityData.asset}" alt="" /><img class="equipment-icon" src="${ASSET}${EQUIPMENT_ICONS[item.slot]}" alt="" /></span><b>${slotInfo(item.slot).name}</b><small>${equipmentValueText(item)}</small>`;
+    button.innerHTML = `<span class="equipment-quality-frame"><img src="${ASSET}${qualityData.asset}" alt="" /><img class="equipment-icon" src="${ASSET}${getEquipmentIcon(item.slot, item.quality, equipmentArtType(item))}" alt="" /></span><b>${equipmentWarriorTag(item)}${slotInfo(item.slot).name}</b><small>${equipmentValueText(item)}</small>`;
     button.title = `${equipmentName(item)} · 点击穿戴`;
     button.setAttribute("aria-label", button.title);
     button.addEventListener("click", () => { equipEquipment(item.id, type); showEquipmentGrowth(onBack); });
     compatibleList.appendChild(button);
   });
-  if (!compatible.length) compatibleList.innerHTML = '<small class="equipment-empty">暂无同品质装备，可在关卡结算或包裹合成中获取</small>';
+  if (!compatible.length) compatibleList.innerHTML = '<small class="equipment-empty">暂无可穿戴的同品质装备；武器与衣服需与当前武将职业匹配，其余部位全职业通用。可在关卡结算或包裹合成中获取</small>';
 
   const autoEquipButton = panel.querySelector(".equipment-auto-equip");
   autoEquipButton.disabled = !canManageHero() || status.complete || getAutoEquipCandidates(type).length === 0;
   if (status.complete) {
     autoEquipButton.classList.add("done");
-    autoEquipButton.innerHTML = `<img src="${ASSET}${EQUIPMENT_ICONS.armor}" alt="" />已穿齐`;
+    autoEquipButton.innerHTML = `<img src="${ASSET}${getEquipmentIcon("armor", 1, type)}" alt="" />已穿齐`;
   }
   autoEquipButton.addEventListener("click", () => {
     if (autoEquipButton.disabled) return;
@@ -4422,7 +4554,7 @@ function addBagAction(label, onClick, color = "green") {
 }
 
 function bagItemArtwork(item) {
-  return `<img class="bag-quality" src="${ASSET}${qualityInfo(item.quality).asset}" alt="" /><img class="bag-item-icon" src="${ASSET}${EQUIPMENT_ICONS[item.slot]}" alt="" />`;
+  return `<img class="bag-quality" src="${ASSET}${qualityInfo(item.quality).asset}" alt="" /><img class="bag-item-icon" src="${ASSET}${getEquipmentIcon(item.slot, item.quality, equipmentArtType(item))}" alt="" />`;
 }
 
 function createBagItem(item, onClick) {
@@ -4923,7 +5055,7 @@ function forgeQualityFrame(item, slotId) {
   const base = q ? q.asset : "ui/character/equipment-slot.png";
   return `<span class="forge-quality-frame${q ? "" : " empty"}">
     <img class="forge-quality-base" src="${ASSET}${base}" alt="" />
-    ${item ? `<img class="forge-equip-icon" src="${ASSET}${EQUIPMENT_ICONS[slotId] || "equipment/weapon.png"}" alt="" />` : ""}
+    ${item ? `<img class="forge-equip-icon" src="${ASSET}${getEquipmentIcon(slotId, item.quality, equipmentArtType(item))}" alt="" />` : ""}
     ${item ? "" : '<span class="forge-empty-mark">无</span>'}
   </span>`;
 }
@@ -5657,9 +5789,15 @@ function showShop(onBack = showHome, noticeText = "") {
       renderHud();
       saveProgress();
       notice.textContent = `已用 ${cost} 元宝兑换 ${short(amount)}${group.unit}${group.label}。`;
-      modalDetail.querySelector(".shop-yuanbao").textContent = String(state.yuanbao);
-      modalDetail.querySelector(".shop-coin").textContent = formatCurrency(state.gold);
-      modalDetail.querySelector(`.shop-group[data-group="${group.kind}"] .shop-group-owned b`).textContent = ownedText(group);
+      /* 兑换后只刷新本面板的数字，不整页重绘。加空值保护：
+         商店面板有可能在点击的同一帧里被别的弹窗（如广告）替换掉，
+         此时这些节点已不存在，直接取 .textContent 会抛错。 */
+      const wallet = modalDetail.querySelector(".shop-yuanbao");
+      if (wallet) wallet.textContent = String(state.yuanbao);
+      const coin = modalDetail.querySelector(".shop-coin");
+      if (coin) coin.textContent = formatCurrency(state.gold);
+      const owned = modalDetail.querySelector(`.shop-group[data-group="${group.kind}"] .shop-group-owned b`);
+      if (owned) owned.textContent = ownedText(group);
       modalDetail.querySelectorAll("[data-buy]").forEach((other) => {
         const lack = state.yuanbao < (Number(other.dataset.cost) || 0);
         other.dataset.lack = lack ? "1" : "0";

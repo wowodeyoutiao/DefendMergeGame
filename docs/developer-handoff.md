@@ -60,6 +60,7 @@ node tools/serve.mjs --port 5173
 | `public/assets/warriors/sources/` | 原始 GIF、Spine 工程、导出文件及贴图 |
 | `public/assets/monsters/actions/` | 7 个章节使用的近战、远程小怪和 Boss 待机、行走、攻击 GIF |
 | `public/assets/ui/bag/` | 包裹与装备方形品质底框 |
+| `public/assets/equipment/` | 装备本体图标，`{部位}[-{职业}]-{品质}.png` 共 70 张；`art/Icon` 为原始素材 |
 | `public/assets/ui/fonts/` | 伤害位图数字、“暴击”和“闪避”美术字 |
 | `asset-contact-sheets/warrior-qualities.jpg` | 武将品质外形对照图 |
 | `docs/` | MVP、成长、装备、包裹与资源接入规则 |
@@ -68,6 +69,7 @@ node tools/serve.mjs --port 5173
 
 ## 最近调整
 
+- 装备图标全套接入（2026-09-27）：`art/Icon` 的 98 张素材中，70 张按「部位 + 品质 + 职业」导入 `public/assets/equipment/`，装备不再共用单张部位图标。**品质只由品质底框表达，素材配色不参与品质表达**（源素材配色档位与实际品质不对应，已确认不返修）。武器与衣服绑定职业，只有对应武将能穿戴，掉落与合成时职业三职业等概率随机；旧存档无职业字段的武器与衣服保持通用可穿。导入脚本 `tools/import-equipment-icons.mjs` 可重复执行，未接入的指环、腰带、饰品、裤子 28 张留在 `art/Icon` 备用。
 - 装备成长弹窗固定高度，常驻预留两排可穿戴装备空间；超出列表范围时内部滚动。
 - 攻击力、暴击值、命中值为固定数值，只有攻速为百分比。
 - 普攻对每个目标独立判定命中与暴击；怪物通过闪避值、韧性值对抗。
