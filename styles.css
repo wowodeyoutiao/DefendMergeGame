@@ -651,6 +651,26 @@ button {
   filter: drop-shadow(0 0 5px rgba(91, 224, 255, 0.95)) drop-shadow(0 4px 2px rgba(46, 24, 12, 0.45));
 }
 
+/* 历史遗留类补齐：合成提示按钮高亮 + 怪物行走/攻击姿态 */
+.hint-active {
+  box-shadow: 0 0 0 2px #ffcf6f, 0 0 14px rgba(255, 207, 111, 0.65);
+  filter: brightness(1.08);
+}
+.monster-walking img {
+  animation: monster-walk 0.42s ease-in-out infinite alternate;
+}
+.monster-attacking img {
+  animation: monster-attack 0.26s ease-in-out;
+}
+@keyframes monster-walk {
+  from { transform: translateY(0) rotate(-2deg); }
+  to   { transform: translateY(-3px) rotate(2deg); }
+}
+@keyframes monster-attack {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.12) translateY(-2px); }
+}
+
 .monster-status {
   position: absolute;
   top: -10px;
