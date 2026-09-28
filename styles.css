@@ -182,7 +182,7 @@ button {
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: 1fr auto auto 1fr;
+  grid-template-columns: auto 1fr auto auto 1fr;
   align-items: center;
   gap: 8px;
   margin: 10px 14px;
@@ -205,6 +205,21 @@ button {
   font-size: 11px;
   white-space: nowrap;
 }
+
+.mode-badge {
+  justify-self: start;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #fff;
+  white-space: nowrap;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35), 0 2px 3px rgba(0, 0, 0, 0.3);
+}
+.mode-badge.mode-normal { background: linear-gradient(180deg, #8fc7ff, #5a9eff); }
+.mode-badge.mode-challenge { background: linear-gradient(180deg, #ffb04a, #ff7a3d); }
+.mode-badge.mode-beast { background: linear-gradient(180deg, #c98cff, #9a5cff); }
 
 .board-wrap {
   --cell: min(12vw, 41px);
@@ -295,6 +310,34 @@ button {
 @keyframes tutorialCoachPulse {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-2px); }
+}
+
+.tutorial-skip {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 13;
+  padding: 4px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 999px;
+  background: rgba(20, 40, 60, 0.72);
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.tutorial-skip:hover { background: rgba(20, 40, 60, 0.9); }
+.tutorial-skip.hidden { display: none; }
+
+.tutorial-highlight {
+  outline: 3px solid #ffd34d;
+  outline-offset: 3px;
+  border-radius: 10px;
+  animation: tutorialPulse 1.1s ease-in-out infinite;
+}
+@keyframes tutorialPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 211, 77, 0.55); }
+  50% { box-shadow: 0 0 0 9px rgba(255, 211, 77, 0); }
 }
 
 .daily-task-list { display: grid; gap: 7px; margin: 2px 0 15px; text-align: left; }
@@ -1239,7 +1282,8 @@ button {
 }
 
 .action-button.ghost {
-  background: linear-gradient(#55935b, #27603d);
+  background: linear-gradient(#5a9eff, #3f6fd6);
+  color: #ffffff;
 }
 
 .action-button:disabled {

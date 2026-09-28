@@ -164,6 +164,7 @@
         <section class="stage">
           <img class="stage-bg" src="./public/assets/ui/theme/battle-jade.png" alt="" />
           <div class="round-banner">
+            <span class="mode-badge mode-normal" id="modeBadge">普通</span>
             <span id="levelText">关卡 1</span>
             <strong id="phaseText">操作期</strong>
             <span id="cardProgress">卡牌 0/6</span>
@@ -183,6 +184,7 @@
             <div class="board" id="board" role="grid" aria-label="6x6 消除棋盘"></div>
           </div>
           <div class="tutorial-coach hidden" id="tutorialCoach" aria-live="polite"></div>
+          <button type="button" class="tutorial-skip hidden" id="tutorialSkip">跳过教学</button>
 
           <div class="defense-status">
             <button class="hero-mini hero-skill-button" id="heroSkillBtn" type="button" aria-label="主角大招" aria-describedby="heroSkillTimer" title="主角大招">

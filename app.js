@@ -945,6 +945,9 @@ const phaseText = document.getElementById("phaseText");
 const roundText = document.getElementById("roundText");
 const cardProgressText = document.getElementById("cardProgress");
 const levelText = document.getElementById("levelText");
+const modeBadge = document.getElementById("modeBadge");
+const tutorialSkip = document.getElementById("tutorialSkip");
+if (tutorialSkip) tutorialSkip.addEventListener("click", skipTutorial);
 const defenseHpText = document.getElementById("defenseHpText");
 const defenseHpTrack = document.getElementById("defenseHpTrack");
 const defenseHpFill = document.getElementById("defenseHpFill");
@@ -1659,8 +1662,28 @@ function renderTutorialCoach() {
     3: "继续消除，自动连锁完成后，棋子会从棋盘下方补满。",
     4: "操作完成后点击“出怪”，观察武将攻击并守住防线。",
   };
+  const targetMap = { 2: "board", 3: "board", 4: "startWaveBtn" };
+  clearTutorialHighlight();
+  const show = state.tutorialActive && Boolean(messages[state.tutorialStep]);
+  if (show && targetMap[state.tutorialStep]) {
+    const el = document.getElementById(targetMap[state.tutorialStep]);
+    if (el) el.classList.add("tutorial-highlight");
+  }
   tutorialCoach.textContent = messages[state.tutorialStep] || "";
-  tutorialCoach.classList.toggle("hidden", !state.tutorialActive || !messages[state.tutorialStep]);
+  tutorialCoach.classList.toggle("hidden", !show);
+  if (tutorialSkip) tutorialSkip.classList.toggle("hidden", !show);
+}
+
+function clearTutorialHighlight() {
+  document.querySelectorAll(".tutorial-highlight").forEach((el) => el.classList.remove("tutorial-highlight"));
+}
+
+function skipTutorial() {
+  state.tutorialStep = 5;
+  state.tutorialActive = false;
+  clearTutorialHighlight();
+  renderTutorialCoach();
+  saveProgress();
 }
 
 function advanceTutorial(step) {
@@ -1678,11 +1701,7 @@ function startTutorial() {
       startLevelFromHome();
       renderTutorialCoach();
     } },
-    { label: "跳过", secondary: true, onClick: () => {
-      state.tutorialStep = 5;
-      state.tutorialActive = false;
-      saveProgress();
-    } },
+    { label: "跳过", secondary: true, onClick: skipTutorial },
   ]);
 }
 
@@ -2292,7 +2311,19 @@ function renderHud() {
   goldText.textContent = formatCurrency(state.gold);
   yuanbaoText.textContent = formatCurrency(state.yuanbao);
   staminaText.textContent = `${state.stamina}/${state.maxStamina}`;
-  levelText.textContent = isBeastRaid() ? "异兽入侵" : `${isChallengeMode() ? "挑战 " : ""}关卡 ${state.level}`;
+  levelText.textContent = isBeastRaid() ? "异兽入侵" : `关卡 ${state.level}`;
+  if (modeBadge) {
+    if (isBeastRaid()) {
+      modeBadge.textContent = "异兽";
+      modeBadge.className = "mode-badge mode-beast";
+    } else if (isChallengeMode()) {
+      modeBadge.textContent = "挑战";
+      modeBadge.className = "mode-badge mode-challenge";
+    } else {
+      modeBadge.textContent = "普通";
+      modeBadge.className = "mode-badge mode-normal";
+    }
+  }
   phaseText.textContent = state.phase === "setup"
     ? "操作期"
     : state.phase === "card" ? "选卡暂停" : state.phase === "hint-ad" ? "广告暂停" : "出怪期";
@@ -4027,6 +4058,15 @@ function showModal(title, body, actions = [], options = {}) {
   modal.classList.remove("hidden");
 }
 
+function showConfirm(title, message, onConfirm, confirmLabel = "确定", options = {}) {
+  const { cancelLabel = "取消", onCancel, className } = options;
+  const actions = [];
+  if (cancelLabel) actions.push({ label: cancelLabel, secondary: true, onClick: onCancel });
+  actions.push({ label: confirmLabel, onClick: onConfirm });
+  showModal(title, message, actions);
+  if (className) modalCard.classList.add(className);
+}
+
 function hideModal() {
   modal.classList.add("hidden");
   modalBackButton.hidden = true;
@@ -4233,15 +4273,15 @@ function showDefeat() {
     : [{ label: "局外养成", secondary: true, onClick: () => showGrowthModal(showDefeat) }];
   if (!state.revived) {
     showModal("防线失守", `${rewardText} ${growthHint} 模拟激励广告复活：回满防线 HP，并重新挑战当前波。`, [
-      { label: "看广告复活", onClick: () => AdService.showRewarded({ placement: "失败复活", onComplete: revive }) },
+      { label: "重开本关", onClick: resetGame },
+      { label: "看广告复活", secondary: true, onClick: () => AdService.showRewarded({ placement: "失败复活", onComplete: revive }) },
       ...growthActions,
-      { label: "重开本关", secondary: true, onClick: resetGame },
       { label: "返回主界面", secondary: true, onClick: returnToHomeAfterDefeat },
     ]);
   } else {
     showModal("本关失败", `${rewardText} ${growthHint} 本局复活机会已经用完，可以重开再试。`, [
-      ...growthActions,
       { label: "重开本关", onClick: resetGame },
+      ...growthActions,
       { label: "返回主界面", secondary: true, onClick: returnToHomeAfterDefeat },
     ]);
   }
@@ -4321,33 +4361,25 @@ function showVictory() {
     : `本关三个宝箱的元宝奖励此前已领取。`;
   const ybLine = state.paidYuanbao > 0 ? `${state.paidYuanbao} 元宝、` : "";
   const body = `本关结算 ${state.paidReward} 金币、${ybLine}强化石 ${state.paidForgeEnhanceStone}、升星石 ${state.paidForgeStarStone}。${chestLine}${expLine}${dropText}`;
-  showModal("胜利结算", body, [
-    {
-      label: state.doubled ? "已双倍，下一关" : "看广告双倍结算 + 额外装备",
-      onClick: () => {
-        if (!state.doubled) {
-          AdService.showRewarded({
-            placement: "结算双倍",
-            onComplete: () => {
-              state.doubled = true;
-              showVictory();
-            },
-          });
-        } else {
-          flushVictoryChests();
-          if (isChallengeMode()) {
-            resetGame();
-            showHome();
-          } else {
-            nextLevel();
-          }
-        }
-      },
-    },
-    { label: "局外养成", secondary: true, onClick: () => { flushVictoryChests(); showGrowthModal(showVictory); } },
-    { label: "下一关", secondary: true, onClick: () => { flushVictoryChests(); nextLevel(); } },
-    { label: "返回主界面", secondary: true, onClick: () => { flushVictoryChests(); completeLevelToHome(); } },
-  ]);
+  const victoryActions = [
+    { label: "下一关", onClick: () => { flushVictoryChests(); nextLevel(); } },
+  ];
+  if (!state.doubled) {
+    victoryActions.push({
+      label: "看广告双倍结算 + 额外装备",
+      secondary: true,
+      onClick: () => AdService.showRewarded({
+        placement: "结算双倍",
+        onComplete: () => {
+          state.doubled = true;
+          showVictory();
+        },
+      }),
+    });
+  }
+  victoryActions.push({ label: "局外养成", secondary: true, onClick: () => { flushVictoryChests(); showGrowthModal(showVictory); } });
+  victoryActions.push({ label: "返回主界面", secondary: true, onClick: () => { flushVictoryChests(); completeLevelToHome(); } });
+  showModal("胜利结算", body, victoryActions);
   modalCard.classList.add("victory-modal");
   victoryChestKey = String(state.level);
   victoryChestPending = chestResult.pending.slice();
@@ -4543,7 +4575,7 @@ function showBagShell(title, onBack, compact = false) {
   return { content: modalDetail.querySelector(".bag-content"), notice: modalDetail.querySelector(".bag-notice") };
 }
 
-function addBagAction(label, onClick, color = "green") {
+function addBagAction(label, onClick, color = "primary") {
   const button = document.createElement("button");
   button.type = "button";
   button.className = `bag-action bag-action-${color}`;
@@ -4698,7 +4730,7 @@ function showEquipmentSale(item, onBack, onComplete) {
   input.addEventListener("input", updateQuantity);
   minus.addEventListener("click", () => { input.value = quantity - 1; updateQuantity(); });
   plus.addEventListener("click", () => { input.value = quantity + 1; updateQuantity(); });
-  const sell = addBagAction("出售", () => showEquipmentSaleConfirm(matching.slice(0, quantity).map((entry) => entry.id), () => showEquipmentSale(item, onBack, onComplete), onComplete), "gold");
+  const sell = addBagAction("出售", () => showEquipmentSaleConfirm(matching.slice(0, quantity).map((entry) => entry.id), () => showEquipmentSale(item, onBack, onComplete), onComplete), "primary");
   sell.disabled = !canManageHero();
   updateQuantity();
 }
@@ -4776,15 +4808,19 @@ function showEquipmentSynthesis(onBack, selectedIds = [], message = "") {
     const complete = addBagAction("补齐材料", () => {
       const extra = state.equipmentInventory.filter((item) => item.quality === quality && !ids.includes(item.id)).slice(0, 5 - ids.length).map((item) => item.id);
       showEquipmentSynthesis(onBack, [...ids, ...extra], ids.length + extra.length < 5 ? "同品质装备不足 5 件" : "");
-    }, "gold");
+    }, "blue");
     complete.disabled = !canManageHero() || fillableCount === 0;
   }
   const start = addBagAction("开始合成", () => {
-    start.disabled = true;
-    const result = synthesizeEquipment(ids);
-    if (!result.ok) { notice.textContent = result.message; return; }
-    renderHud();
-    showEquipmentSynthesisResult(result, () => showEquipmentSynthesis(onBack), onBack);
+    const quote = getSynthesisQuote(ids);
+    if (!quote.ok) { notice.textContent = quote.message; return; }
+    const materials = getOwnedBagItems(ids).map((item) => equipmentName(item)).join("、");
+    showConfirm("确认合成", `将消耗 ${quote.cost} 金币，并使用 ${materials} 共 5 件材料合成（成功率 ${Math.round(quote.rate * 100)}%）。无论成败，材料与金币均不返还。`, () => {
+      const result = synthesizeEquipment(ids);
+      if (!result.ok) { notice.textContent = result.message; return; }
+      renderHud();
+      showEquipmentSynthesisResult(result, () => showEquipmentSynthesis(onBack), onBack);
+    }, "开始合成");
   });
   const quote = getSynthesisQuote(ids);
   start.disabled = !canManageHero() || !quote.ok || state.gold < quote.cost;
@@ -5560,6 +5596,7 @@ function showForgeLack(kind, lack, cost, back) {
     { label: "获取材料", onClick: () => showForgeSource(lack === "gold" ? "star" : kind, back) },
     { label: "取消", secondary: true, onClick: back },
   ]);
+  modalCard.classList.add("forge-modal");
 }
 
 function showForgeSource(kind, back) {
@@ -5570,7 +5607,7 @@ function showForgeSource(kind, back) {
     {
       label: `兑换 ${amount} 个（${price} 元宝）`,
       disabled: state.yuanbao < price,
-      onClick: () => {
+      onClick: () => showConfirm("确认兑换", `将消耗 ${price} 元宝兑换 ${amount} 个${name}，是否确认？`, () => {
         if (state.yuanbao < price) return back();
         state.yuanbao -= price;
         if (kind === "star") state.forgeStarStone += amount;
@@ -5578,9 +5615,10 @@ function showForgeSource(kind, back) {
         renderHud();
         saveProgress();
         back();
-      },
+      }, "确认兑换", { onCancel: () => showForgeSource(kind, back), className: "forge-modal" }),
     },
   ], { backAction: back });
+  modalCard.classList.add("forge-modal");
 }
 
 function showForgeMaster(kind, back) {
@@ -5785,26 +5823,14 @@ function showShop(onBack = showHome, noticeText = "") {
         notice.textContent = `元宝不足：兑换 ${short(amount)}${group.unit}${group.label}需要 ${cost} 元宝，当前 ${state.yuanbao} 元宝。`;
         return;
       }
-      state.yuanbao -= cost;
-      state[group.field] = (Number(state[group.field]) || 0) + amount;
-      renderHud();
-      saveProgress();
-      notice.textContent = `已用 ${cost} 元宝兑换 ${short(amount)}${group.unit}${group.label}。`;
-      /* 兑换后只刷新本面板的数字，不整页重绘。加空值保护：
-         商店面板有可能在点击的同一帧里被别的弹窗（如广告）替换掉，
-         此时这些节点已不存在，直接取 .textContent 会抛错。 */
-      const wallet = modalDetail.querySelector(".shop-yuanbao");
-      if (wallet) wallet.textContent = String(state.yuanbao);
-      const coin = modalDetail.querySelector(".shop-coin");
-      if (coin) coin.textContent = formatCurrency(state.gold);
-      const owned = modalDetail.querySelector(`.shop-group[data-group="${group.kind}"] .shop-group-owned b`);
-      if (owned) owned.textContent = ownedText(group);
-      modalDetail.querySelectorAll("[data-buy]").forEach((other) => {
-        const lack = state.yuanbao < (Number(other.dataset.cost) || 0);
-        other.dataset.lack = lack ? "1" : "0";
-        const action = other.querySelector(".shop-card-action");
-        if (action) action.textContent = lack ? "元宝不足" : "兑换";
-      });
+      showConfirm("确认兑换", `将消耗 ${cost} 元宝兑换 ${short(amount)}${group.unit}${group.label}，是否确认？`, () => {
+        if (state.yuanbao < cost) { showShop(onBack, "元宝不足，无法兑换。"); return; }
+        state.yuanbao -= cost;
+        state[group.field] = (Number(state[group.field]) || 0) + amount;
+        renderHud();
+        saveProgress();
+        showShop(onBack, `已用 ${cost} 元宝兑换 ${short(amount)}${group.unit}${group.label}。`);
+      }, "确认兑换", { onCancel: () => showShop(onBack, noticeText), className: "shop-modal" });
     });
   });
 }
@@ -6328,13 +6354,13 @@ adStepsBtn.addEventListener("click", () => AdService.showRewarded({
 }));
 mergeHintBtn.addEventListener("click", showMergeHintAd);
 boardShuffleBtn.addEventListener("click", showBoardShuffleAd);
-resetBtn.addEventListener("click", () => resetGame());
+resetBtn.addEventListener("click", () => showConfirm("重开本局", "确定重开本局吗？当前进度与已消耗体力不返还。", () => resetGame(), "重开"));
 homeStartBtn.addEventListener("click", startLevelFromHome);
 homeNormalModeBtn.addEventListener("click", () => selectHomeMode(false));
 homeChallengeModeBtn.addEventListener("click", () => selectHomeMode(true));
 homeStaminaBtn.addEventListener("click", showStaminaRefill);
 homeHeroAvatar.addEventListener("click", () => showHeroSkillView(showHome));
-battleHomeBtn.addEventListener("click", showHome);
+battleHomeBtn.addEventListener("click", () => showConfirm("返回主界面", "确定返回主界面吗？本局进度将丢失，已消耗体力不返还。", showHome, "返回"));
 homePrevLevelBtn.addEventListener("click", () => selectHomeLevel(-1));
 homeNextLevelBtn.addEventListener("click", () => selectHomeLevel(1));
 document.getElementById("armyMarqueeHome").addEventListener("click", () => {

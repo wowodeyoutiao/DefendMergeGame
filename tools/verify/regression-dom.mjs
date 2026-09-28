@@ -445,6 +445,8 @@ const shopFlow = run(`
   const stoneBefore = state.forgeEnhanceStone;
   const card = document.querySelector('[data-buy][data-kind="enhance"]');
   card.click();
+  const confirmBtn = [...document.querySelectorAll('#modalActions button')].find((b) => b.textContent.includes('确认兑换'));
+  if (confirmBtn) confirmBtn.click();
   return {
     hasCard: Boolean(card),
     paid: yuanbaoBefore - state.yuanbao,
