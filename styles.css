@@ -1251,10 +1251,14 @@ button {
   height: 74px;
   z-index: 5;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.08fr) 46px;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
   gap: 8px;
   padding: 10px;
   background: linear-gradient(#71431f, #4b2b18);
+}
+
+.bottom-bar .action-button.primary {
+  margin-left: auto;
 }
 
 .action-button {
@@ -1290,6 +1294,32 @@ button {
   filter: grayscale(1);
   opacity: 0.58;
   cursor: not-allowed;
+}
+
+.speed-float {
+  position: absolute;
+  right: 8px;
+  bottom: 180px;
+  z-index: 10;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: linear-gradient(#5a9eff, #3f6fd6);
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.16), 0 3px 8px rgba(0, 0, 0, 0.2);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.speed-float:disabled {
+  filter: grayscale(1);
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+@media (hover: hover) and (pointer: fine) {
+  .speed-float:hover:not(:disabled) { transform: translateY(-2px); box-shadow: inset 0 -3px 0 rgba(0,0,0,0.16), 0 6px 12px rgba(0,0,0,0.25); }
 }
 
 .merge-hint-button {
