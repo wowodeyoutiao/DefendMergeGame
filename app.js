@@ -4772,11 +4772,12 @@ function showEquipmentSynthesis(onBack, selectedIds = [], message = "") {
   }, "blue");
   quickAdd.disabled = !canManageHero();
   if (ids.length > 0 && ids.length < 5) {
+    const fillableCount = state.equipmentInventory.filter((item) => item.quality === quality && !ids.includes(item.id)).length;
     const complete = addBagAction("补齐材料", () => {
       const extra = state.equipmentInventory.filter((item) => item.quality === quality && !ids.includes(item.id)).slice(0, 5 - ids.length).map((item) => item.id);
       showEquipmentSynthesis(onBack, [...ids, ...extra], ids.length + extra.length < 5 ? "同品质装备不足 5 件" : "");
     }, "gold");
-    complete.disabled = !canManageHero();
+    complete.disabled = !canManageHero() || fillableCount === 0;
   }
   const start = addBagAction("开始合成", () => {
     start.disabled = true;
