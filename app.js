@@ -3388,16 +3388,56 @@ function cardBurst() {
   setTimeout(() => fx.remove(), 620);
 }
 
+// 主角主动技能序列帧特效（运行时从 public/assets/skill-fx/manifest.json 载入；
+// 无清单/无序列帧时自动回退到 .hero-skill-fx 全屏淡色闪，保证不崩）。
+let heroSkillFxManifest = null;
+let heroSkillFxLoading = false;
+
+function loadHeroSkillFxManifest() {
+  if (heroSkillFxManifest || heroSkillFxLoading) return;
+  if (typeof fetch !== "function") { heroSkillFxManifest = {}; return; }
+  heroSkillFxLoading = true;
+  fetch(`${ASSET}skill-fx/manifest.json`)
+    .then((r) => (r.ok ? r.json() : null))
+    .then((m) => { heroSkillFxManifest = m || {}; })
+    .catch(() => { heroSkillFxManifest = {}; })
+    .finally(() => { heroSkillFxLoading = false; });
+}
+
+function playHeroSkillFx(skill) {
+  loadHeroSkillFxManifest();
+  const m = heroSkillFxManifest && heroSkillFxManifest.skills && heroSkillFxManifest.skills[skill.id];
+  // 底闪作为衬托 / 兜底，始终保留
+  const backdrop = document.createElement("div");
+  backdrop.className = "card-screen-fx hero-skill-fx";
+  fxLayer.appendChild(backdrop);
+  setTimeout(() => backdrop.remove(), 620);
+  if (!m || !m.frames) return; // 无序列帧则只留底闪
+  const fps = (heroSkillFxManifest.fps) || 30;
+  const total = m.frames;
+  const img = document.createElement("img");
+  img.className = "hero-skill-seq";
+  if (m.blend === "screen") img.classList.add("blend-screen");
+  img.alt = skill.name;
+  fxLayer.appendChild(img);
+  let i = 0;
+  const advance = () => {
+    if (i >= total) { img.remove(); return; }
+    img.src = `${ASSET}${m.dir}/${m.src}_${String(i).padStart(3, "0")}.png`;
+    i += 1;
+    setTimeout(advance, 1000 / fps);
+  };
+  advance();
+  setTimeout(() => img.remove(), (total / fps) * 1000 + 240);
+}
+
 function releaseHeroSkill() {
   const { skill, ready } = getHeroSkillStatus();
   if (!ready) return;
   state.heroSkillCooldowns[skill.id] = skill.cooldown;
   state.heroSkillIndex = (state.heroSkillIndex + 1) % getHeroSkillQueue().length;
   applyHeroSkillEffect(skill);
-  const fx = document.createElement("div");
-  fx.className = `card-screen-fx hero-skill-fx skill-fx-${skill.id}`;
-  fxLayer.appendChild(fx);
-  setTimeout(() => fx.remove(), 620);
+  playHeroSkillFx(skill);
   removeDefeatedMonsters();
   tipText.textContent = `主角释放「${skill.name}」。`;
   renderHud();

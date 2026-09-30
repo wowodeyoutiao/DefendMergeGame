@@ -920,6 +920,23 @@ button {
   animation: heroSkillFlash 620ms ease-out forwards;
 }
 
+.hero-skill-seq {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: min(82%, 540px);
+  max-height: 74%;
+  transform: translate(-50%, -50%);
+  z-index: 14;
+  pointer-events: none;
+  object-fit: contain;
+}
+
+/* 源无 alpha 的亮色技能用 screen 混合把黑底变透明（加色发光感） */
+.hero-skill-seq.blend-screen {
+  mix-blend-mode: screen;
+}
+
 @keyframes heroSkillFlash {
   0% { opacity: 0; }
   20% { opacity: 1; }
