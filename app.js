@@ -19,6 +19,9 @@ function monsterOffsetY(monsterY, cell, approachHeight) {
   return approachHeight * (1 + monsterY / MONSTER_SPAWN_Y);
 }
 const ATTACK_RANGE_BY_TIER = [0, 3, 4, 5, 6];
+/* 法师（sword）同列攻击距离单独收窄：法师打竖列且怪物沿列行进（列内停留密度高），
+   原与战士共用同一数组会导致法师性价比偏高，这里分层缩短其纵向停留段以平衡。 */
+const MAGE_RANGE_BY_TIER = [0, 2, 3, 3, 4];
 const AREA_RADIUS_BY_TIER = [0, 0.5, 1, 1.5, 2];
 const ATTACK_INTERVAL_BY_TIER = [0, 0.8, 0.62, 0.46, 0.34];
 const MONSTER_MOVE_INTERVAL = 1.24;
@@ -713,7 +716,7 @@ const TYPES = {
     icon: "icon-sword.png",
     kind: "unit",
     color: "#cf3d2c",
-    dps: 10,
+    dps: 8,
   },
   fan: {
     name: "男战士",
@@ -721,7 +724,7 @@ const TYPES = {
     icon: "icon-fan.png",
     kind: "unit",
     color: "#3c8f74",
-    dps: 8,
+    dps: 11,
   },
   rock: {
     name: "女祭司",
@@ -729,7 +732,7 @@ const TYPES = {
     icon: "icon-rock.png",
     kind: "unit",
     color: "#5676aa",
-    dps: 7,
+    dps: 9,
   },
   gourd: {
     name: "葫芦",
@@ -3239,7 +3242,7 @@ function rangeFlashAt(index, type, tier) {
   const boardLeft = boardRect.left - parentRect.left;
   const boardTop = boardRect.top - parentRect.top;
   const flash = document.createElement("div");
-  const range = ATTACK_RANGE_BY_TIER[tier] || ATTACK_RANGE_BY_TIER[1];
+  const range = (type === "sword" ? MAGE_RANGE_BY_TIER : ATTACK_RANGE_BY_TIER)[tier] || ATTACK_RANGE_BY_TIER[1];
 
   flash.className = `range-flash range-${type}`;
   flash.style.setProperty("--range-color", TYPES[type]?.color || "#ffe49b");
@@ -3716,7 +3719,7 @@ function attackMonsters(dt) {
       * state.damageMultiplier
       * (state.heroRallyRemaining > 0 ? 1.5 : 1)
       * (state.heroDamageRemaining > 0 ? 1.4 : 1);
-    const attackRange = ATTACK_RANGE_BY_TIER[level];
+    const attackRange = piece.type === "sword" ? MAGE_RANGE_BY_TIER[level] : ATTACK_RANGE_BY_TIER[level];
     const wideMode = state.attackMode === "wide";
     const targets = state.monsters.filter((monster) => {
       if (monster.hp <= 0) return false;
