@@ -669,7 +669,8 @@ button:focus-visible, [role="button"]:focus-visible {
 .modal-card::before { display: none; }
 .modal-art { display: block; width: 90px; height: 90px; object-fit: contain; margin: -6px auto 6px; filter: drop-shadow(0 4px 6px #ffcf6f66); }
 .modal-card h2 { margin: 0 0 8px; color: #c96822; font-size: 26px; text-align: center; text-shadow: 0 2px 0 #ffffff99; font-weight: 900; }
-.modal-card p { margin: 0 0 14px; color: #8f84a3; font-size: 13px; line-height: 1.75; text-align: center; }
+.modal-card p,
+#modalBody { margin: 0 0 14px; color: #8f84a3; font-size: 13px; line-height: 1.75; text-align: center; }
 .modal-actions { gap: 9px; }
 
 .modal-actions > button:not(.card-choice) {
@@ -2642,6 +2643,44 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
 .shop-modal .shop-group-owned { white-space: nowrap; }
 /* ========== 胜利结算 · 关卡宝箱 ========== */
 .modal-card.victory-modal .modal-detail { display: block; }
+
+/* 胜利结算奖励卡片：图标 + 数量（参考命运硬币_5.png 示意） */
+.victory-modal #modalBody { margin-bottom: 10px; }
+.victory-subtitle { text-align: center; margin-bottom: 10px; }
+.victory-subtitle b { display: block; color: #c96822; font-size: 14px; font-weight: 900; }
+.victory-subtitle span { display: block; color: #8f84a3; font-size: 12px; font-weight: 800; margin-top: 2px; }
+.victory-rewards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 10px;
+}
+.victory-reward {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 7px 3px 6px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #fff9f0, #ffe8cc);
+  border: 2px solid #ffcf6f;
+  box-shadow: 0 2px 0 #d9a34c, 0 3px 6px #ffcf6f33;
+}
+.victory-reward img { width: 30px; height: 30px; object-fit: contain; margin-bottom: 3px; filter: drop-shadow(0 1px 1px #0000001a); }
+.victory-reward b { font-size: 10px; color: #8f5e28; font-weight: 800; margin-bottom: 1px; }
+.victory-reward span { font-size: 15px; color: #b5371f; font-weight: 900; line-height: 1.2; }
+.victory-reward.gold { background: linear-gradient(180deg, #fff9e6, #ffe0a3); border-color: #ffc447; box-shadow: 0 2px 0 #d9a34c, 0 3px 6px #ffc44733; }
+.victory-reward.yuanbao { background: linear-gradient(180deg, #f9f0ff, #e8d4ff); border-color: #c084ff; box-shadow: 0 2px 0 #a066d9, 0 3px 6px #c084ff33; }
+.victory-reward.yuanbao span { color: #9b4dff; }
+.victory-reward.enhance { background: linear-gradient(180deg, #f0f8ff, #cce6ff); border-color: #5a9eff; box-shadow: 0 2px 0 #4a8fe0, 0 3px 6px #5a9eff33; }
+.victory-reward.enhance span { color: #2e7bd9; }
+.victory-reward.star { background: linear-gradient(180deg, #fff5f0, #ffd4c7); border-color: #ff8a6b; box-shadow: 0 2px 0 #e06a4a, 0 3px 6px #ff8a6b33; }
+.victory-reward.star span { color: #d4552e; }
+.victory-reward.exp { background: linear-gradient(180deg, #f0fff5, #c7f0d4); border-color: #5ecf7a; box-shadow: 0 2px 0 #3db35a, 0 3px 6px #5ecf7a33; }
+.victory-reward.exp span { color: #2ca84e; }
+.victory-note { margin: 5px 0 0; color: #8f84a3; font-size: 11px; line-height: 1.55; text-align: center; }
+.victory-note:first-of-type { margin-top: 8px; }
+
 .victory-chests {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -1483,7 +1483,8 @@ button {
   text-shadow: 0 1px 0 #fff5d0;
 }
 
-.modal-card p {
+.modal-card p,
+#modalBody {
   margin: 0 0 16px;
   color: var(--muted);
   line-height: 1.5;

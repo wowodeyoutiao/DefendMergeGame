@@ -4402,8 +4402,29 @@ function showVictory() {
   const chestLine = pendingChests > 0
     ? `${isChallengeMode() ? "挑战" : "普通"}关卡宝箱解锁 ${pendingChests} 个，点击宝箱即可领取元宝。`
     : `本关三个宝箱的元宝奖励此前已领取。`;
-  const ybLine = state.paidYuanbao > 0 ? `${state.paidYuanbao} 元宝、` : "";
-  const body = `本关结算 ${state.paidReward} 金币、${ybLine}强化石 ${state.paidForgeEnhanceStone}、升星石 ${state.paidForgeStarStone}。${chestLine}${expLine}${dropText}`;
+  const modeLabel = isChallengeMode() ? "挑战" : "普通";
+  const rewardRows = [
+    { key: "gold", label: "金币", icon: "icon-coin.png", amount: state.paidReward, cls: "gold" },
+    state.paidYuanbao > 0 ? { key: "yuanbao", label: "元宝", icon: "home/premium.png", amount: state.paidYuanbao, cls: "yuanbao" } : null,
+    { key: "enhance", label: "强化石", icon: "ui/forge/stone-enhance.png", amount: state.paidForgeEnhanceStone, cls: "enhance" },
+    { key: "star", label: "升星石", icon: "ui/forge/stone-star.png", amount: state.paidForgeStarStone, cls: "star" },
+    { key: "exp", label: "经验", icon: "hero.png", amount: formatPower(expGain), cls: "exp" },
+  ].filter(Boolean);
+  const rewardsHtml = rewardRows.map((r) => `
+    <div class="victory-reward ${r.cls}">
+      <img src="${ASSET}${r.icon}" alt="${r.label}" />
+      <b>${r.label}</b>
+      <span>${r.amount}</span>
+    </div>`).join("");
+  const body = `
+    <div class="victory-subtitle">
+      <b>已通关：${modeLabel}第 ${state.level} 关</b>
+      <span>恭喜挑战获得</span>
+    </div>
+    <div class="victory-rewards">${rewardsHtml}</div>
+    <p class="victory-note">${chestLine}</p>
+    <p class="victory-note">${expLine}</p>
+    <p class="victory-note">${dropText}</p>`;
   const victoryActions = [
     { label: "下一关", onClick: () => { flushVictoryChests(); nextLevel(); } },
   ];
