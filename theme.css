@@ -1980,7 +1980,7 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   .card-choice strong { font-size: 14px; }
   .card-copy { gap: 6px 5px; }
   .card-choice small { padding-inline: 5px; }
-  .bottom-bar { grid-template-columns: repeat(4, minmax(0, 1fr)) 34px; gap: 3px; padding-inline: 5px; }
+  .bottom-bar { grid-template-columns: repeat(3, minmax(0, 1fr)) auto; gap: 3px; padding-inline: 5px; }
   .action-button { gap: 2px; font-size: 10px; }
   .action-button img { width: 16px; height: 18px; }
   .bottom-bar .ad-action { font-size: 10px; }
@@ -2660,24 +2660,34 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  padding: 7px 3px 6px;
+  padding: 8px 4px 7px;
   border-radius: 12px;
-  background: linear-gradient(180deg, #fff9f0, #ffe8cc);
-  border: 2px solid #ffcf6f;
-  box-shadow: 0 2px 0 #d9a34c, 0 3px 6px #ffcf6f33;
+  background: #faf6ee;
+  border: 1px solid #e8dcc5;
+  box-shadow: 0 2px 0 #dcc9a6;
 }
-.victory-reward img { width: 30px; height: 30px; object-fit: contain; margin-bottom: 3px; filter: drop-shadow(0 1px 1px #0000001a); }
-.victory-reward b { font-size: 10px; color: #8f5e28; font-weight: 800; margin-bottom: 1px; }
+.victory-reward .reward-frame {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: center / contain no-repeat;
+  margin-bottom: 5px;
+}
+.victory-reward .reward-frame img { width: 30px; height: 30px; object-fit: contain; }
+.victory-reward b { font-size: 10px; color: #6b4623; font-weight: 800; margin-bottom: 1px; text-align: center; line-height: 1.2; }
 .victory-reward span { font-size: 15px; color: #b5371f; font-weight: 900; line-height: 1.2; }
-.victory-reward.gold { background: linear-gradient(180deg, #fff9e6, #ffe0a3); border-color: #ffc447; box-shadow: 0 2px 0 #d9a34c, 0 3px 6px #ffc44733; }
-.victory-reward.yuanbao { background: linear-gradient(180deg, #f9f0ff, #e8d4ff); border-color: #c084ff; box-shadow: 0 2px 0 #a066d9, 0 3px 6px #c084ff33; }
-.victory-reward.yuanbao span { color: #9b4dff; }
-.victory-reward.enhance { background: linear-gradient(180deg, #f0f8ff, #cce6ff); border-color: #5a9eff; box-shadow: 0 2px 0 #4a8fe0, 0 3px 6px #5a9eff33; }
-.victory-reward.enhance span { color: #2e7bd9; }
-.victory-reward.star { background: linear-gradient(180deg, #fff5f0, #ffd4c7); border-color: #ff8a6b; box-shadow: 0 2px 0 #e06a4a, 0 3px 6px #ff8a6b33; }
-.victory-reward.star span { color: #d4552e; }
-.victory-reward.exp { background: linear-gradient(180deg, #f0fff5, #c7f0d4); border-color: #5ecf7a; box-shadow: 0 2px 0 #3db35a, 0 3px 6px #5ecf7a33; }
-.victory-reward.exp span { color: #2ca84e; }
+.victory-reward.equipment b { font-size: 9px; }
+.victory-reward.equipment span { font-size: 11px; color: #8f5e28; font-weight: 800; }
+.victory-reward .reward-frame.vf-1 { background-image: url("./public/assets/ui/frames/bg_icon1.png"); }
+.victory-reward .reward-frame.vf-2 { background-image: url("./public/assets/ui/frames/bg_icon2.png"); }
+.victory-reward .reward-frame.vf-3 { background-image: url("./public/assets/ui/frames/bg_icon3.png"); }
+.victory-reward .reward-frame.vf-4 { background-image: url("./public/assets/ui/frames/bg_icon4.png"); }
+.victory-reward .reward-frame.vf-5 { background-image: url("./public/assets/ui/frames/bg_icon5.png"); }
+.victory-reward .reward-frame.vf-6 { background-image: url("./public/assets/ui/frames/bg_icon6.png"); }
+.victory-reward .reward-frame.vf-7 { background-image: url("./public/assets/ui/frames/bg_icon7.png"); }
+.victory-reward .reward-frame.vf-8 { background-image: url("./public/assets/ui/frames/bg_icon8.png"); }
 .victory-note { margin: 5px 0 0; color: #8f84a3; font-size: 11px; line-height: 1.55; text-align: center; }
 .victory-note:first-of-type { margin-top: 8px; }
 

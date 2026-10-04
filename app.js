@@ -4403,19 +4403,44 @@ function showVictory() {
     ? `${isChallengeMode() ? "挑战" : "普通"}关卡宝箱解锁 ${pendingChests} 个，点击宝箱即可领取元宝。`
     : `本关三个宝箱的元宝奖励此前已领取。`;
   const modeLabel = isChallengeMode() ? "挑战" : "普通";
+  const VICTORY_FRAME_INDEX = { gold: 1, exp: 1, yuanbao: 6, enhance: 3, star: 7 };
+  const EQUIPMENT_QUALITY_FRAME = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 6, 6: 7, 7: 8 };
   const rewardRows = [
-    { key: "gold", label: "金币", icon: "icon-coin.png", amount: state.paidReward, cls: "gold" },
-    state.paidYuanbao > 0 ? { key: "yuanbao", label: "元宝", icon: "home/premium.png", amount: state.paidYuanbao, cls: "yuanbao" } : null,
-    { key: "enhance", label: "强化石", icon: "ui/forge/stone-enhance.png", amount: state.paidForgeEnhanceStone, cls: "enhance" },
-    { key: "star", label: "升星石", icon: "ui/forge/stone-star.png", amount: state.paidForgeStarStone, cls: "star" },
-    { key: "exp", label: "经验", icon: "hero.png", amount: formatPower(expGain), cls: "exp" },
+    { type: "gold", label: "金币", icon: "icon-coin.png", amount: formatPower(state.paidReward) },
+    state.paidYuanbao > 0 ? { type: "yuanbao", label: "元宝", icon: "home/premium.png", amount: state.paidYuanbao } : null,
+    { type: "enhance", label: "强化石", icon: "ui/forge/stone-enhance.png", amount: state.paidForgeEnhanceStone },
+    { type: "star", label: "升星石", icon: "ui/forge/stone-star.png", amount: state.paidForgeStarStone },
+    { type: "exp", label: "经验", icon: "hero.png", amount: formatPower(expGain) },
   ].filter(Boolean);
-  const rewardsHtml = rewardRows.map((r) => `
-    <div class="victory-reward ${r.cls}">
-      <img src="${ASSET}${r.icon}" alt="${r.label}" />
-      <b>${r.label}</b>
-      <span>${r.amount}</span>
-    </div>`).join("");
+  const dropItems = [];
+  if (challengeDrops.length) {
+    challengeDrops.forEach((item) => dropItems.push({ type: "equipment", item }));
+  } else if (equipmentDrop) {
+    dropItems.push({ type: "equipment", item: equipmentDrop });
+  }
+  if (adEquipmentDrop) dropItems.push({ type: "equipment", item: adEquipmentDrop });
+  const allRewards = [...rewardRows, ...dropItems];
+  const rewardsHtml = allRewards.map((r) => {
+    if (r.type === "equipment") {
+      const item = r.item;
+      const frameIdx = EQUIPMENT_QUALITY_FRAME[item.quality] || 1;
+      const icon = getEquipmentIcon(item.slot, item.quality, item.warrior);
+      const q = qualityInfo(item.quality);
+      return `
+        <div class="victory-reward equipment">
+          <div class="reward-frame vf-${frameIdx}"><img src="${ASSET}${icon}" alt="${equipmentName(item)}" /></div>
+          <b>${equipmentName(item)}</b>
+          <span style="color:${q.color}">${q.name}</span>
+        </div>`;
+    }
+    return `
+      <div class="victory-reward resource">
+        <div class="reward-frame vf-${VICTORY_FRAME_INDEX[r.type]}"><img src="${ASSET}${r.icon}" alt="${r.label}" /></div>
+        <b>${r.label}</b>
+        <span>${r.amount}</span>
+      </div>`;
+  }).join("");
+  const dropNote = dropItems.length ? "" : `<p class="victory-note">${dropText}</p>`;
   const body = `
     <div class="victory-subtitle">
       <b>已通关：${modeLabel}第 ${state.level} 关</b>
@@ -4424,7 +4449,7 @@ function showVictory() {
     <div class="victory-rewards">${rewardsHtml}</div>
     <p class="victory-note">${chestLine}</p>
     <p class="victory-note">${expLine}</p>
-    <p class="victory-note">${dropText}</p>`;
+    ${dropNote}`;
   const victoryActions = [
     { label: "下一关", onClick: () => { flushVictoryChests(); nextLevel(); } },
   ];
