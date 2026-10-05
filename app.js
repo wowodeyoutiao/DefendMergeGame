@@ -3570,6 +3570,7 @@ function startWave() {
     fullReward: getFullLevelReward(),
     profile: getWaveProfile(waveLevel, state.round),
     lanePattern: state.round % 3 === 0 ? "pressure" : state.round % 2 === 0 ? "split" : "spread",
+    pressureLane: Math.floor(Math.random() * BOARD_SIZE),
   };
   tipText.textContent = "出怪期开始。武将等级越高，攻击力、攻击速度与有效范围越强。";
   render();
@@ -3643,7 +3644,7 @@ function spawnMonster() {
   const previous = state.monsters[state.monsters.length - 1];
   let c = Math.floor(Math.random() * BOARD_SIZE);
   if (isBoss && Number.isInteger(state.bossLane) && !isChallengeMode()) c = state.bossLane;
-  else if (!bossWave && state.waveConfig.lanePattern === "pressure" && previous) c = previous.c;
+  else if (!bossWave && state.waveConfig.lanePattern === "pressure") c = Math.random() < 0.45 ? state.waveConfig.pressureLane : Math.floor(Math.random() * BOARD_SIZE);
   else if (!bossWave && state.waveConfig.lanePattern === "split" && previous) c = (previous.c + 2 + (state.spawned % 2)) % BOARD_SIZE;
   const maxHp = Math.round((isBoss ? state.waveConfig.hp * BOSS_CONFIG.hpMultiplier : state.waveConfig.hp) * profile.hp);
   const monsterLevel = getRunLevel();
