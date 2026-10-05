@@ -614,6 +614,14 @@ button {
   background: linear-gradient(180deg, rgba(255, 231, 104, 0.22), transparent 80%);
   border-left: 1px dashed rgba(255, 245, 176, 0.32);
 }
+.lane.lane-blessed {
+  background: linear-gradient(180deg, rgba(255, 215, 120, 0.5), rgba(255, 215, 120, 0.14) 80%);
+  border-left: 1px dashed rgba(255, 222, 142, 0.65);
+}
+.lane.lane-hazard {
+  background: linear-gradient(180deg, rgba(220, 90, 60, 0.42), rgba(220, 90, 60, 0.1) 80%);
+  border-left: 1px dashed rgba(220, 90, 60, 0.6);
+}
 
 .monster-layer {
   z-index: 4;
@@ -724,6 +732,25 @@ button {
   font-size: 8px;
   font-weight: 700;
   text-shadow: 0 1px 2px rgba(17, 47, 60, 0.9);
+}
+
+.monster-trait {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  z-index: 3;
 }
 
 .merge-fx,

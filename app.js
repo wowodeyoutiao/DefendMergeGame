@@ -472,6 +472,42 @@ const MONSTER_PROFILES = {
   brute: { move: 0.78, hp: 1.7, reward: 28, dodge: 100, resilience: 0 },
   elite: { move: 0.92, hp: 1.35, reward: 34, dodge: 100, resilience: 0 },
 };
+
+// 怪物特性标签：直接贴三武将攻击轴（sword=同列 / fan=同行 / rock=半径），制造「本关该养谁」的抉择。
+// 减伤型（columnArmor/rowArmor）在 attackMonsters 按 piece.type 轴比对；evasion/ironwall 在 spawnMonster 叠加 dodge/resilience；
+// swarm/giant 在 spawnMonster 按系数调 hp/moveSpeed。配色用于战斗中特性徽章（零美术资源，纯 CSS 文本）。
+const MONSTER_TRAITS = {
+  columnArmor: { id: "columnArmor", badge: "列", label: "列甲", color: "#3aa0ff", counter: "sword",
+    desc: "仅被同列武将（男法师）全额伤害，其余攻击 −60%。", resistAxis: "col", resistPct: 0.6 },
+  rowArmor: { id: "rowArmor", badge: "行", label: "行甲", color: "#ff7a45", counter: "fan",
+    desc: "仅被同行武将（男战士）全额伤害，其余攻击 −60%。", resistAxis: "row", resistPct: 0.6 },
+  swarm: { id: "swarm", badge: "群", label: "群涌", color: "#9b59ff", counter: "rock",
+    desc: "血薄、数量多、移动快，范围武将（女祭司）清场最佳。", hpMul: 0.6, moveMul: 1.25 },
+  giant: { id: "giant", badge: "巨", label: "巨躯", color: "#d4503a", counter: "sword",
+    desc: "单体超高血、慢速，列爆发武将（男法师）单点突破最佳。", hpMul: 1.6, moveMul: 0.7 },
+  evasion: { id: "evasion", badge: "闪", label: "闪避", color: "#8a8f99", counter: "rock",
+    desc: "高闪避，薄行带武将易打空，需精准或范围。", extraDodge: 40 },
+  ironwall: { id: "ironwall", badge: "壁", label: "铁壁", color: "#6b7280", counter: null,
+    desc: "高韧性，需高 tier 武将或破甲卡突破。", extraResilience: 40 },
+  colTutorial: { id: "colTutorial", badge: "列", label: "列甲", color: "#3aa0ff", counter: "sword",
+    desc: "教学关：认得「列」徽章即代表适合同列武将（男法师）。本关仅轻微减伤，正式关卡减伤更强。", resistAxis: "col", resistPct: 0.2 },
+  rowTutorial: { id: "rowTutorial", badge: "行", label: "行甲", color: "#ff7a45", counter: "fan",
+    desc: "教学关：认得「行」徽章即代表适合同行武将（男战士）。本关仅轻微减伤，正式关卡减伤更强。", resistAxis: "row", resistPct: 0.2 },
+};
+
+// 统一差异化数据层：刷怪 / 棋盘 / 卡牌都从它读。null = 暖场关（无特性）。
+// monsterTrait: 本关小怪统一携带的特性（Boss 不带）；board: 棋盘修正；cardBias: 肉鸽卡牌加权投放权重。
+const LEVEL_MODIFIERS = {
+  1: { monsterTrait: "colTutorial", board: null, cardBias: { columnMaster: 2 } },
+  2: { monsterTrait: "rowTutorial", board: null, cardBias: { rowMaster: 2 } },
+  3: { monsterTrait: "columnArmor", board: null, cardBias: { columnMaster: 3, warCry: 2, crossfire: 2 } },
+  4: { monsterTrait: "rowArmor", board: null, cardBias: { rowMaster: 3, warCry: 2 } },
+  5: { monsterTrait: "swarm", board: { hazardColumn: 2 }, cardBias: { areaMaster: 3, frost: 3, thunder: 2 } },
+  6: { monsterTrait: "giant", board: { blessedColumn: 3 }, cardBias: { columnMaster: 3, execution: 2, thunder: 2 } },
+  7: { monsterTrait: "evasion", board: null, cardBias: { areaMaster: 2, rapidFire: 2, crossfire: 1 } },
+  8: { monsterTrait: "ironwall", board: null, cardBias: { warCry: 2, execution: 3, columnMaster: 1 } },
+};
+
 // DEPRECATED · 未生效，勿调（波次出怪实际读 CHAPTERS[].roster，见 getWaveProfile）
 const LEVEL_WAVE_PROFILES = [
   ["normal", "normal", "normal"],
@@ -581,6 +617,15 @@ function getLevelHpScale(level) {
     1 + Math.max(0, currentLevel - LEVEL_SCALING.lateHpStart) * LEVEL_SCALING.lateHpPerLevel,
   );
   return LEVEL_SCALING.hpBase * Math.pow(currentLevel, LEVEL_SCALING.hpPower) * lateMultiplier;
+}
+
+// 前期暖场系数：前几关降低怪数与血量，让玩家先用初始阵容建立正反馈，
+// 第 4 关起回归满难度（与后期 lateHp 机制解耦，只作用于关卡早期）。
+function getEarlyEase(level) {
+  if (level <= 1) return 0.55;
+  if (level === 2) return 0.7;
+  if (level === 3) return 0.85;
+  return 1;
 }
 
 function getChapterIndex(level) {
@@ -819,6 +864,33 @@ const CARD_DEFINITIONS = [
     title: "破阵斩首",
     description: "对生命值高于 50% 的怪物造成 35% 额外伤害。",
   },
+  {
+    id: "columnMaster",
+    mark: "列",
+    tag: "流派专精",
+    title: "列阵精通",
+    icon: "buff-crossfire.png",
+    description: "男法师伤害 +30%，但男战士伤害 −15%。",
+    specialize: { buff: "sword", buffMul: 1.3, nerf: "fan", nerfMul: 0.85 },
+  },
+  {
+    id: "rowMaster",
+    mark: "行",
+    tag: "流派专精",
+    title: "横扫精通",
+    icon: "buff-war-cry.png",
+    description: "男战士伤害 +30%，但男法师伤害 −15%。",
+    specialize: { buff: "fan", buffMul: 1.3, nerf: "sword", nerfMul: 0.85 },
+  },
+  {
+    id: "areaMaster",
+    mark: "围",
+    tag: "流派专精",
+    title: "范围精通",
+    icon: "buff-burst.png",
+    description: "女祭司伤害 +30%，其余武将 −10%。",
+    specialize: { buff: "rock", buffMul: 1.3, nerf: "sword", nerfMul: 0.9, nerf2: "fan", nerf2Mul: 0.9 },
+  },
 ];
 
 const state = {
@@ -858,6 +930,10 @@ const state = {
   attackSpeedMultiplier: 1,
   attackMode: "standard",
   executionReady: false,
+  levelModifier: null,
+  warriorDamageMult: { sword: 1, fan: 1, rock: 1 },
+  briefingShownForLevel: 0,
+  seenTraits: {},
   stamina: STARTING_STAMINA,
   maxStamina: MAX_STAMINA,
   staminaLastRegenAt: Date.now(),
@@ -1999,6 +2075,14 @@ function resolveWarriorAttack(stats, monster, baseDamage, random = Math.random) 
   return { hit: true, critical, damage: baseDamage * (critical ? COMBAT_RATING_CONFIG.criticalDamageMultiplier : 1) };
 }
 
+// 怪物特性对伤害的减伤：列甲/行甲仅被对应轴武将全额伤害，其余 −resistPct。
+function traitDamageMultiplier(monster, warriorType) {
+  const trait = monster.trait && MONSTER_TRAITS[monster.trait];
+  if (!trait || !trait.resistAxis) return 1;
+  const onAxis = trait.resistAxis === "col" ? warriorType === "sword" : warriorType === "fan";
+  return onAxis ? 1 : (1 - (trait.resistPct || 0.6));
+}
+
 function getEquipmentSetStatus(type) {
   const quality = state.warriorQuality[type] || 1;
   const equipment = warriorEquipmentFor(type);
@@ -2590,6 +2674,37 @@ function startLevelFromHome() {
     state.levelStaminaSpent = true;
   }
   showBattle();
+  showLevelBriefing();
+}
+
+// 关卡预告：进波前显式告诉玩家本关特性 + 推荐武将（差异化感知的主入口）。每关仅弹一次。
+function showLevelBriefing() {
+  const modifier = LEVEL_MODIFIERS[state.level] || null;
+  state.levelModifier = modifier;
+  if (state.briefingShownForLevel === state.level) return;
+  state.briefingShownForLevel = state.level;
+  if (!modifier) {
+    if (state.level <= 2) {
+      showModal("关卡预告", `第 ${state.level} 关为暖场关，无特殊机制。\n熟悉合成与三武将切换即可。`, [
+        { label: "开始守城", onClick: () => {} },
+      ]);
+      modalBody.style.whiteSpace = "pre-line";
+    }
+    return;
+  }
+  const trait = modifier.monsterTrait ? MONSTER_TRAITS[modifier.monsterTrait] : null;
+  const counterName = trait && trait.counter ? ({ sword: "男法师（同列）", fan: "男战士（同行）", rock: "女祭司（范围）" })[trait.counter] : "高 tier 武将 / 破甲卡";
+  const boardText = modifier.board ? Object.entries(modifier.board).map(([k, v]) => {
+    if (k === "blessedColumn") return `增益列（第 ${v + 1} 列，武将攻击距离 +1）`;
+    if (k === "hazardColumn") return `险恶列（第 ${v + 1} 列，怪物移动更快）`;
+    return "";
+  }).filter(Boolean).join("、") : "无";
+  showModal(
+    `关卡预告 · 第 ${state.level} 关`,
+    `本关特性【${trait ? trait.label : "无"}】：${trait ? trait.desc : ""}\n棋盘：${boardText}\n推荐：重点培养 ${counterName}${modifier.board && modifier.board.blessedColumn != null ? "，并把对应武将放在增益列上" : ""}。`,
+    [{ label: "开始守城", onClick: () => {} }],
+  );
+  modalBody.style.whiteSpace = "pre-line";
 }
 
 function showHomeFeature(feature) {
@@ -2723,6 +2838,21 @@ function renderMonsters() {
     el.classList.toggle("monster-walking", actionName === "walk");
     el.classList.toggle("monster-attacking", actionName === "attack");
     ["normal", "runner", "brute", "elite"].forEach((variant) => el.classList.toggle(`monster-${variant}`, monster.variant === variant));
+    let badge = el.querySelector(".monster-trait");
+    if (monster.trait && MONSTER_TRAITS[monster.trait]) {
+      const t = MONSTER_TRAITS[monster.trait];
+      if (!badge) {
+        badge = document.createElement("div");
+        badge.className = "monster-trait";
+        el.appendChild(badge);
+      }
+      badge.textContent = t.badge;
+      badge.style.background = t.color;
+      badge.title = t.label;
+      if (!state.seenTraits[monster.trait]) state.seenTraits[monster.trait] = true;
+    } else if (badge) {
+      badge.remove();
+    }
     el.style.setProperty("--monster-move-duration", `${MONSTER_MOVE_INTERVAL * 1000 / state.speed}ms`);
     const image = el.querySelector("img");
     const imageSrc = `${ASSET}${monster.actions?.[actionName] || monster.icon}`;
@@ -2774,9 +2904,12 @@ function renderMonsters() {
 
 function renderLanes() {
   laneLayer.innerHTML = "";
+  const board = state.levelModifier && state.levelModifier.board;
   for (let i = 0; i < 6; i += 1) {
     const lane = document.createElement("div");
     lane.className = "lane";
+    if (board && board.blessedColumn === i) lane.classList.add("lane-blessed");
+    if (board && board.hazardColumn === i) lane.classList.add("lane-hazard");
     laneLayer.appendChild(lane);
   }
 }
@@ -3546,7 +3679,9 @@ function startWave() {
   const waveLevel = getRunLevel();
   const beastRun = isBeastRaid();
   // 关卡强度：总怪数由关卡决定，再按波次形状分摊；血量同理按整关均值归一化。
-  // 关卡 1 逐波仍为 9/11/13 只 · 86/100/114 血，与旧公式完全一致（前期手感零变化）。
+  // 前 3 关乘 getEarlyEase 暖场系数（第 1 关 ≈ 0.55），让初始阵容不升档也能守住第一波，
+  // 第 4 关起 earlyEase=1，难度由 lateHp 机制渐进（前 20 关保持新手体验）。
+  const earlyEase = getEarlyEase(waveLevel);
   const monsterTotal = LEVEL_SCALING.monsterTotalBase
     * Math.pow(waveLevel, LEVEL_SCALING.monsterTotalPower);
   // 军报固定 10 波，若按自身波数分摊会让每波怪数低于主线；故统一按主线同关波数分摊，
@@ -3556,11 +3691,12 @@ function startWave() {
     / (beastRun ? getRoundsForLevel(waveLevel) : state.maxRounds);
   const waveCountShape = 0.85 + 0.3 * (state.round - 1) / Math.max(1, state.maxRounds - 1);
   const count = Math.max(2, Math.round(perWaveBase * waveCountShape
-    * (beastRun ? ARMY_REPORT_CONFIG.monsterTotalMultiplier : 1)));
+    * (beastRun ? ARMY_REPORT_CONFIG.monsterTotalMultiplier : 1) * earlyEase));
   const waveHpShape = (36 + state.round * 7) / (36 + 7 * (state.maxRounds + 1) / 2);
   const hp = Math.round(
     getLevelHpScale(waveLevel) * waveHpShape
-    * (beastRun ? ARMY_REPORT_CONFIG.difficultyMultiplier : challengeRun ? CHALLENGE_MODE_CONFIG.difficultyMultiplier : 1),
+    * (beastRun ? ARMY_REPORT_CONFIG.difficultyMultiplier : challengeRun ? CHALLENGE_MODE_CONFIG.difficultyMultiplier : 1)
+    * earlyEase,
   );
   state.waveConfig = {
     count,
@@ -3641,12 +3777,24 @@ function spawnMonster() {
   const isBoss = bossWave && state.spawned >= state.waveConfig.count - bossCount;
   const profileName = isBoss ? "brute" : state.waveConfig.profile;
   const profile = MONSTER_PROFILES[profileName];
+  const levelModifier = state.levelModifier;
+  const trait = (!isBoss && levelModifier && levelModifier.monsterTrait) ? levelModifier.monsterTrait : null;
+  const traitDef = trait ? MONSTER_TRAITS[trait] : null;
+  let hpMul = 1, moveMul = 1, extraDodge = 0, extraResilience = 0;
+  if (traitDef) {
+    if (traitDef.hpMul) hpMul *= traitDef.hpMul;
+    if (traitDef.moveMul) moveMul *= traitDef.moveMul;
+    if (traitDef.extraDodge) extraDodge += traitDef.extraDodge;
+    if (traitDef.extraResilience) extraResilience += traitDef.extraResilience;
+  }
   const previous = state.monsters[state.monsters.length - 1];
   let c = Math.floor(Math.random() * BOARD_SIZE);
   if (isBoss && Number.isInteger(state.bossLane) && !isChallengeMode()) c = state.bossLane;
   else if (!bossWave && state.waveConfig.lanePattern === "pressure") c = Math.random() < 0.45 ? state.waveConfig.pressureLane : Math.floor(Math.random() * BOARD_SIZE);
   else if (!bossWave && state.waveConfig.lanePattern === "split" && previous) c = (previous.c + 2 + (state.spawned % 2)) % BOARD_SIZE;
-  const maxHp = Math.round((isBoss ? state.waveConfig.hp * BOSS_CONFIG.hpMultiplier : state.waveConfig.hp) * profile.hp);
+  const hazardColumn = levelModifier && levelModifier.board && levelModifier.board.hazardColumn;
+  if (hazardColumn === c) moveMul *= 1.3;
+  const maxHp = Math.round((isBoss ? state.waveConfig.hp * BOSS_CONFIG.hpMultiplier : state.waveConfig.hp) * profile.hp * hpMul);
   const monsterLevel = getRunLevel();
   const actions = isBoss ? getBossActions(monsterLevel) : getMonsterActionsForType(monsterLevel, profileName);
   state.monsters.push({
@@ -3660,9 +3808,10 @@ function spawnMonster() {
     triggeredDevices: [],
     isBoss,
     variant: profileName,
-    moveSpeed: profile.move,
-    dodge: isBoss ? BOSS_COMBAT_RATINGS.dodge : profile.dodge,
-    resilience: isBoss ? BOSS_COMBAT_RATINGS.resilience : profile.resilience,
+    trait,
+    moveSpeed: profile.move * moveMul,
+    dodge: (isBoss ? BOSS_COMBAT_RATINGS.dodge : profile.dodge) + extraDodge,
+    resilience: (isBoss ? BOSS_COMBAT_RATINGS.resilience : profile.resilience) + extraResilience,
     icon: actions.stand,
     actions,
     action: "stand",
@@ -3718,9 +3867,12 @@ function attackMonsters(dt) {
     const skillProfile = getWarriorSkillProfile(piece.type);
     const dps = (type.dps * Math.pow(1.8, level - 1) + equipmentBonuses.attack)
       * state.damageMultiplier
+      * (state.warriorDamageMult[piece.type] || 1)
       * (state.heroRallyRemaining > 0 ? 1.5 : 1)
       * (state.heroDamageRemaining > 0 ? 1.4 : 1);
-    const attackRange = piece.type === "sword" ? MAGE_RANGE_BY_TIER[level] : ATTACK_RANGE_BY_TIER[level];
+    const blessedColumn = state.levelModifier && state.levelModifier.board && state.levelModifier.board.blessedColumn;
+    const attackRange = (piece.type === "sword" ? MAGE_RANGE_BY_TIER[level] : ATTACK_RANGE_BY_TIER[level])
+      + (blessedColumn === unit.c ? 1 : 0);
     const wideMode = state.attackMode === "wide";
     const targets = state.monsters.filter((monster) => {
       if (monster.hp <= 0) return false;
@@ -3753,7 +3905,7 @@ function attackMonsters(dt) {
         damageBurstAtMonster(monster, "闪避", { miss: true });
         return;
       }
-      const finalDamage = result.damage * multiTargetBonus;
+      const finalDamage = result.damage * multiTargetBonus * traitDamageMultiplier(monster, piece.type);
       monster.hp -= finalDamage;
       if (rootTriggered) monster.rootRemaining = Math.max(monster.rootRemaining || 0, skillProfile.multiTargetRoot);
       damageBurstAtMonster(monster, `-${Math.round(finalDamage)}`, { critical: result.critical, emphasized: finalDamage >= 24 });
@@ -4239,6 +4391,11 @@ function applyCard(card) {
   if (card.id === "execution") {
     state.executionReady = true;
   }
+  if (card.specialize) {
+    state.warriorDamageMult[card.specialize.buff] *= card.specialize.buffMul;
+    state.warriorDamageMult[card.specialize.nerf] *= card.specialize.nerfMul;
+    if (card.specialize.nerf2) state.warriorDamageMult[card.specialize.nerf2] *= card.specialize.nerf2Mul;
+  }
 }
 
 function chooseCard(card) {
@@ -4259,6 +4416,29 @@ function chooseCard(card) {
   runLoop();
 }
 
+// 肉鸽卡牌加权投放：按本关 LEVEL_MODIFIERS.cardBias 加权抽 count 张不重复卡牌。
+// 通用卡默认权重 1；targeted 关把对应 counter 卡权重拉高 → 三选一变成「面对这波威胁，你要哪种 counter-build」。
+function pickWeightedCards(count) {
+  const bias = (state.levelModifier && state.levelModifier.cardBias) || null;
+  const available = CARD_DEFINITIONS.map((card) => ({
+    card,
+    weight: (bias && bias[card.id] != null) ? bias[card.id] : 1,
+  }));
+  const chosen = [];
+  while (chosen.length < count && available.length) {
+    const total = available.reduce((s, e) => s + e.weight, 0);
+    let r = Math.random() * total;
+    let idx = 0;
+    for (let i = 0; i < available.length; i += 1) {
+      r -= available[i].weight;
+      if (r <= 0) { idx = i; break; }
+    }
+    chosen.push(available[idx].card);
+    available.splice(idx, 1);
+  }
+  return chosen;
+}
+
 function openCardChoice() {
   if (state.cardsOffered >= CARD_KILL_STEPS.length) return;
   state.cardQueued = false;
@@ -4270,7 +4450,7 @@ function openCardChoice() {
   modalCard.classList.remove("growth-modal", "equipment-modal", "bag-modal", "bag-compact");
   modalCard.classList.add("card-draft");
   renderModalArtwork("命运三选一");
-  const choices = shuffled(CARD_DEFINITIONS).slice(0, 3);
+  const choices = pickWeightedCards(3);
   modalTitle.textContent = "命运三选一";
   modalBody.textContent = `击杀 ${state.totalKills} 个怪物，选择一张卡牌加入本局。`;
   modalActions.className = "modal-actions card-options";
@@ -4282,7 +4462,7 @@ function openCardChoice() {
     button.dataset.cardStyle = String(index + 1);
     button.setAttribute("aria-label", `${card.title}：${card.description}`);
     button.innerHTML = `
-      <span class="card-mark"><img src="./public/assets/ui/theme/buff-${card.id}.png" alt="" /></span>
+      <span class="card-mark"><img src="./public/assets/ui/theme/${card.icon || `buff-${card.id}.png`}" alt="" /></span>
       <span class="card-copy">
         <strong>${card.title}</strong>
         <small>${card.tag}</small>
@@ -6412,6 +6592,8 @@ function resetGame(keepLevel = true, options = {}) {
   state.heroSkillQueue = shuffled(getUnlockedHeroSkills().map((skill) => skill.id));
   state.heroRallyRemaining = 0;
   state.heroDamageRemaining = 0;
+  state.warriorDamageMult = { sword: 1, fan: 1, rock: 1 };
+  state.seenTraits = {};
   state.heroSpeedRemaining = 0;
   HERO_SKILLS.forEach((skill) => { state.heroSkillCooldowns[skill.id] = 0; });
   state.damageMultiplier = 1;
