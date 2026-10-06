@@ -1016,6 +1016,7 @@ const boardEl = document.getElementById("board");
 const monsterLayer = document.getElementById("monsterLayer");
 const laneLayer = document.getElementById("laneLayer");
 const fxLayer = document.getElementById("fxLayer");
+const rangeLayer = document.getElementById("rangeLayer");
 const stepsText = document.getElementById("stepsText");
 const goldText = document.getElementById("goldText");
 const yuanbaoText = document.getElementById("yuanbaoText");
@@ -3439,7 +3440,7 @@ function getFxPosition(index) {
 function rangeFlashAt(index, type, tier) {
   if (!WARRIORS.some(({ type: warriorType }) => warriorType === type)) return;
   const boardRect = boardEl.getBoundingClientRect();
-  const parentRect = fxLayer.getBoundingClientRect();
+  const parentRect = rangeLayer.getBoundingClientRect();
   const cell = boardRect.width / BOARD_SIZE || 56;
   const { c, r } = indexToPos(index);
   const boardLeft = boardRect.left - parentRect.left;
@@ -3474,7 +3475,7 @@ function rangeFlashAt(index, type, tier) {
     flash.style.height = `${cell}px`;
   }
 
-  fxLayer.appendChild(flash);
+  rangeLayer.appendChild(flash);
   setTimeout(() => flash.remove(), 320);
 }
 
@@ -4649,10 +4650,6 @@ function showVictory() {
   if (state.heroLevel >= HERO_MAX_LEVEL) expLine = `主角已满级（Lv.${HERO_MAX_LEVEL}），本关不再获得经验。`;
   else if (leveled > 0) expLine = `获得经验 ${formatPower(expGain)}，主角升至 ${state.heroLevel} 级（防线血量上限 ${state.maxHp}）！`;
   else expLine = `获得经验 ${formatPower(expGain)}。`;
-  const pendingChests = chestResult.pending.length;
-  const chestLine = pendingChests > 0
-    ? `${isChallengeMode() ? "挑战" : "普通"}关卡宝箱解锁 ${pendingChests} 个，点击宝箱即可领取元宝。`
-    : `本关三个宝箱的元宝奖励此前已领取。`;
   const modeLabel = isChallengeMode() ? "挑战" : "普通";
   const VICTORY_FRAME_INDEX = { gold: 1, exp: 1, yuanbao: 6, enhance: 3, star: 7 };
   const EQUIPMENT_QUALITY_FRAME = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 6, 6: 7, 7: 8 };
@@ -4698,7 +4695,6 @@ function showVictory() {
       <span>恭喜挑战获得</span>
     </div>
     <div class="victory-rewards">${rewardsHtml}</div>
-    <p class="victory-note">${chestLine}</p>
     <p class="victory-note">${expLine}</p>
     ${dropNote}`;
   const victoryActions = [

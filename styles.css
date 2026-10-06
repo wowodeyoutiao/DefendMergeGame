@@ -566,6 +566,7 @@ button {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
+.range-layer,
 .lane-layer,
 .monster-layer,
 .fx-layer {
@@ -621,6 +622,11 @@ button {
 .lane.lane-hazard {
   background: linear-gradient(180deg, rgba(220, 90, 60, 0.42), rgba(220, 90, 60, 0.1) 80%);
   border-left: 1px dashed rgba(220, 90, 60, 0.6);
+}
+
+/* 攻击范围闪光：必须是「地面光效」，压在怪物层(z4)之下，否则蓝色圆形会像遮罩盖住怪物与飘血数字 */
+.range-layer {
+  z-index: 2;
 }
 
 .monster-layer {
@@ -2383,12 +2389,12 @@ button {
 /* 战斗内顶部 toast：移动端（侧栏隐藏）替代 tipText 的反馈通道（F3） */
 .battle-toast {
   position: absolute;
-  top: 48px;
+  bottom: 78px;          /* 移出棋盘区：落在战斗屏底部、公告条上方，不再遮挡怪物与飘血数字 */
   left: 50%;
-  transform: translateX(-50%) translateY(-8px);
+  transform: translateX(-50%) translateY(8px);
   max-width: 90%;
-  padding: 7px 14px;
-  background: rgba(18, 26, 40, 0.92);
+  padding: 6px 12px;
+  background: rgba(18, 26, 40, 0.86);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 999px;

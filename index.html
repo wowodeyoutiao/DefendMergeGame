@@ -172,7 +172,6 @@
             <span id="roundText">第 1/3 波</span>
           </div>
           <button type="button" class="briefing-fab" id="briefingBtn" aria-label="查看本关特性与攻略" title="查看本关特性与攻略">?</button>
-          <div class="battle-toast" id="battleToast" aria-live="polite"></div>
 
           <div class="board-wrap">
             <div class="approach-zone" aria-hidden="true">
@@ -181,6 +180,7 @@
                 <b>BOSS</b>
               </div>
             </div>
+            <div class="range-layer" id="rangeLayer" aria-hidden="true"></div>
             <div class="lane-layer" id="laneLayer" aria-hidden="true"></div>
             <div class="monster-layer" id="monsterLayer" aria-hidden="true"></div>
             <div class="fx-layer" id="fxLayer" aria-hidden="true"></div>
@@ -211,6 +211,8 @@
             </div>
           </div>
         </section>
+
+        <div class="battle-toast" id="battleToast" aria-live="polite"></div>
 
         <div class="army-marquee" id="armyMarqueeBattle" role="status" aria-live="polite">
           <div class="army-marquee-track">
