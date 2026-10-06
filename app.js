@@ -4720,6 +4720,7 @@ function showVictory() {
   victoryActions.push({ label: "局外养成", secondary: true, onClick: () => { flushVictoryChests(); showGrowthModal(showVictory); } });
   victoryActions.push({ label: "返回主界面", secondary: true, onClick: () => { flushVictoryChests(); completeLevelToHome(); } });
   showModal("胜利结算", body, victoryActions);
+  modalBody.innerHTML = body;
   modalCard.classList.add("victory-modal");
   victoryChestKey = String(state.level);
   victoryChestPending = chestResult.pending.slice();
