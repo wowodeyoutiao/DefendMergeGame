@@ -2717,36 +2717,53 @@ function showLevelBriefing(force) {
   }
   state.briefingShownForLevel = state.level;
   renderLanes();             // 同步增益列/险恶列染色（F2）
-  const FORMS = "三武将攻击形态：男法师=同列直线 / 男战士=同行直线 / 女祭司=范围。";
+  const FORMS = [
+    { name: "男法师", form: "同列直线" },
+    { name: "男战士", form: "同行直线" },
+    { name: "女祭司", form: "范围" },
+  ];
+  const formsHTML = `<div class="briefing-forms">${FORMS.map((f) => `<div class="briefing-form"><b>${f.name}</b>${f.form}</div>`).join("")}</div>`;
+  let html;
   if (!modifier) {
-    if (state.level <= 2) {
-      showModal("关卡预告", `第 ${state.level} 关为暖场关，无特殊机制。\n熟悉合成与三武将切换即可。\n${FORMS}`, [
-        { label: "开始守城", onClick: () => {} },
-      ]);
-      modalBody.style.whiteSpace = "pre-line";
-    } else {
-      showModal(`关卡预告 · 第 ${state.level} 关`, `本关为常规关，无特殊怪物机制。\n${FORMS}`, [
-        { label: "开始守城", onClick: () => {} },
-      ]);
-      modalBody.style.whiteSpace = "pre-line";
-    }
-    return;
+    const note = state.level <= 2
+      ? "本关为暖场关，无特殊机制。熟悉合成与三武将切换即可。"
+      : "本关为常规关，无特殊怪物机制。";
+    html = `<div class="briefing-body"><div class="briefing-note">${note}</div>${formsHTML}</div>`;
+  } else {
+    const trait = MONSTER_TRAITS[modifier.monsterTrait] || null;
+    const tone = trait ? trait.color : "#e0863a";
+    const badge = trait ? trait.badge : "★";
+    const tname = trait ? trait.label : "无";
+    const tdesc = trait ? trait.desc : "";
+    const counterName = trait && trait.counter
+      ? ({ sword: "男法师（同列）", fan: "男战士（同行）", rock: "女祭司（范围）" })[trait.counter]
+      : "高 tier 武将 / 列阵或破阵（单点爆发）";
+    const boardItems = modifier.board
+      ? Object.entries(modifier.board).map(([k, v]) => {
+        if (k === "blessedColumn") return `增益列（第 ${v + 1} 列，武将攻击距离 +1）`;
+        if (k === "hazardColumn") return `险恶列（第 ${v + 1} 列，怪物移动更快）`;
+        return "";
+      }).filter(Boolean)
+      : [];
+    const boardHas = boardItems.length > 0;
+    const boardText = boardHas ? boardItems.join("／") : "无（标准布局）";
+    const blessedHint = modifier.board && modifier.board.blessedColumn != null
+      ? "，并把对应武将放在增益列（金色高亮列）上即可获得 +1 射程" : "";
+    html = `<div class="briefing-body">
+      <div class="briefing-trait">
+        <span class="briefing-badge" style="--tone:${tone}">${badge}</span>
+        <div class="briefing-trait-text">
+          <div class="briefing-trait-name" style="color:${tone}">${tname}</div>
+          <div class="briefing-trait-desc">${tdesc}</div>
+        </div>
+      </div>
+      <div class="briefing-section"><span class="briefing-label">棋盘</span><span class="briefing-value">${boardText}${boardHas ? "（棋盘已高亮）" : ""}</span></div>
+      <div class="briefing-section"><span class="briefing-label">推荐</span><span class="briefing-value">重点培养 <b>${counterName}</b>${blessedHint}。</span></div>
+      ${formsHTML}
+    </div>`;
   }
-  const trait = modifier.monsterTrait ? MONSTER_TRAITS[modifier.monsterTrait] : null;
-  const counterName = trait && trait.counter ? ({ sword: "男法师（同列）", fan: "男战士（同行）", rock: "女祭司（范围）" })[trait.counter] : "高 tier 武将 / 列阵或破阵（单点爆发）";
-  const boardText = modifier.board ? Object.entries(modifier.board).map(([k, v]) => {
-    if (k === "blessedColumn") return `增益列（第 ${v + 1} 列，武将攻击距离 +1，棋盘已高亮）`;
-    if (k === "hazardColumn") return `险恶列（第 ${v + 1} 列，怪物移动更快，棋盘已高亮）`;
-    return "";
-  }).filter(Boolean).join("、") : "无";
-  const blessedHint = modifier.board && modifier.board.blessedColumn != null
-    ? "，并把对应武将放在增益列（金色高亮列）上即可获得 +1 射程" : "";
-  showModal(
-    `关卡预告 · 第 ${state.level} 关`,
-    `本关特性【${trait ? trait.label : "无"}】：${trait ? trait.desc : ""}\n棋盘：${boardText}\n推荐：重点培养 ${counterName}${blessedHint}。\n${FORMS}`,
-    [{ label: "开始守城", onClick: () => {} }],
-  );
-  modalBody.style.whiteSpace = "pre-line";
+  showModal(`关卡预告 · 第 ${state.level} 关`, "", [{ label: "开始守城", onClick: () => {} }]);
+  modalBody.innerHTML = html;
 }
 
 function showHomeFeature(feature) {
