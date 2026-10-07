@@ -497,8 +497,8 @@ const MONSTER_TRAITS = {
 
 // 统一差异化数据层：刷怪 / 棋盘 / 卡牌都从它读。
 // monsterTraits: 本关小怪统一携带的特性数组（Boss 不带）；board: 棋盘修正；cardBias: 肉鸽卡牌加权投放权重。
-// 普通关：单特性（+可选棋盘修正），1-8 显式、9 起走 NORMAL_CYCLE 循环覆盖「所有关卡」；
-// 挑战关：在普通关基础上叠加第二特性 + 双棋盘修正（更丰富、更难），由 getStageModifier 按模式分流。
+// 普通关：单特性或复合特性（+可选棋盘修正），1-8 显式、9 起走 NORMAL_CYCLE 循环覆盖「所有关卡」；
+// 挑战关：在普通关基础上叠加第二特性 + 双棋盘修正（列位置随关号轮换，部分关只叠特性不叠棋盘），由 getStageModifier 按模式分流。
 
 // 各特性对应的肉鸽卡牌加权（避免与 LEVEL_MODIFIERS 重复书写，集中维护）
 const TRAIT_CARD_BIAS = {
@@ -524,20 +524,25 @@ const LEVEL_MODIFIERS = {
   8: { monsterTraits: ["ironwall"], board: null, cardBias: { "war-cry": 2, execution: 3, columnMaster: 1 } },
 };
 
-// 9 关起：12 步循环，保证「每一关」都有特性与清晰策略焦点（无限关卡靠循环覆盖）
+// 9 关起：16 步循环覆盖「所有关卡」，每 4 关插入一个复合关（双特性 + 棋盘修正）增加策略起伏。
+// 复合关特性组合均保证「最多一个减伤轴」，避免 col+row 双削导致无解（见 traitDamageMultiplier 逐轴相乘）。
 const NORMAL_CYCLE = [
   { monsterTraits: ["columnArmor"], board: null },
   { monsterTraits: ["rowArmor"], board: null },
   { monsterTraits: ["swarm"], board: { hazardColumn: 2 } },
+  { monsterTraits: ["columnArmor", "swarm"], board: { blessedColumn: 3 } },   // 复合：法师占增益列清群涌
   { monsterTraits: ["giant"], board: { blessedColumn: 3 } },
   { monsterTraits: ["evasion"], board: null },
   { monsterTraits: ["ironwall"], board: null },
+  { monsterTraits: ["rowArmor", "giant"], board: { hazardColumn: 2 } },       // 复合：战士破甲 / 巨躯
   { monsterTraits: ["columnArmor"], board: { blessedColumn: 3 } },
   { monsterTraits: ["rowArmor"], board: { hazardColumn: 2 } },
   { monsterTraits: ["swarm"], board: null },
+  { monsterTraits: ["evasion", "giant"], board: { blessedColumn: 3 } },       // 复合：高闪避+巨躯，需范围/高tier
   { monsterTraits: ["giant"], board: null },
   { monsterTraits: ["evasion"], board: { hazardColumn: 2 } },
   { monsterTraits: ["ironwall"], board: { blessedColumn: 3 } },
+  { monsterTraits: ["swarm", "ironwall"], board: { hazardColumn: 2 } },       // 复合：群涌+铁壁，薄血需范围+高tier
 ];
 
 function normalModifierForLevel(level) {
@@ -547,21 +552,42 @@ function normalModifierForLevel(level) {
   return NORMAL_CYCLE[idx];
 }
 
-// 挑战关：在普通关基础上叠加第二特性 + 双棋盘修正。
-// 规则：第二特性不与主特性同为「减伤轴(col/row)」，确保至少一名武将满伤可解（避免无解）；
-//       补齐另一条棋盘修正（险恶列+增益列同时出现），卡牌池更偏 counter。
+// 挑战关：在普通关基础上「叠加第二特性 + 双棋盘修正」，比普通关更丰富、更难。
+// 难度保证：① 新叠加特性绝不与已有减伤轴形成「另一减伤轴」，整局最多一个减伤轴（避免 col+row 双削无解）；
+//           ② 约 1/3 挑战关（level%3===0）只叠特性、不补双棋盘，保留难度梯度；
+//           ③ 双棋盘的列位置随关号轮换（不再固定第3/4列），增加读图变化；
+//           ④ 卡牌池覆盖所有特性并偏 counter。
+const CHALLENGE_BOARD_LAYOUTS = [
+  { hazardColumn: 1, blessedColumn: 4 },
+  { hazardColumn: 4, blessedColumn: 1 },
+  { hazardColumn: 2, blessedColumn: 3 },
+  { hazardColumn: 3, blessedColumn: 2 },
+];
 function enrichChallenge(base, level) {
-  const primary = (base.monsterTraits && base.monsterTraits[0]) || "columnArmor";
-  const resistTraits = ["columnArmor", "rowArmor"];
+  const baseTraits = (base.monsterTraits && base.monsterTraits.slice()) || ["columnArmor"];
+  // 已存在的减伤轴集合（col / row / 空）
+  const axes = new Set(
+    baseTraits.map((t) => MONSTER_TRAITS[t] && MONSTER_TRAITS[t].resistAxis).filter(Boolean),
+  );
   const softTraits = ["swarm", "giant", "evasion", "ironwall"];
-  const second = resistTraits.includes(primary)
-    ? softTraits[level % softTraits.length]
-    : resistTraits[level % resistTraits.length];
-  const monsterTraits = [primary, second];
+  const resistTraits = ["columnArmor", "rowArmor"];
+  // 若已有减伤轴（无论几个），只叠 soft 避免引入另一轴致无解；若无减伤轴，叠一个减伤轴增加克制深度。
+  // 候选池排除 base 已带特性，避免挑战关叠加出重复徽章（如 [列甲,群涌] 再叠群涌）。
+  const candidates = axes.size > 0 ? softTraits : resistTraits;
+  const pool = candidates.filter((t) => !baseTraits.includes(t));
+  const second = pool.length ? pool[level % pool.length] : candidates[level % candidates.length];
+  const monsterTraits = [...baseTraits, second];
+  // 约 1/3 挑战关只叠特性、不补双棋盘（保留梯度，棋盘沿用普通关原有修正即可）
+  const keepSingleBoard = level % 3 === 0;
   const board = { ...(base.board || {}) };
-  if (board.hazardColumn == null) board.hazardColumn = 2;
-  if (board.blessedColumn == null) board.blessedColumn = 3;
-  const cardBias = { ...(TRAIT_CARD_BIAS[primary] || {}), ...(TRAIT_CARD_BIAS[second] || {}), challenge: 1 };
+  if (!keepSingleBoard) {
+    const layout = CHALLENGE_BOARD_LAYOUTS[level % CHALLENGE_BOARD_LAYOUTS.length];
+    board.hazardColumn = layout.hazardColumn;
+    board.blessedColumn = layout.blessedColumn;
+  }
+  const cardBias = {};
+  monsterTraits.forEach((t) => Object.assign(cardBias, TRAIT_CARD_BIAS[t] || {}));
+  cardBias.challenge = 1;
   return { monsterTraits, board, cardBias };
 }
 
