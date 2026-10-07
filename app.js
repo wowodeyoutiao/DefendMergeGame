@@ -530,19 +530,19 @@ const NORMAL_CYCLE = [
   { monsterTraits: ["columnArmor"], board: null },
   { monsterTraits: ["rowArmor"], board: null },
   { monsterTraits: ["swarm"], board: { hazardColumn: 2 } },
-  { monsterTraits: ["columnArmor", "swarm"], board: { blessedColumn: 3 } },   // 复合：法师占增益列清群涌
+  { monsterTraits: ["columnArmor", "ironwall"], board: { blessedColumn: 4 } },   // 复合：法师单点 + 铁壁，需高 tier 破甲
   { monsterTraits: ["giant"], board: { blessedColumn: 3 } },
   { monsterTraits: ["evasion"], board: null },
   { monsterTraits: ["ironwall"], board: null },
-  { monsterTraits: ["rowArmor", "giant"], board: { hazardColumn: 2 } },       // 复合：战士破甲 / 巨躯
+  { monsterTraits: ["rowArmor", "swarm"], board: { hazardColumn: 1 } },       // 复合：战士破甲 / 范围清群涌
   { monsterTraits: ["columnArmor"], board: { blessedColumn: 3 } },
   { monsterTraits: ["rowArmor"], board: { hazardColumn: 2 } },
   { monsterTraits: ["swarm"], board: null },
-  { monsterTraits: ["evasion", "giant"], board: { blessedColumn: 3 } },       // 复合：高闪避+巨躯，需范围/高tier
+  { monsterTraits: ["evasion", "ironwall"], board: { blessedColumn: 2 } },       // 复合：高闪避+铁壁，薄甲需范围+高tier
   { monsterTraits: ["giant"], board: null },
   { monsterTraits: ["evasion"], board: { hazardColumn: 2 } },
   { monsterTraits: ["ironwall"], board: { blessedColumn: 3 } },
-  { monsterTraits: ["swarm", "ironwall"], board: { hazardColumn: 2 } },       // 复合：群涌+铁壁，薄血需范围+高tier
+  { monsterTraits: ["giant", "swarm"], board: { hazardColumn: 5 } },       // 复合：巨躯+群涌，范围吃香但单体厚
 ];
 
 function normalModifierForLevel(level) {
@@ -554,10 +554,13 @@ function normalModifierForLevel(level) {
 
 // 挑战关：在普通关基础上「叠加第二特性 + 双棋盘修正」，比普通关更丰富、更难。
 // 难度保证：① 新叠加特性绝不与已有减伤轴形成「另一减伤轴」，整局最多一个减伤轴（避免 col+row 双削无解）；
-//           ② 约 1/3 挑战关（level%3===0）只叠特性、不补双棋盘，保留难度梯度；
-//           ③ 双棋盘的列位置随关号轮换（不再固定第3/4列），增加读图变化；
+//           ② 普通关已是复合关（≥2 特性）时挑战关只叠特性、不补双棋盘——复合关叠第三特性已足够难，
+//              再叠双棋盘易超模；简单关（单特性）则稳定叠双棋盘，梯度锚定在天然高难点；
+//           ③ 双棋盘的列位置随关号在 6 套布局间轮换（用满 0–5 全部列），增加读图变化；
 //           ④ 卡牌池覆盖所有特性并偏 counter。
 const CHALLENGE_BOARD_LAYOUTS = [
+  { hazardColumn: 0, blessedColumn: 5 },
+  { hazardColumn: 5, blessedColumn: 0 },
   { hazardColumn: 1, blessedColumn: 4 },
   { hazardColumn: 4, blessedColumn: 1 },
   { hazardColumn: 2, blessedColumn: 3 },
@@ -577,8 +580,9 @@ function enrichChallenge(base, level) {
   const pool = candidates.filter((t) => !baseTraits.includes(t));
   const second = pool.length ? pool[level % pool.length] : candidates[level % candidates.length];
   const monsterTraits = [...baseTraits, second];
-  // 约 1/3 挑战关只叠特性、不补双棋盘（保留梯度，棋盘沿用普通关原有修正即可）
-  const keepSingleBoard = level % 3 === 0;
+  // 难度梯度：普通关已是复合关（≥2 特性）时挑战关只叠特性、不补双棋盘（锚定天然高难点）；
+  // 再额外每 6 关放宽 1 关（level%6===0）只叠特性，使"只叠特性"总比例回到约 1/3，比纯复合锚定的 24% 更温和。
+  const keepSingleBoard = (baseTraits.length || 0) >= 2 || level % 6 === 0;
   const board = { ...(base.board || {}) };
   if (!keepSingleBoard) {
     const layout = CHALLENGE_BOARD_LAYOUTS[level % CHALLENGE_BOARD_LAYOUTS.length];
