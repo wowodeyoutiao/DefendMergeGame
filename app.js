@@ -495,18 +495,82 @@ const MONSTER_TRAITS = {
     desc: "教学关：认得「行」徽章即代表适合同行武将（男战士）。本关仅轻微减伤，正式关卡减伤更强。", resistAxis: "row", resistPct: 0.2 },
 };
 
-// 统一差异化数据层：刷怪 / 棋盘 / 卡牌都从它读。null = 暖场关（无特性）。
-// monsterTrait: 本关小怪统一携带的特性（Boss 不带）；board: 棋盘修正；cardBias: 肉鸽卡牌加权投放权重。
-const LEVEL_MODIFIERS = {
-  1: { monsterTrait: "colTutorial", board: null, cardBias: { columnMaster: 2 } },
-  2: { monsterTrait: "rowTutorial", board: null, cardBias: { rowMaster: 2 } },
-  3: { monsterTrait: "columnArmor", board: null, cardBias: { columnMaster: 3, "war-cry": 2, crossfire: 2 } },
-  4: { monsterTrait: "rowArmor", board: null, cardBias: { rowMaster: 3, "war-cry": 2 } },
-  5: { monsterTrait: "swarm", board: { hazardColumn: 2 }, cardBias: { areaMaster: 3, frost: 3, thunder: 2 } },
-  6: { monsterTrait: "giant", board: { blessedColumn: 3 }, cardBias: { columnMaster: 3, execution: 2, thunder: 2 } },
-  7: { monsterTrait: "evasion", board: null, cardBias: { areaMaster: 2, "rapid-fire": 2, crossfire: 1 } },
-  8: { monsterTrait: "ironwall", board: null, cardBias: { "war-cry": 2, execution: 3, columnMaster: 1 } },
+// 统一差异化数据层：刷怪 / 棋盘 / 卡牌都从它读。
+// monsterTraits: 本关小怪统一携带的特性数组（Boss 不带）；board: 棋盘修正；cardBias: 肉鸽卡牌加权投放权重。
+// 普通关：单特性（+可选棋盘修正），1-8 显式、9 起走 NORMAL_CYCLE 循环覆盖「所有关卡」；
+// 挑战关：在普通关基础上叠加第二特性 + 双棋盘修正（更丰富、更难），由 getStageModifier 按模式分流。
+
+// 各特性对应的肉鸽卡牌加权（避免与 LEVEL_MODIFIERS 重复书写，集中维护）
+const TRAIT_CARD_BIAS = {
+  columnArmor: { columnMaster: 3, "war-cry": 2, crossfire: 2 },
+  rowArmor: { rowMaster: 3, "war-cry": 2 },
+  swarm: { areaMaster: 3, frost: 3, thunder: 2 },
+  giant: { columnMaster: 3, execution: 2, thunder: 2 },
+  evasion: { areaMaster: 2, "rapid-fire": 2, crossfire: 1 },
+  ironwall: { "war-cry": 2, execution: 3, columnMaster: 1 },
+  colTutorial: { columnMaster: 2 },
+  rowTutorial: { rowMaster: 2 },
 };
+
+// 1-8 关：沿用已定案设定（教学关 1/2 仅轻微减伤，3-8 正式特性）
+const LEVEL_MODIFIERS = {
+  1: { monsterTraits: ["colTutorial"], board: null, cardBias: { columnMaster: 2 } },
+  2: { monsterTraits: ["rowTutorial"], board: null, cardBias: { rowMaster: 2 } },
+  3: { monsterTraits: ["columnArmor"], board: null, cardBias: { columnMaster: 3, "war-cry": 2, crossfire: 2 } },
+  4: { monsterTraits: ["rowArmor"], board: null, cardBias: { rowMaster: 3, "war-cry": 2 } },
+  5: { monsterTraits: ["swarm"], board: { hazardColumn: 2 }, cardBias: { areaMaster: 3, frost: 3, thunder: 2 } },
+  6: { monsterTraits: ["giant"], board: { blessedColumn: 3 }, cardBias: { columnMaster: 3, execution: 2, thunder: 2 } },
+  7: { monsterTraits: ["evasion"], board: null, cardBias: { areaMaster: 2, "rapid-fire": 2, crossfire: 1 } },
+  8: { monsterTraits: ["ironwall"], board: null, cardBias: { "war-cry": 2, execution: 3, columnMaster: 1 } },
+};
+
+// 9 关起：12 步循环，保证「每一关」都有特性与清晰策略焦点（无限关卡靠循环覆盖）
+const NORMAL_CYCLE = [
+  { monsterTraits: ["columnArmor"], board: null },
+  { monsterTraits: ["rowArmor"], board: null },
+  { monsterTraits: ["swarm"], board: { hazardColumn: 2 } },
+  { monsterTraits: ["giant"], board: { blessedColumn: 3 } },
+  { monsterTraits: ["evasion"], board: null },
+  { monsterTraits: ["ironwall"], board: null },
+  { monsterTraits: ["columnArmor"], board: { blessedColumn: 3 } },
+  { monsterTraits: ["rowArmor"], board: { hazardColumn: 2 } },
+  { monsterTraits: ["swarm"], board: null },
+  { monsterTraits: ["giant"], board: null },
+  { monsterTraits: ["evasion"], board: { hazardColumn: 2 } },
+  { monsterTraits: ["ironwall"], board: { blessedColumn: 3 } },
+];
+
+function normalModifierForLevel(level) {
+  if (LEVEL_MODIFIERS[level]) return LEVEL_MODIFIERS[level];
+  const len = NORMAL_CYCLE.length;
+  const idx = (((level - 9) % len) + len) % len;
+  return NORMAL_CYCLE[idx];
+}
+
+// 挑战关：在普通关基础上叠加第二特性 + 双棋盘修正。
+// 规则：第二特性不与主特性同为「减伤轴(col/row)」，确保至少一名武将满伤可解（避免无解）；
+//       补齐另一条棋盘修正（险恶列+增益列同时出现），卡牌池更偏 counter。
+function enrichChallenge(base, level) {
+  const primary = (base.monsterTraits && base.monsterTraits[0]) || "columnArmor";
+  const resistTraits = ["columnArmor", "rowArmor"];
+  const softTraits = ["swarm", "giant", "evasion", "ironwall"];
+  const second = resistTraits.includes(primary)
+    ? softTraits[level % softTraits.length]
+    : resistTraits[level % resistTraits.length];
+  const monsterTraits = [primary, second];
+  const board = { ...(base.board || {}) };
+  if (board.hazardColumn == null) board.hazardColumn = 2;
+  if (board.blessedColumn == null) board.blessedColumn = 3;
+  const cardBias = { ...(TRAIT_CARD_BIAS[primary] || {}), ...(TRAIT_CARD_BIAS[second] || {}), challenge: 1 };
+  return { monsterTraits, board, cardBias };
+}
+
+// 统一出口：按当前模式返回本关修正（普通=单特性循环；挑战=叠加更丰富条件）
+function getStageModifier(level) {
+  const base = normalModifierForLevel(level);
+  if (isChallengeMode()) return enrichChallenge(base, level);
+  return { ...base, cardBias: base.cardBias || {} };
+}
 
 // DEPRECATED · 未生效，勿调（波次出怪实际读 CHAPTERS[].roster，见 getWaveProfile）
 const LEVEL_WAVE_PROFILES = [
@@ -2093,11 +2157,18 @@ function resolveWarriorAttack(stats, monster, baseDamage, random = Math.random) 
 }
 
 // 怪物特性对伤害的减伤：列甲/行甲仅被对应轴武将全额伤害，其余 −resistPct。
+// 支持多特性叠加（挑战关）：多个减伤轴系数连乘。
 function traitDamageMultiplier(monster, warriorType) {
-  const trait = monster.trait && MONSTER_TRAITS[monster.trait];
-  if (!trait || !trait.resistAxis) return 1;
-  const onAxis = trait.resistAxis === "col" ? warriorType === "sword" : warriorType === "fan";
-  return onAxis ? 1 : (1 - (trait.resistPct || 0.6));
+  const traits = monster.traits;
+  if (!Array.isArray(traits) || traits.length === 0) return 1;
+  let mult = 1;
+  for (const id of traits) {
+    const t = MONSTER_TRAITS[id];
+    if (!t || !t.resistAxis) continue;
+    const onAxis = t.resistAxis === "col" ? warriorType === "sword" : warriorType === "fan";
+    mult *= onAxis ? 1 : (1 - (t.resistPct || 0.6));
+  }
+  return mult;
 }
 
 function getEquipmentSetStatus(type) {
@@ -2528,11 +2599,11 @@ function renderHomeHud() {
   homeYuanbaoText.title = `${state.yuanbao} 元宝`;
   homeLevelText.textContent = selectedLevel;
   homeStageName.textContent = getChapter(selectedLevel).name;
-  // F8：选关界面提前展示本关特性，让玩家进关前就能决策是否先去养成
-  const stageMod = LEVEL_MODIFIERS[selectedLevel];
-  if (stageMod) {
-    const tr = stageMod.monsterTrait ? MONSTER_TRAITS[stageMod.monsterTrait] : null;
-    let txt = tr ? `特性：${tr.label}` : "暖场关";
+  // F8：选关界面提前展示本关特性，让玩家进关前就能决策是否先去养成（含挑战关更丰富条件）
+  const stageMod = getStageModifier(selectedLevel);
+  if (stageMod && stageMod.monsterTraits && stageMod.monsterTraits.length) {
+    const names = stageMod.monsterTraits.map((id) => (MONSTER_TRAITS[id] ? MONSTER_TRAITS[id].label : null)).filter(Boolean);
+    let txt = names.length ? `特性：${names.join("+")}` : "暖场关";
     if (stageMod.board && stageMod.board.blessedColumn != null) txt += " · 增益列";
     if (stageMod.board && stageMod.board.hazardColumn != null) txt += " · 险恶列";
     homeStageTrait.textContent = txt;
@@ -2710,7 +2781,7 @@ function startLevelFromHome() {
 // 关卡预告：进波前显式告诉玩家本关特性 + 推荐武将（差异化感知的主入口）。每关默认仅弹一次。
 // force=true 用于战斗内「本关特性」按钮重看（F9/F12）。
 function showLevelBriefing(force) {
-  const modifier = LEVEL_MODIFIERS[state.level] || null;
+  const modifier = getStageModifier(state.level);
   state.levelModifier = modifier;
   if (!force && state.briefingShownForLevel === state.level) {
     renderLanes();           // 已看过也确保棋盘染色与当前关一致
@@ -2731,14 +2802,16 @@ function showLevelBriefing(force) {
       : "本关为常规关，无特殊怪物机制。";
     html = `<div class="briefing-body"><div class="briefing-note">${note}</div>${formsHTML}</div>`;
   } else {
-    const trait = MONSTER_TRAITS[modifier.monsterTrait] || null;
-    const tone = trait ? trait.color : "#e0863a";
-    const badge = trait ? trait.badge : "★";
-    const tname = trait ? trait.label : "无";
-    const tdesc = trait ? trait.desc : "";
-    const counterName = trait && trait.counter
-      ? ({ sword: "男法师（同列）", fan: "男战士（同行）", rock: "女祭司（范围）" })[trait.counter]
-      : "高 tier 武将 / 列阵或破阵（单点爆发）";
+    const traits = modifier.monsterTraits || [];
+    const defs = traits.map((id) => MONSTER_TRAITS[id]).filter(Boolean);
+    const tone = defs[0] ? defs[0].color : "#e0863a";
+    const badgesHTML = defs.map((t) => `<span class="briefing-badge" style="--tone:${t.color}">${t.badge}</span>`).join("");
+    const tnames = defs.map((t) => t.label).join(" + ");
+    const tdescs = defs.map((t) => t.desc).join("；");
+    const counterMap = { sword: "男法师（同列）", fan: "男战士（同行）", rock: "女祭司（范围）" };
+    const counters = new Set();
+    defs.forEach((t) => counters.add(t.counter ? counterMap[t.counter] : "高 tier 武将 / 列阵或破阵（单点爆发）"));
+    const counterName = [...counters].join(" / ");
     const boardItems = modifier.board
       ? Object.entries(modifier.board).map(([k, v]) => {
         if (k === "blessedColumn") return `增益列（第 ${v + 1} 列，武将攻击距离 +1）`;
@@ -2752,10 +2825,10 @@ function showLevelBriefing(force) {
       ? "，并把对应武将放在增益列（金色高亮列）上即可获得 +1 射程" : "";
     html = `<div class="briefing-body">
       <div class="briefing-trait">
-        <span class="briefing-badge" style="--tone:${tone}">${badge}</span>
+        <div class="briefing-badges">${badgesHTML}</div>
         <div class="briefing-trait-text">
-          <div class="briefing-trait-name" style="color:${tone}">${tname}</div>
-          <div class="briefing-trait-desc">${tdesc}</div>
+          <div class="briefing-trait-name" style="color:${tone}">${tnames}</div>
+          <div class="briefing-trait-desc">${tdescs}</div>
         </div>
       </div>
       <div class="briefing-section"><span class="briefing-label">棋盘</span><span class="briefing-value">${boardText}${boardHas ? "（棋盘已高亮）" : ""}</span></div>
@@ -2898,20 +2971,24 @@ function renderMonsters() {
     el.classList.toggle("monster-walking", actionName === "walk");
     el.classList.toggle("monster-attacking", actionName === "attack");
     ["normal", "runner", "brute", "elite"].forEach((variant) => el.classList.toggle(`monster-${variant}`, monster.variant === variant));
-    let badge = el.querySelector(".monster-trait");
-    if (monster.trait && MONSTER_TRAITS[monster.trait]) {
-      const t = MONSTER_TRAITS[monster.trait];
-      if (!badge) {
-        badge = document.createElement("div");
-        badge.className = "monster-trait";
-        el.appendChild(badge);
+    const traitKey = Array.isArray(monster.traits) ? monster.traits.join(",") : "";
+    if (el.dataset.traitKey !== traitKey) {
+      el.dataset.traitKey = traitKey;
+      el.querySelectorAll(".monster-trait").forEach((b) => b.remove());
+      if (traitKey) {
+        monster.traits.forEach((id, i) => {
+          const t = MONSTER_TRAITS[id];
+          if (!t) return;
+          const badge = document.createElement("div");
+          badge.className = "monster-trait";
+          badge.textContent = t.badge;
+          badge.style.background = t.color;
+          badge.title = t.label;
+          if (i > 0) badge.style.right = `${1 + i * 17}px`;
+          el.appendChild(badge);
+          if (!state.seenTraits[id]) state.seenTraits[id] = true;
+        });
       }
-      badge.textContent = t.badge;
-      badge.style.background = t.color;
-      badge.title = t.label;
-      if (!state.seenTraits[monster.trait]) state.seenTraits[monster.trait] = true;
-    } else if (badge) {
-      badge.remove();
     }
     el.style.setProperty("--monster-move-duration", `${MONSTER_MOVE_INTERVAL * 1000 / state.speed}ms`);
     const image = el.querySelector("img");
@@ -3849,15 +3926,18 @@ function spawnMonster() {
   const profileName = isBoss ? "brute" : state.waveConfig.profile;
   const profile = MONSTER_PROFILES[profileName];
   const levelModifier = state.levelModifier;
-  const trait = (!isBoss && levelModifier && levelModifier.monsterTrait) ? levelModifier.monsterTrait : null;
-  const traitDef = trait ? MONSTER_TRAITS[trait] : null;
+  const traits = (!isBoss && levelModifier && levelModifier.monsterTraits)
+    ? levelModifier.monsterTraits
+    : [];
   let hpMul = 1, moveMul = 1, extraDodge = 0, extraResilience = 0;
-  if (traitDef) {
-    if (traitDef.hpMul) hpMul *= traitDef.hpMul;
-    if (traitDef.moveMul) moveMul *= traitDef.moveMul;
-    if (traitDef.extraDodge) extraDodge += traitDef.extraDodge;
-    if (traitDef.extraResilience) extraResilience += traitDef.extraResilience;
-  }
+  traits.forEach((id) => {
+    const t = MONSTER_TRAITS[id];
+    if (!t) return;
+    if (t.hpMul) hpMul *= t.hpMul;
+    if (t.moveMul) moveMul *= t.moveMul;
+    if (t.extraDodge) extraDodge += t.extraDodge;
+    if (t.extraResilience) extraResilience += t.extraResilience;
+  });
   const previous = state.monsters[state.monsters.length - 1];
   let c = Math.floor(Math.random() * BOARD_SIZE);
   if (isBoss && Number.isInteger(state.bossLane) && !isChallengeMode()) c = state.bossLane;
@@ -3879,7 +3959,7 @@ function spawnMonster() {
     triggeredDevices: [],
     isBoss,
     variant: profileName,
-    trait,
+    traits,
     moveSpeed: profile.move * moveMul,
     dodge: (isBoss ? BOSS_COMBAT_RATINGS.dodge : profile.dodge) + extraDodge,
     resilience: (isBoss ? BOSS_COMBAT_RATINGS.resilience : profile.resilience) + extraResilience,

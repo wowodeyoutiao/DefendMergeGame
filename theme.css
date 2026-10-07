@@ -4166,6 +4166,7 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
 .briefing-body { font-size: 13px; line-height: 1.7; color: #3a2f25; }
 .briefing-note { color: #5a4a3a; padding: 2px 0; }
 .briefing-trait { display: flex; gap: 10px; align-items: flex-start; }
+.briefing-badges { display: flex; gap: 6px; flex: 0 0 auto; }
 .briefing-badge {
   flex: 0 0 auto;
   width: 34px; height: 34px; border-radius: 9px;
