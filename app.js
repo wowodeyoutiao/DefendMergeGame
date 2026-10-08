@@ -481,7 +481,7 @@ const MONSTER_TRAITS = {
     desc: "仅被同列武将（男法师）全额伤害，其余攻击 −60%。", resistAxis: "col", resistPct: 0.6 },
   rowArmor: { id: "rowArmor", badge: "行", label: "行甲", color: "#ff7a45", counter: "fan",
     desc: "仅被同行武将（男战士）全额伤害，其余攻击 −60%。", resistAxis: "row", resistPct: 0.6 },
-  swarm: { id: "swarm", badge: "群", label: "群涌", color: "#9b59ff", counter: "rock",
+  swarm: { id: "swarm", badge: "群", label: "群", color: "#9b59ff", counter: "rock",
     desc: "血薄、数量多、移动快，范围武将（女祭司）清场最佳。", hpMul: 0.6, moveMul: 1.25 },
   giant: { id: "giant", badge: "巨", label: "巨躯", color: "#d4503a", counter: "sword",
     desc: "单体超高血、慢速，列爆发武将（男法师）单点突破最佳。", hpMul: 1.6, moveMul: 0.7 },
@@ -3014,7 +3014,7 @@ function renderMonsters() {
           badge.textContent = t.badge;
           badge.style.background = t.color;
           badge.title = t.label;
-          if (i > 0) badge.style.right = `${1 + i * 17}px`;
+          if (i > 0) badge.style.right = `${1 + i * 9}px`;
           el.appendChild(badge);
           if (!state.seenTraits[id]) state.seenTraits[id] = true;
         });
@@ -3381,6 +3381,7 @@ function eliminateMatches(matches, { chain = 1 } = {}) {
   state.selected = null;
   const messages = [];
   let refundedSteps = 0;
+  const refundEvents = []; // { count, steps, isChest } 供回合结束统一做飘字 + 数字滚动
   results.forEach(({ type, cluster, targetIndex, highestTier }) => {
     const count = cluster.length;
     const nextTier = Math.min(MAX_PIECE_TIER, highestTier + 1);
@@ -3397,6 +3398,7 @@ function eliminateMatches(matches, { chain = 1 } = {}) {
     } else if (type === "chest") {
       const gain = Math.max(1, count - 2);
       refundedSteps += gain;
+      refundEvents.push({ count, steps: gain, isChest: true });
       messages.push(`宝箱 ${count} 连消除，返还 ${gain} 步`);
     } else if (type === "trap") {
       effects.rootDuration = (count - 2) * 0.5;
@@ -3422,11 +3424,16 @@ function eliminateMatches(matches, { chain = 1 } = {}) {
     const refundChance = Math.min(1, Math.max(0, (regularCount - 3) * 0.2));
     if (refundChance > 0) {
       const refunded = Math.random() < refundChance;
-      if (refunded) refundedSteps += 1;
-      messages.push(refunded ? "触发普通消除返步 +1" : `未触发 ${Math.round(refundChance * 100)}% 普通返步`);
+      if (refunded) {
+        // 按超出 3 个的部分累加返步：合并越多，返还越多（4→+1，6→+3，8+→+5）
+        const excess = regularCount - 3;
+        refundedSteps += excess;
+        refundEvents.push({ count: regularCount, steps: excess, isChest: false });
+      }
+      messages.push(refunded ? `触发普通消除返步 +${regularCount - 3}` : `未触发 ${Math.round(refundChance * 100)}% 普通返步`);
     }
   }
-  state.steps += refundedSteps;
+  // 注意：不在本函数内直接累加 state.steps，交由 resolveBoardAfterMove 在回合结束后统一做飘字 + 数字滚动
   const SPECIAL_TYPES = ["gourd", "coin", "chest", "trap", "mine"];
   let specialIntro = "";
   if (!state.specialTipShown && results.some(({ type }) => SPECIAL_TYPES.includes(type))) {
@@ -3435,7 +3442,7 @@ function eliminateMatches(matches, { chain = 1 } = {}) {
   }
   const chainText = chain > 1 ? `第 ${chain} 连锁：` : "";
   setTip(`${specialIntro}${chainText}${messages.join("；")}。`);
-  return { refundedSteps };
+  return { refundedSteps, refundEvents };
 }
 
 // 递补规则：消除产生的空位由该列下方的棋子逐格向上顶替，缺口留在列底部，
@@ -3500,18 +3507,61 @@ function wait(ms) {
 // 递补后棋子整列下沉会更容易形成新连线，给自动连锁设一个安全阀，避免极端随机局面卡住操作期。
 const MAX_AUTO_CHAIN = 15;
 
+// 步数返步统一结算：居中飘字 + 步数数字滚动
+const STEP_REFUND_TOAST_MS = 1800;   // 飘字总时长
+const STEP_REFUND_ROLL_AT = 1300;    // 飘字开始淡出时启动数字滚动
+const STEP_REFUND_ROLL_MS = 700;      // 数字滚动时长
+
+function rollStepsText(from, to) {
+  if (!stepsText) return;
+  const start = performance.now();
+  stepsText.classList.add("steps-rolling");
+  stepsText.textContent = String(from);
+  function frame(now) {
+    const t = Math.min(1, (now - start) / STEP_REFUND_ROLL_MS);
+    const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+    stepsText.textContent = String(Math.round(from + (to - from) * eased));
+    if (t < 1) requestAnimationFrame(frame);
+    else {
+      stepsText.textContent = String(to);
+      stepsText.classList.remove("steps-rolling");
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
+function applyStepRefund(startSteps, events, totalRefund) {
+  const newSteps = startSteps + totalRefund;
+  state.steps = newSteps; // 状态立即更新（渲染仍显示 startSteps，待滚动补齐观感）
+  const toast = document.getElementById("stepRefundToast");
+  if (toast) {
+    const maxCount = events.reduce((m, e) => Math.max(m, e.count), 0);
+    toast.textContent = `本次合成消除了${maxCount}个元素，获得${totalRefund}点步数返还！`;
+    toast.classList.remove("show");
+    void toast.offsetWidth; // 强制重启动画
+    toast.classList.add("show");
+  }
+  // 飘字开始淡出时再滚动步数数字
+  setTimeout(() => rollStepsText(startSteps, newSteps), STEP_REFUND_ROLL_AT);
+}
+
 async function resolveBoardAfterMove(preferredTarget = null) {
   state.resolving = true;
   state.selected = null;
   const resolutionId = ++state.resolutionId;
   let chain = 0;
+  let totalRefund = 0;
+  const refundEvents = [];
+  const startSteps = state.steps; // 回合开始时的步数，作为数字滚动起点
   render();
 
   while (state.phase === "setup" && resolutionId === state.resolutionId && chain < MAX_AUTO_CHAIN) {
     const matches = collectAllMatches(chain === 0 ? preferredTarget : null);
     if (!matches.length) break;
     chain += 1;
-    eliminateMatches(matches, { chain });
+    const res = eliminateMatches(matches, { chain });
+    totalRefund += res.refundedSteps;
+    if (res.refundEvents.length) refundEvents.push(...res.refundEvents);
     render();
     await wait(300);
     if (resolutionId !== state.resolutionId) return;
@@ -3523,7 +3573,12 @@ async function resolveBoardAfterMove(preferredTarget = null) {
 
   if (resolutionId !== state.resolutionId) return;
   state.resolving = false;
-  render();
+  render(); // 此时步数仍显示 startSteps（本回合尚未累加返步），避免提前跳数
+
+  // 回合结束后统一结算返步：飘字提示 + 步数数字滚动
+  if (totalRefund > 0) {
+    applyStepRefund(startSteps, refundEvents, totalRefund);
+  }
   if (!chain) {
     setTip("棋盘已稳定，本次换位未形成消除。");
   } else {

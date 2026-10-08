@@ -744,17 +744,17 @@ button {
   position: absolute;
   top: 1px;
   right: 1px;
-  width: 16px;
-  height: 16px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   display: grid;
   place-items: center;
   color: #fff;
-  font-size: 11px;
+  font-size: 5.5px;
   font-weight: 900;
   line-height: 1;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0.5px 0.5px rgba(0, 0, 0, 0.4);
   pointer-events: none;
   z-index: 3;
 }
@@ -878,6 +878,7 @@ button {
 .damage-fx {
   color: #fff3b0;
   animation: damageFade 900ms ease-out forwards;
+  scale: 0.5;
 }
 
 .damage-fx.heavy-hit {
@@ -2413,6 +2414,51 @@ button {
 }
 @media (max-width: 760px) {
   .battle-toast { display: block; }
+}
+
+/* 步数返步飘字：居中突出提示，与侧栏 tipText 互不干扰 */
+.step-refund-toast {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.6);
+  z-index: 30;
+  pointer-events: none;
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 2px solid #ffe1a8;
+  background: linear-gradient(180deg, rgba(255, 154, 86, 0.94), rgba(255, 91, 91, 0.94));
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.38), inset 0 0 10px rgba(255, 255, 255, 0.32);
+  color: #fff7d6;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-shadow: 0 2px 0 #b5530f, 0 0 14px rgba(255, 196, 92, 0.9);
+  opacity: 0;
+}
+.step-refund-toast.show {
+  animation: stepRefundPop 1800ms ease forwards;
+}
+@keyframes stepRefundPop {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+  12%  { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  22%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  72%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -58%) scale(0.95); }
+}
+
+/* 步数数字滚动增加反馈 */
+#stepsText { display: inline-block; }
+#stepsText.steps-rolling {
+  animation: stepsBump 700ms ease;
+  color: #ffe08a;
+  text-shadow: 0 0 10px rgba(255, 196, 92, 0.95);
+}
+@keyframes stepsBump {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.55); }
+  100% { transform: scale(1); }
 }
 
 /* 「本关特性」悬浮按钮：战斗内随时重看预告/攻略（F9/F12） */
