@@ -27,6 +27,15 @@
           `game ${gs.offsetWidth}x${gs.offsetHeight} left ${gs.offsetLeft} ${cs.display}/${cs.width}`,
           `stage ${stage.offsetHeight} bar-bottom ${bar.getBoundingClientRect().bottom}`,
           `appH ${cs.getPropertyValue("--app-height")} chrome ${cs.getPropertyValue("--battle-chrome")}`,
+          (() => {
+            const sp = d.querySelector("#speedBtn"), bd = d.querySelector("#board");
+            if (!sp || !bd) return "no speed/board";
+            const a = sp.getBoundingClientRect(), b = bd.getBoundingClientRect();
+            const overlap = !(a.bottom <= b.top || a.top >= b.bottom || a.right <= b.left || a.left >= b.right);
+            const sr = stage.getBoundingClientRect();
+            const clipped = a.top < sr.top - 0.5 || a.left < sr.left - 0.5 || a.right > sr.right + 0.5;
+            return `speed ${a.left.toFixed(0)},${a.top.toFixed(0)}-${a.right.toFixed(0)},${a.bottom.toFixed(0)} | board ${b.left.toFixed(0)},${b.top.toFixed(0)}-${b.right.toFixed(0)},${b.bottom.toFixed(0)} | OVERLAP=${overlap} gap=${(b.top - a.bottom).toFixed(0)} | stage ${sr.left.toFixed(0)},${sr.top.toFixed(0)}-${sr.right.toFixed(0)},${sr.bottom.toFixed(0)} CLIPPED=${clipped}`;
+          })(),
         ].join("\n");
       } catch (e) { dbg.textContent = "ERR " + e.message; }
     }, 600);

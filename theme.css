@@ -4388,8 +4388,9 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   background-repeat: no-repeat;
 }
 
-/* 玉砖格 */
+/* 玉砖格（container-type 供角标用 cqw 自适应格子大小） */
 #gameScreen .cell {
+  container-type: inline-size;
   border: 0;
   border-radius: 10px;
   background:
@@ -4429,7 +4430,10 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
 
 /* 等级角标：六边形宝石 */
 #gameScreen .cell .level-badge {
-  width: 14.7px; height: 16px;    /* v2 的 22×24 缩到 2/3 */
+  width: 14.7px; height: 16px;    /* 兜底：不支持 cqw 的旧内核沿用固定值 */
+  font-size: 7.5px;
+  width: 26cqw; height: 28cqw;    /* 自适应：随格子缩放（标准屏正好 ≈ 14.7×16，小屏自动更小不再盖棋子） */
+  font-size: 13cqw;
   padding: 0;
   background: var(--quality-badge, #8a8a96);
   color: #ffffff;
@@ -4438,7 +4442,7 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   box-shadow: none;
   filter: drop-shadow(0 1.5px 1.5px #0e2c5c88);
-  font-size: 7.5px; font-weight: 900;
+  font-weight: 900;
   text-shadow: 0 1px 1px #00000066;
   display: grid; place-items: center;
 }
@@ -4585,18 +4589,21 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
 }
 
 /* ---------- 6. 悬浮控件：倍速 / 攻略 ---------- */
-/* 倍速：放行进区左上角——棋盘在窄屏下几乎贴屏幕边，贴左缘外会被裁掉一半；行进区无交互元素，也不占格子 */
+/* 倍速：独立于棋盘，直接贴界面左侧（已移出棋盘容器、挂在 .stage 下，left 相对屏幕而非棋盘）
+   ① 与棋盘无交集，也不占怪物行进区；
+   ② z-index 3 < 怪物层 4，怪物不会被按钮遮挡。 */
 #gameScreen .speed-float {
-  right: auto;
   left: 4px;
-  top: 6px;
+  right: auto;
+  top: 52px;      /* 信息绶带（top 8 + 高 34）之下，不压绶带、不压棋盘 */
   transform: none;
-  width: 42px; height: 42px;
+  z-index: 3;
+  width: 36px; height: 36px;
   border: 2.5px solid var(--ui-ink);
   background: radial-gradient(circle at 50% 28%, #8ad8ff 0%, #41a8f7 46%, #1f6fd0 100%);
   box-shadow: 0 3px 0 var(--ui-ink), inset 0 2px 3px #ffffff66;
   color: #ffffff;
-  font-size: 13px;
+  font-size: 12px;
   text-shadow: 0 2px 0 var(--ui-ink);
 }
 #gameScreen .briefing-fab {
