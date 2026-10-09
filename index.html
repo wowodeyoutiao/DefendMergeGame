@@ -8,8 +8,8 @@
     <meta http-equiv="Expires" content="0" />
     <title>合战守格小游戏软件</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23a84b24'/%3E%3Cpath d='M12 40h40v14H12zM18 26h28v14H18zM10 26 32 10l22 16z' fill='%23ffe2a1'/%3E%3C/svg%3E" />
-    <link rel="stylesheet" href="./styles.css?v=20260922-slot-horizontal-fix" />
-    <link rel="stylesheet" href="./theme.css?v=20260923-capsule" />
+    <link rel="stylesheet" href="./styles.css?v=20261009-battle-v2" />
+    <link rel="stylesheet" href="./theme.css?v=20261009-battle-v2" />
     <script src="./safe-area.js?v=20260923-capsule"></script>
   </head>
   <body>
@@ -128,13 +128,6 @@
       <section class="game-screen hidden" id="gameScreen">
         <header class="top-hud">
           <div class="hud-pill resource-pill">
-            <img class="hud-icon" src="./public/assets/icon-revive.png" alt="" />
-            <div>
-              <b id="stepsText">8</b>
-              <small>步数</small>
-            </div>
-          </div>
-          <div class="hud-pill resource-pill">
             <img class="hud-icon" src="./public/assets/icon-coin.png" alt="" />
             <div>
               <b id="goldText">0</b>
@@ -152,7 +145,6 @@
             <img class="hud-icon" src="./public/assets/home/stamina.png" alt="" />
             <div>
               <b id="staminaText">60/60</b>
-              <small>体力</small>
             </div>
             <img class="stamina-plus-icon" src="./public/assets/ui/stamina-plus.png" alt="" />
           </button>
@@ -210,6 +202,11 @@
               <div class="defense-hp-track" role="progressbar" aria-label="防线血量" aria-valuemin="0" aria-valuemax="4" aria-valuenow="4" id="defenseHpTrack">
                 <span id="defenseHpFill"></span>
               </div>
+            </div>
+            <div class="defense-steps" aria-label="剩余步数">
+              <img src="./public/assets/icon-revive.png" alt="" />
+              <span>步数</span>
+              <b id="stepsText">8</b>
             </div>
           </div>
         </section>

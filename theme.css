@@ -34,7 +34,7 @@
   --safe-bottom: max(env(safe-area-inset-bottom, 0px), var(--host-safe-bottom, 0px));
   --viewport-height: calc(100dvh - var(--safe-top) - var(--safe-bottom));
   --app-height: max(560px, min(860px, calc(var(--viewport-height) - 24px)));
-  --battle-chrome: 244px;
+  --battle-chrome: 280px;   /* 顶栏64 + 信息条48 + 防线卡(含步数条)约100 + 底栏70 + 余量；加步数条后从244上调 */
   --approach-min: clamp(120px, calc((var(--app-height) - var(--battle-chrome)) / 3), 176px);
 }
 
@@ -1937,7 +1937,7 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   .home-screen, .game-screen { width: 100%; border: 0; border-radius: 0; box-shadow: none; }
 }
 @media (max-height: 700px) {
-  :root { --battle-chrome: 216px; }
+  :root { --battle-chrome: 268px; }  /* 同步计入步数条（防线卡两行） */
   .top-hud { height: 56px; padding-block: 4px; }
   .stage { inset: 56px 0 58px; }
   .round-banner { height: 28px; margin-top: 4px; }
@@ -4189,3 +4189,433 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   padding: 6px 4px; font-size: 12px; color: #6a5640;
 }
 .briefing-form b { display: block; color: #e0863a; font-size: 12.5px; margin-bottom: 2px; }
+
+/* 棋子图鉴：图标 + 作用描述。武将组三列竖排（图标在上），道具组单列横排（图标在左） */
+.modal-card.briefing-modal { max-height: calc(100vh - 36px); overflow: auto; -webkit-overflow-scrolling: touch; }
+/* 图鉴拉长了卡片，底部操作按钮吸底常驻，滚动时也始终可点 */
+.modal-card.briefing-modal .modal-actions {
+  position: sticky;
+  bottom: -20px;                /* 抵消卡片 20px 内边距，贴住可视底缘 */
+  margin: 4px -20px -20px;
+  padding: 10px 20px 20px;
+  background: linear-gradient(180deg, rgba(255, 248, 220, 0), #fff8dc 34%);
+}
+.briefing-pieces {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px dashed #e2cba4;
+}
+.briefing-piece-group + .briefing-piece-group { margin-top: 10px; }
+.briefing-piece-head {
+  display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.briefing-piece-head b { font-size: 13px; color: #8f3e27; }
+.briefing-piece-head span { font-size: 11px; color: #9a8567; }
+.briefing-piece-list { display: grid; gap: 6px; }
+.briefing-piece-list.is-column { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.briefing-piece {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 8px;
+  border: 1px solid #ecd9b8;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #fffdf4, #fbf1dc);
+  box-shadow: inset 0 1px 0 #ffffff;
+}
+.briefing-piece-icon {
+  flex: 0 0 auto;
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border: 1.5px solid var(--tone, #c9a227);
+  border-radius: 9px;
+  background: radial-gradient(circle at 50% 28%, #ffffff, #f2e4c6);
+  overflow: hidden;
+}
+.briefing-piece-icon img { width: 100%; height: 100%; object-fit: contain; }
+.briefing-piece-text { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.briefing-piece-text b { font-size: 12px; color: #4a3a25; }
+.briefing-piece-text i { font-style: normal; font-size: 11px; line-height: 1.35; color: #7a6750; }
+.briefing-piece-list.is-column .briefing-piece {
+  flex-direction: column; gap: 3px;
+  padding: 7px 4px; text-align: center;
+}
+.briefing-piece-list.is-column .briefing-piece-icon { width: 46px; height: 46px; }
+.briefing-piece-list.is-column .briefing-piece-text b { font-size: 11.5px; }
+.briefing-piece-list.is-column .briefing-piece-text i { font-size: 10.5px; }
+
+/* ===================================================================
+   战斗界面 UI 重绘 v2（2026-10-09）
+   全部控件造型化：深蓝玉石底 + 金描边 + 顶部高光，风格对齐主界面参考图。
+   只改表现层，不涉及任何游戏逻辑。
+   =================================================================== */
+#gameScreen {
+  --ui-ink: #0e2c5c;          /* 深蓝描边/厚底 */
+  --ui-ink-soft: #16315f;
+  --ui-navy-top: #3a63b8;
+  --ui-navy-bottom: #1d3f7e;
+  --ui-gold-top: #ffe08a;
+  --ui-gold-bottom: #f5a623;
+  --ui-jade-top: #f4fffa;
+  --ui-jade-mid: #d6f3e6;
+  --ui-jade-deep: #bfe8d6;
+  --ui-gap: #9fcdbb;          /* 棋盘砖缝 */
+  --ui-blue-top: #8ad8ff;
+  --ui-blue-mid: #41a8f7;
+  --ui-blue-bottom: #1f6fd0;
+  --ui-red-top: #ff9aa8;
+  --ui-red-mid: #ff5b78;
+  --ui-red-bottom: #e83055;
+  --ui-green-top: #8df0b4;
+  --ui-green-mid: #43cf72;
+  --ui-green-bottom: #21a351;
+}
+
+/* ---------- 1. 顶部资源栏：深蓝玉石胶囊 ---------- */
+#gameScreen .top-hud {
+  /* 步数已移到防线卡；顶栏剩 金币 / 元宝 / 体力(+加号) / 圆钮，返回按钮为绝对定位 */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 96px 38px;
+  background: linear-gradient(180deg, #24437f, #16315f);
+  border-bottom: 3px solid #ffd34d;
+  box-shadow: inset 0 3px 0 #4db6ff33, 0 5px 0 #0e2c5c55;
+}
+#gameScreen .top-hud .hud-pill {
+  height: 40px;
+  border-radius: 20px;
+  gap: 4px;
+  background: linear-gradient(180deg, var(--ui-navy-top), var(--ui-navy-bottom));
+  border: 2.5px solid var(--ui-ink);
+  box-shadow: 0 3px 0 var(--ui-ink), inset 0 2px 4px #ffffff26;
+  color: #ffffff;
+}
+#gameScreen .top-hud .hud-pill.resource-pill {
+  min-height: 40px;
+  padding: 2px 8px;
+  border: 2.5px solid var(--ui-ink);
+  border-radius: 20px;
+  background: linear-gradient(180deg, var(--ui-navy-top), var(--ui-navy-bottom));
+  box-shadow: 0 3px 0 var(--ui-ink), inset 0 2px 4px #ffffff26;
+  color: #ffffff;
+}
+#gameScreen .top-hud .hud-pill b {
+  font-size: 13px;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 2px 0 var(--ui-ink), 0 0 6px #4db6ff55;
+}
+#gameScreen .top-hud .hud-pill small {
+  font-size: 9px;
+  color: #a9c6f2;
+  text-shadow: none;
+  margin-top: 2px;
+}
+#gameScreen .top-hud .hud-pill > img:first-child,
+#gameScreen .top-hud .hud-pill.resource-pill > img:first-child {
+  width: 20px; height: 22px; flex-basis: 20px;
+  filter: drop-shadow(0 1px 1px #0e2c5c88);
+}
+#gameScreen .top-hud .stamina-pill { padding-inline: 8px; }
+#gameScreen .resource-pill > .home-plus,
+#gameScreen .resource-pill > .stamina-plus-icon { filter: drop-shadow(0 1px 0 #0e2c5c); }
+
+/* 圆形玉石钮：返回 / 重开 */
+#gameScreen .icon-button {
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 28%, #8ad8ff 0%, #41a8f7 46%, #1f6fd0 100%);
+  border: 2.5px solid var(--ui-ink);
+  box-shadow: 0 3px 0 var(--ui-ink), inset 0 2px 3px #ffffff66;
+  color: #ffffff;
+  text-shadow: 0 2px 0 var(--ui-ink);
+}
+#gameScreen .icon-button img { filter: drop-shadow(0 1px 1px #0e2c5c88); }
+
+/* ---------- 2. 关卡信息绶带 ---------- */
+#gameScreen .round-banner {
+  display: flex; flex-wrap: nowrap;   /* 覆盖基础 grid 四列：五个子项必须单行排开 */
+  white-space: nowrap;
+  height: 34px;
+  margin: 8px 12px 0;
+  padding: 0 10px;
+  gap: 6px;
+  align-items: center;
+  border-radius: 17px;
+  background: linear-gradient(180deg, var(--ui-navy-top), var(--ui-navy-bottom));
+  border: 2.5px solid var(--ui-ink);
+  box-shadow: 0 3px 0 var(--ui-ink), inset 0 2px 3px #ffffff22;
+  color: #ffffff;
+  text-shadow: 0 2px 0 var(--ui-ink);
+}
+#gameScreen .round-banner span,
+#gameScreen .round-banner strong { color: #ffffff; text-shadow: 0 2px 0 var(--ui-ink); }
+#gameScreen .round-banner strong {
+  padding: 3px 11px;
+  border-radius: 11px;
+  background: linear-gradient(180deg, var(--ui-gold-top), var(--ui-gold-bottom));
+  box-shadow: 0 0 0 2px var(--ui-ink), 0 2px 0 var(--ui-ink);
+  color: #ffffff;
+  text-shadow: 0 1px 0 #b06a00;
+  font-size: 11px;
+}
+#gameScreen .round-banner .mode-badge {
+  padding: 3px 10px;
+  border-radius: 11px;
+  font-size: 11px; font-weight: 900;
+  box-shadow: 0 0 0 2px var(--ui-ink), 0 2px 0 var(--ui-ink);
+}
+#gameScreen .round-banner .mode-badge.mode-normal { background: linear-gradient(180deg, #ffe08a, #f5a623); color: #ffffff; text-shadow: 0 1px 0 #b06a00; }
+#gameScreen .round-banner .mode-badge.mode-challenge { background: linear-gradient(180deg, #ff9aa8, #e83055); text-shadow: 0 1px 0 #6e1030; }
+#gameScreen .round-banner .mode-badge.mode-beast { background: linear-gradient(180deg, #c9a0ff, #8340e8); text-shadow: 0 1px 0 #3d1a75; }
+
+/* ---------- 3. 棋盘：深蓝框 + 玉白内衬 + 四角金铆钉 ---------- */
+#gameScreen .board {
+  border: 4px solid var(--ui-ink);
+  border-radius: 20px;
+  background: var(--ui-gap);
+  box-shadow:
+    0 6px 0 var(--ui-ink-soft),
+    0 12px 24px #0e2c5c55,
+    inset 0 3px 8px #16315f44;
+}
+/* 四角金铆钉用背景绘制，避免占用 ::before/::after（::after 被 .board.resolving 结算遮罩占用） */
+#gameScreen .board {
+  background-color: var(--ui-gap);
+  background-image:
+    radial-gradient(circle 5px at 9px 9px, #ffe08a 0 55%, #f5a623 56% 100%, transparent 101%),
+    radial-gradient(circle 5px at calc(100% - 9px) 9px, #ffe08a 0 55%, #f5a623 56% 100%, transparent 101%),
+    radial-gradient(circle 5px at 9px calc(100% - 9px), #ffe08a 0 55%, #f5a623 56% 100%, transparent 101%),
+    radial-gradient(circle 5px at calc(100% - 9px) calc(100% - 9px), #ffe08a 0 55%, #f5a623 56% 100%, transparent 101%);
+  background-origin: border-box;
+  background-clip: border-box;
+  background-repeat: no-repeat;
+}
+
+/* 玉砖格 */
+#gameScreen .cell {
+  border: 0;
+  border-radius: 10px;
+  background:
+    linear-gradient(45deg, transparent 44%, #ffffff9e 50%, transparent 56%),
+    linear-gradient(-45deg, transparent 44%, #ffffff70 50%, transparent 56%),
+    linear-gradient(180deg, var(--ui-jade-top), var(--ui-jade-mid));
+  box-shadow:
+    inset 0 2px 3px #ffffff,
+    inset 0 -3px 5px #8fcbb455,
+    inset 0 0 0 1px #b9e2d1;
+}
+#gameScreen .cell:nth-child(12n + 2), #gameScreen .cell:nth-child(12n + 4), #gameScreen .cell:nth-child(12n + 6),
+#gameScreen .cell:nth-child(12n + 7), #gameScreen .cell:nth-child(12n + 9), #gameScreen .cell:nth-child(12n + 11) {
+  background:
+    linear-gradient(45deg, transparent 44%, #ffffff8c 50%, transparent 56%),
+    linear-gradient(-45deg, transparent 44%, #ffffff5c 50%, transparent 56%),
+    linear-gradient(180deg, #e2f7ee, var(--ui-jade-deep));
+}
+/* 增益列（金）/ 险恶列（紫） */
+#gameScreen .cell.blessed-column {
+  background:
+    linear-gradient(45deg, transparent 44%, #ffffffa5 50%, transparent 56%),
+    linear-gradient(180deg, #fff6d8, #ffe7a0);
+  box-shadow: inset 0 2px 3px #fff, inset 0 -3px 5px #d9a94055, inset 0 0 0 1.5px #f0b64a;
+}
+#gameScreen .cell.hazard-column {
+  background:
+    linear-gradient(45deg, transparent 44%, #ffffff70 50%, transparent 56%),
+    linear-gradient(180deg, #efe0ff, #d3b3f5);
+  box-shadow: inset 0 2px 3px #fff, inset 0 -3px 5px #8b5cc755, inset 0 0 0 1.5px #a675e0;
+}
+#gameScreen .cell.selected {
+  outline: 0;
+  box-shadow: 0 0 0 3px #ffd34d, 0 0 16px #ffd34dcc, inset 0 2px 3px #ffffff;
+  border-radius: 10px;
+}
+
+/* 等级角标：六边形宝石 */
+#gameScreen .cell .level-badge {
+  width: 14.7px; height: 16px;    /* v2 的 22×24 缩到 2/3 */
+  padding: 0;
+  background: var(--quality-badge, #8a8a96);
+  color: #ffffff;
+  border: 0;
+  border-radius: 0;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  box-shadow: none;
+  filter: drop-shadow(0 1.5px 1.5px #0e2c5c88);
+  font-size: 7.5px; font-weight: 900;
+  text-shadow: 0 1px 1px #00000066;
+  display: grid; place-items: center;
+}
+
+/* ---------- 4. 英雄技能 + 防线：金边白玉面板 ---------- */
+#gameScreen .defense-status {
+  height: auto;                 /* 覆盖基础样式的固定高，让步数条的第二行撑开 */
+  min-height: 56px;
+  bottom: 8px;
+  left: 12px; right: 12px;
+  padding: 5px 10px 7px 4px;
+  gap: 6px 8px;
+  align-items: center;
+  border: 3px solid #f5b53f;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #fffdf7, #fff6e3);
+  box-shadow: 0 0 0 3px var(--ui-ink), 0 4px 0 var(--ui-ink-soft), 0 8px 16px #0e2c5c55;
+}
+#gameScreen .hero-skill-button {
+  border: 3px solid var(--ui-ink);
+  background: conic-gradient(var(--ui-gold-top) var(--skill-progress, 0%), #3d5da8 0);
+  box-shadow: 0 2px 0 var(--ui-ink), 0 0 8px #ffd34d55;
+}
+#gameScreen .hero-skill-button::before { background: linear-gradient(135deg, #ffffff, #eaf4ff); }
+#gameScreen .hero-skill-button.ready {
+  box-shadow: 0 0 0 3px #ffd34d, 0 0 16px #ffd34daa, 0 2px 0 var(--ui-ink);
+}
+@keyframes skillPulse {
+  0%, 100% { box-shadow: 0 0 0 3px #ffd34d, 0 0 14px #ffd34d66, 0 2px 0 var(--ui-ink); }
+  50%      { box-shadow: 0 0 0 5px #ffd34d, 0 0 22px #ffd34dbb, 0 2px 0 var(--ui-ink); }
+}
+#gameScreen .hero-skill-help {
+  border: 2px solid #ecd9b8;
+  border-radius: 10px;
+  background: #fffdf6;
+  color: #23395e;
+  font-size: 11px;
+}
+#gameScreen .hero-skill-info > strong { color: #23395e; }
+#gameScreen .skill-timer {
+  background: linear-gradient(180deg, var(--ui-gold-top), var(--ui-gold-bottom));
+  color: #ffffff;
+  border: 2px solid var(--ui-ink);
+  border-radius: 10px;
+  text-shadow: 0 1px 0 #b06a00;
+}
+/* 立体血条：深槽 + 绿渐变 + 顶部高光 + 四段刻度 */
+#gameScreen .defense-hp-label { color: #6b5a2a; font-size: 11px; text-shadow: 0 1px 0 #ffffff; }
+#gameScreen .defense-hp-label strong { color: #1d8a45; font-size: 12px; }
+#gameScreen .defense-hp-track {
+  height: 16px;
+  border: 3px solid var(--ui-ink);
+  border-radius: 9px;
+  background: #14315e;
+  box-shadow: inset 0 2px 3px #0e2c5c99;
+  overflow: hidden;
+  position: relative;
+}
+#gameScreen .defense-hp-track span {
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(180deg, #8df0b4 0%, #43cf72 50%, #21a351 100%);
+  box-shadow: inset 0 2px 0 #ffffff77;
+}
+#gameScreen .defense-hp-track::after {
+  content: "";
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(90deg, transparent 0 calc(25% - 1px), #0e2c5c66 calc(25% - 1px) 25%);
+}
+#gameScreen .defense-hp-track.critical span {
+  background: linear-gradient(180deg, #ffb36b 0%, #ff6b6b 50%, #d63a4a 100%);
+}
+/* 步数条：挂在血条下方（整卡第二行），返步滚动动画作用于这里的 #stepsText */
+#gameScreen .defense-steps {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  align-self: stretch;
+  padding: 2px 10px;
+  border: 2px solid var(--ui-ink);
+  border-radius: 13px;
+  background: linear-gradient(180deg, var(--ui-navy-top), var(--ui-navy-bottom));
+  box-shadow: inset 0 2px 3px #ffffff22, 0 2px 0 var(--ui-ink);
+}
+#gameScreen .defense-steps img { width: 19px; height: 19px; flex-basis: 19px; object-fit: contain; }
+#gameScreen .defense-steps > span { font-size: 11px; color: #cfe1ff; }
+#gameScreen .defense-steps b {
+  margin-left: auto;
+  font-size: 15px; font-weight: 900; color: #ffe08a;
+  text-shadow: 0 2px 0 var(--ui-ink);
+  transition: none;
+}
+
+/* ---------- 5. 底部操作栏：深蓝底 + 玉石按钮 ---------- */
+#gameScreen .bottom-bar {
+  height: 70px;
+  padding: 9px 10px;
+  gap: 8px;
+  background: linear-gradient(180deg, #24437f, #16315f);
+  border-top: 3px solid #ffd34d;
+  box-shadow: inset 0 3px 0 #4db6ff33;
+}
+#gameScreen .action-button,
+#gameScreen .action-button.ghost {
+  border: 2.5px solid var(--ui-ink);
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--ui-blue-top) 0%, var(--ui-blue-mid) 46%, var(--ui-blue-bottom) 100%);
+  box-shadow: 0 4px 0 var(--ui-ink), inset 0 2px 4px #ffffff55;
+  color: #ffffff;
+  font-size: 12px; font-weight: 900;
+  text-shadow: 0 2px 0 var(--ui-ink);
+  padding-bottom: 3px;
+}
+#gameScreen .action-button.primary {
+  border: 2.5px solid #6e1030;
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--ui-red-top) 0%, var(--ui-red-mid) 46%, var(--ui-red-bottom) 100%);
+  box-shadow: 0 4px 0 #6e1030, inset 0 2px 4px #ffffff55;
+  color: #ffffff;
+  font-size: 17px;
+  text-shadow: 0 2px 0 #6e1030;
+}
+#gameScreen .bottom-bar .board-shuffle-button {
+  border: 2.5px solid #0e4d2a;
+  background: linear-gradient(180deg, var(--ui-green-top) 0%, var(--ui-green-mid) 46%, var(--ui-green-bottom) 100%);
+  box-shadow: 0 4px 0 #0e4d2a, inset 0 2px 4px #ffffff55;
+  color: #ffffff;
+  text-shadow: 0 2px 0 #0e4d2a;
+}
+#gameScreen .action-button:disabled { filter: grayscale(.85) brightness(.72); opacity: .75; }
+#gameScreen .action-button img { filter: drop-shadow(0 1px 1px #0e2c5c88); }
+#gameScreen .bottom-bar .ad-action > span { color: #ffffff; text-shadow: 0 2px 0 var(--ui-ink); }
+#gameScreen .bottom-bar .ad-action > small {
+  padding: 1px 5px;
+  border-radius: 9px;
+  border: 2px solid var(--ui-ink);
+  background: linear-gradient(180deg, var(--ui-gold-top), var(--ui-gold-bottom));
+  color: #ffffff;
+  font-size: 9px; font-weight: 900;
+  text-shadow: 0 1px 0 #b06a00;
+  box-shadow: 0 2px 0 var(--ui-ink);
+}
+
+/* ---------- 6. 悬浮控件：倍速 / 攻略 ---------- */
+/* 倍速：放行进区左上角——棋盘在窄屏下几乎贴屏幕边，贴左缘外会被裁掉一半；行进区无交互元素，也不占格子 */
+#gameScreen .speed-float {
+  right: auto;
+  left: 4px;
+  top: 6px;
+  transform: none;
+  width: 42px; height: 42px;
+  border: 2.5px solid var(--ui-ink);
+  background: radial-gradient(circle at 50% 28%, #8ad8ff 0%, #41a8f7 46%, #1f6fd0 100%);
+  box-shadow: 0 3px 0 var(--ui-ink), inset 0 2px 3px #ffffff66;
+  color: #ffffff;
+  font-size: 13px;
+  text-shadow: 0 2px 0 var(--ui-ink);
+}
+#gameScreen .briefing-fab {
+  width: 30px; height: 30px;
+  border: 2.5px solid var(--ui-ink);
+  background: linear-gradient(180deg, var(--ui-gold-top), var(--ui-gold-bottom));
+  box-shadow: 0 3px 0 var(--ui-ink);
+  color: #ffffff;
+  font-size: 16px; font-weight: 900;
+  text-shadow: 0 1px 0 #b06a00;
+}
+
+/* ---------- 7. 界面可上下拖动（兜底） ----------
+   正常屏由 --app-height / --battle-chrome 变量缩放保证内容不溢出；
+   极端机型（字体放大 / 异形屏 / 宿主容器压缩）内容超高时允许整卡上下拖动查看，
+   不再被 overflow:hidden 裁掉。顶栏吸顶常驻。 */
+#gameScreen.game-screen {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+#gameScreen.game-screen > .top-hud { position: sticky; top: 0; z-index: 30; }

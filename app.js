@@ -2808,6 +2808,59 @@ function startLevelFromHome() {
   showLevelBriefing();
 }
 
+/* 棋子图鉴：跟着关卡预告一起给玩家看，避免在战斗里靠试错猜每种棋子干什么。
+   单位（男法师/男战士/女祭司）用武将预览图，与棋盘上显示的是同一张；
+   道具与装置用 TYPES 里的图标，保证"图标 + 作用"一一对应。 */
+const PIECE_GUIDE_GROUPS = [
+  {
+    title: "武将棋子",
+    hint: "摆在棋盘上自动攻击，等级越高越强",
+    column: true,
+    items: [
+      { type: "sword", desc: "攻击同列怪物" },
+      { type: "fan", desc: "攻击同行怪物" },
+      { type: "rock", desc: "范围攻击并定身" },
+    ],
+  },
+  {
+    title: "道具 / 装置",
+    hint: "合成消除时立即触发效果",
+    items: [
+      { type: "gourd", desc: "消除时回复防线生命" },
+      { type: "coin", desc: "消除时获得金币" },
+      { type: "chest", desc: "3 连返 1 步，4 连返 2 步" },
+      { type: "trap", desc: "消除数量决定禁锢怪物时长" },
+      { type: "mine", desc: "消除数量决定爆炸伤害" },
+    ],
+  },
+];
+
+function pieceGuideIcon(type) {
+  const warrior = getWarriorAppearance(type);
+  if (warrior) return `${ASSET}${warrior.previewImage}`;
+  const def = TYPES[type];
+  return def ? `${ASSET}${def.icon}` : "";
+}
+
+function pieceGuideHTML() {
+  const groups = PIECE_GUIDE_GROUPS.map((group) => {
+    const rows = group.items.map((entry) => {
+      const def = TYPES[entry.type];
+      if (!def) return "";
+      const tone = def.color || "#c9a227";
+      return `<div class="briefing-piece" style="--tone:${tone}">
+          <span class="briefing-piece-icon"><img src="${pieceGuideIcon(entry.type)}" alt="${def.name}" /></span>
+          <span class="briefing-piece-text"><b>${def.name}</b><i>${entry.desc}</i></span>
+        </div>`;
+    }).join("");
+    return `<div class="briefing-piece-group">
+        <div class="briefing-piece-head"><b>${group.title}</b><span>${group.hint}</span></div>
+        <div class="briefing-piece-list${group.column ? " is-column" : ""}">${rows}</div>
+      </div>`;
+  }).join("");
+  return `<div class="briefing-pieces">${groups}</div>`;
+}
+
 // 关卡预告：进波前显式告诉玩家本关特性 + 推荐武将（差异化感知的主入口）。每关默认仅弹一次。
 // force=true 用于战斗内「本关特性」按钮重看（F9/F12）。
 function showLevelBriefing(force) {
@@ -2830,7 +2883,7 @@ function showLevelBriefing(force) {
     const note = state.level <= 2
       ? "本关为暖场关，无特殊机制。熟悉合成与三武将切换即可。"
       : "本关为常规关，无特殊怪物机制。";
-    html = `<div class="briefing-body"><div class="briefing-note">${note}</div>${formsHTML}</div>`;
+    html = `<div class="briefing-body"><div class="briefing-note">${note}</div>${formsHTML}${pieceGuideHTML()}</div>`;
   } else {
     const traits = modifier.monsterTraits || [];
     const defs = traits.map((id) => MONSTER_TRAITS[id]).filter(Boolean);
@@ -2864,9 +2917,11 @@ function showLevelBriefing(force) {
       <div class="briefing-section"><span class="briefing-label">棋盘</span><span class="briefing-value">${boardText}${boardHas ? "（棋盘已高亮）" : ""}</span></div>
       <div class="briefing-section"><span class="briefing-label">推荐</span><span class="briefing-value">重点培养 <b>${counterName}</b>${blessedHint}。</span></div>
       ${formsHTML}
+      ${pieceGuideHTML()}
     </div>`;
   }
   showModal(`关卡预告 · 第 ${state.level} 关`, "", [{ label: "开始守城", onClick: () => {} }]);
+  modalCard.classList.add("briefing-modal");   // 内容含棋子图鉴，允许整卡滚动
   modalBody.innerHTML = html;
 }
 
@@ -4462,7 +4517,7 @@ function isModalBackAction(action) {
 }
 
 function showModal(title, body, actions = [], options = {}) {
-  modalCard.classList.remove("card-draft", "growth-modal", "hero-skill-view-modal", "equipment-modal", "bag-modal", "bag-compact", "forge-modal", "shop-modal", "victory-modal", "army-report-modal", "daily-modal");
+  modalCard.classList.remove("card-draft", "growth-modal", "hero-skill-view-modal", "equipment-modal", "bag-modal", "bag-compact", "forge-modal", "shop-modal", "victory-modal", "army-report-modal", "daily-modal", "briefing-modal");
   renderModalArtwork(title);
   modalTitle.textContent = title;
   /* 面板可把 #modalBody 挪作他用（如武将界面顶栏的资源胶囊），每次开弹窗先复位 */

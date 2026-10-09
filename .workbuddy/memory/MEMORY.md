@@ -29,7 +29,9 @@
 ## 工程约定
 
 - 纯静态工程，零构建零 npm 依赖；`node tools/serve.mjs --port 5173` 起本地试玩。
-- **每次代码调整后，都要确认该本地服务保持常驻，并主动把试玩链接 `http://127.0.0.1:5173/` 发给超哥**（超哥 2026-09-28 明确要求）。注意服务进程可能被回收，发链接前先 curl `--noproxy '*'` 探活，挂了就重启。
+- **每次代码调整后，都要确认该本地服务保持常驻，并主动把试玩链接发给超哥**（超哥 2026-09-28 明确要求）。发链接前先 curl `--noproxy '*'` 探活，挂了就重启。
+- **链接必须用 `http://localhost:5173/`，不要用 127.0.0.1**（2026-10-09 定案）。本机有全局代理 `http://127.0.0.1:4210`，代理**绕过 localhost 但不绕过 127.0.0.1**——超哥用 127.0.0.1 会被浏览器代理拦掉、表现为"打不开"，而服务其实是好的（curl 需加 `--noproxy` 也说明这点）。排查时别误判成服务挂了。
+- 公网部署（`workbuddy_sites_deploy`）在本机代理环境下会 `fetch failed`，暂不可行；若超哥要远程/手机试玩，需先解决代理或让他改浏览器代理例外。
 - 访问 127.0.0.1 时 curl 要加 `--noproxy '*'`，否则走代理返回 502。
 - **回归三件套**（改完任何逻辑都跑一遍），脚本都在 `tools/verify/`（已入库）：
   - `node --check app.js` 语法；
@@ -37,6 +39,7 @@
   - `NODE_PATH="C:/Users/MC/.workbuddy/binaries/node/workspace/node_modules" node tools/verify/regression-dom.mjs` 整体回归（把页面注入 jsdom 真跑，90 项断言，含"把每个界面所有按钮点一遍"）。
   - 另有两个专项：`tools/verify/verify-board-rules.mjs`（棋盘换位与递补，从 app.js 源码抽函数做纯数据断言，注意 app.js 是 CRLF）、`tools/verify/verify-equipment-icons.mjs`（装备图标与职业绑定）。
   - 脚本用 `import.meta.url` 上溯两级定位仓库根（从 `tmp/` 迁到 `tools/verify/` 时改过，再挪目录要同步改）。
+- **改任何 CSS/JS 后必须同步 bump `index.html` 里的资源版本参数**（`styles.css?v=` / `theme.css?v=`，2026-10-09 教训）：超哥端浏览器会拿旧缓存，表现为"改动不生效/旧样式盖住内容"，且本地复现永远正常、极难排查。版本参数用日期+改动主题，如 `?v=20261009-battle-v2`。
 - 存档在 localStorage（键 `defend-merge-progress-v1`），换浏览器/域名/端口会丢档。
 - **存档读入必须做清洗**：`loadProgress` 里装备相关字段走 `sanitizeEquipmentItem` + `isPlainObject`，id 去重且 `equipmentNextId` 严格大于所有已用 id。不要退回"直接赋值 / 展开覆盖"的旧写法——存档被外部改过或写入中断时，脏数据会被原样写回，玩家永远恢复不了。
 - 激励广告仍是本地模拟，未接微信/抖音 SDK。

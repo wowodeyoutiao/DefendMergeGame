@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<style>
+  * { margin: 0; padding: 0; }
+  body { width: 100vw; height: 100vh; overflow: hidden; background: #000; }
+  iframe { width: 100vw; height: 100vh; border: 0; }
+</style>
+</head>
+<body>
+<iframe id="f" src="/"></iframe>
+<div id="dbg" style="position:fixed;left:0;bottom:0;background:#000c;color:#0f0;font:10px monospace;padding:2px 4px;z-index:9;max-width:100%;white-space:pre-wrap;display:none">boot</div>
+<script>
+  // 调试：输出关键布局数值（?debug=1 开启）
+  if (new URLSearchParams(location.search).get("debug") === "1") {
+    dbg.style.display = "block";
+    setInterval(() => {
+      try {
+        const d = f.contentDocument, w = f.contentWindow;
+        const gs = d.querySelector(".game-screen");
+        const stage = d.querySelector(".stage");
+        const bar = d.querySelector(".bottom-bar");
+        const cs = w.getComputedStyle(gs);
+        dbg.textContent = [
+          `win ${w.innerWidth}x${w.innerHeight} scroll ${d.documentElement.scrollWidth}x${d.documentElement.scrollHeight}`,
+          `game ${gs.offsetWidth}x${gs.offsetHeight} left ${gs.offsetLeft} ${cs.display}/${cs.width}`,
+          `stage ${stage.offsetHeight} bar-bottom ${bar.getBoundingClientRect().bottom}`,
+          `appH ${cs.getPropertyValue("--app-height")} chrome ${cs.getPropertyValue("--battle-chrome")}`,
+        ].join("\n");
+      } catch (e) { dbg.textContent = "ERR " + e.message; }
+    }, 600);
+  }
+</script>
+<script>
+  // 自动：开始守城 → 跳过新手教学弹窗 → 停在战斗操作期供截图
+  const dbg = document.getElementById("dbg");
+  const log = (m) => { dbg.textContent = m; };
+  const f = document.getElementById("f");
+  f.addEventListener("load", () => {
+    log("iframe loaded");
+    let tries = 0;
+    const timer = setInterval(() => {
+      tries += 1;
+      if (tries > 40) { clearInterval(timer); log("TIMEOUT"); return; }
+      const doc = f.contentDocument;
+      if (!doc) { log("no doc"); return; }
+      const gameHidden = doc.querySelector("#gameScreen")?.classList.contains("hidden");
+      const modalShown = !!doc.querySelector("#modal:not(.hidden)");
+      log("t" + tries + " game=" + (gameHidden ? "hidden" : "shown") + " modal=" + modalShown);
+      if (modalShown) {
+        const btns = doc.querySelectorAll("#modal .modal-actions button");
+        if (btns.length) { log("click modal btn " + (btns.length - 1)); btns[btns.length - 1].click(); }
+        return;
+      }
+      if (gameHidden) {
+        const start = doc.querySelector("#homeStartBtn");
+        if (start) { log("click start"); start.click(); }
+        return;
+      }
+      clearInterval(timer);
+      log("BATTLE READY");
+      // 默认停在战斗界面；加 ?briefing=1 时再点问号按钮截图预告弹窗
+      if (new URLSearchParams(location.search).get("briefing") !== "1") return;
+      setTimeout(() => {
+        const b = doc.querySelector("#briefingBtn");
+        if (b) { b.click(); log("BRIEFING OPEN"); }
+      }, 700);
+    }, 400);
+  });
+</script>
+</body>
+</html>
