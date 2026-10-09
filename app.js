@@ -3251,8 +3251,12 @@ function renderMergeHint() {
   });
 }
 
+// 注意：这里刻意**不依赖** state.levelStaminaSpent（本关体力是否已结算）。
+// 该标记只表示"本关体力已扣"，用于判断是否存在未结束的战局；而广告提示/洗牌是操作期内的
+// 辅助功能，只要在战斗界面、操作期、次数未用尽就应该可用。若依赖它，通关后点「下一关」
+// 直接进入新关时（体力要等第一次出怪才结算）两个按钮会被锁死，与从主页进关的表现不一致。
 function canRequestMergeHint() {
-  return currentView === "battle" && state.levelStaminaSpent
+  return currentView === "battle"
     && state.phase === "setup"
     && !state.resolving && !state.hintAd && !state.adPlayback && !state.hintIndices.length
     && state.mergeHintsUsed < MAX_MERGE_HINTS;
@@ -3294,7 +3298,7 @@ function findHintMoves(board = state.board) {
 }
 
 function canRequestBoardShuffle() {
-  return currentView === "battle" && state.levelStaminaSpent && state.phase === "setup"
+  return currentView === "battle" && state.phase === "setup"
     && !state.resolving && !state.hintAd && !state.adPlayback
     && state.boardShufflesUsed < MAX_BOARD_SHUFFLES;
 }
@@ -4733,14 +4737,14 @@ function showDefeat() {
     : [{ label: "局外养成", secondary: true, onClick: () => showGrowthModal(showDefeat) }];
   if (!state.revived) {
     showModal("防线失守", `${rewardText} ${growthHint} 模拟激励广告复活：回满防线 HP，并重新挑战当前波。`, [
-      { label: "重开本关", onClick: resetGame },
+      { label: "重开本关", onClick: () => restartLevel() },
       { label: "看广告复活", secondary: true, onClick: () => AdService.showRewarded({ placement: "失败复活", onComplete: revive }) },
       ...growthActions,
       { label: "返回主界面", secondary: true, onClick: returnToHomeAfterDefeat },
     ]);
   } else {
     showModal("本关失败", `${rewardText} ${growthHint} 本局复活机会已经用完，可以重开再试。`, [
-      { label: "重开本关", onClick: resetGame },
+      { label: "重开本关", onClick: () => restartLevel() },
       ...growthActions,
       { label: "返回主界面", secondary: true, onClick: returnToHomeAfterDefeat },
     ]);
@@ -6753,6 +6757,16 @@ function showBeastDefeat() {
   modalDetail.innerHTML = beastRewardRowHtml(result, false);
 }
 
+// 重开本局：保留本关已扣的体力标记。resetGame 会把 levelStaminaSpent 清成 false，
+// 若不恢复，第一次出怪（startWave）会按"本关未付费"再扣一次体力，等于重开一次多收一份门票。
+function restartLevel() {
+  const staminaAlreadySpent = state.levelStaminaSpent;
+  resetGame();
+  if (staminaAlreadySpent) state.levelStaminaSpent = true;
+  showBattle();
+  setTip("本局已重开，棋盘与进度重置；本关体力不再重复扣除。");
+}
+
 function nextLevel() {
   state.level += 1;
   state.selectedLevel = state.level;
@@ -6770,6 +6784,7 @@ function completeLevelToHome() {
 
 function resetGame(keepLevel = true, options = {}) {
   finishMergeHintAd(false, false);
+  state.adPlayback = null;   // 清残留广告态：否则换关/重开后广告类按钮会被旧状态锁死
   stopLoop();
   hideModal();
   state.resolutionId += 1;
@@ -6860,7 +6875,7 @@ adStepsBtn.addEventListener("click", () => AdService.showRewarded({
 }));
 mergeHintBtn.addEventListener("click", showMergeHintAd);
 boardShuffleBtn.addEventListener("click", showBoardShuffleAd);
-resetBtn.addEventListener("click", () => showConfirm("重开本局", "确定重开本局吗？当前进度与已消耗体力不返还。", () => resetGame(), "重开"));
+resetBtn.addEventListener("click", () => showConfirm("重开本局", "确定重开本局吗？当前进度与已消耗体力不返还（也不会重复扣除）。", () => restartLevel(), "重开"));
 homeStartBtn.addEventListener("click", startLevelFromHome);
 homeNormalModeBtn.addEventListener("click", () => selectHomeMode(false));
 homeChallengeModeBtn.addEventListener("click", () => selectHomeMode(true));

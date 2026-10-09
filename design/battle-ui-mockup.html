@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>战斗界面 UI 改版效果图 v1 · 合战守格</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #23262e;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 24px 12px 48px;
+    font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  h1 { color: #fff; font-size: 18px; margin-bottom: 4px; }
+  .sub { color: #9aa3b2; font-size: 12px; margin-bottom: 18px; }
+
+  /* ===== 手机画布 ===== */
+  .phone {
+    width: 720px; height: 860px;
+    border-radius: 26px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 24px 60px #000a;
+    background: linear-gradient(180deg,#bfe3ff,#8fc7ff);
+  }
+  .stage-bg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; opacity: .48;
+  }
+
+  /* ===== A. 顶部资源栏 ===== */
+  .topbar {
+    position: relative; z-index: 5;
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px 0;
+  }
+  .round-btn {
+    width: 44px; height: 44px; flex: 0 0 44px;
+    border-radius: 50%;
+    background: linear-gradient(180deg,#ffffff,#eaf3ff);
+    box-shadow: 0 3px 0 #b8d6ff, 0 5px 10px #4a8fe033;
+    display: grid; place-items: center;
+    font-size: 20px; font-weight: 900; color: #5a7fd6;
+  }
+  .round-btn img { width: 24px; height: 26px; object-fit: contain; }
+  .pill {
+    height: 44px;
+    display: flex; align-items: center; gap: 7px;
+    padding: 0 14px;
+    border-radius: 22px;
+    background: linear-gradient(180deg,#ffffffee,#e6f4ffee);
+    box-shadow: inset 0 1px 0 #fff, 0 3px 0 #c9e2f8, 0 5px 12px #4a8fe026;
+  }
+  .pill img { width: 24px; height: 26px; object-fit: contain; }
+  .pill .num { font-size: 17px; font-weight: 900; color: #3a3450; line-height: 1; }
+  .pill .lbl { font-size: 10px; color: #8f84a3; font-weight: 700; margin-top: 2px; }
+  .pill .col { display: flex; flex-direction: column; align-items: center; line-height: 1; }
+  .pill .plus {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #4ecb71; color: #fff; font-size: 13px; font-weight: 900;
+    display: grid; place-items: center; box-shadow: 0 2px 0 #3ba559;
+  }
+  .spacer { flex: 1; }
+
+  /* ===== B. 关卡信息条（一行毛玻璃） ===== */
+  .info-strip {
+    position: relative; z-index: 4;
+    margin: 10px 14px 0;
+    height: 36px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 10px;
+    border-radius: 18px;
+    background: #ffffffb8;
+    backdrop-filter: blur(6px);
+    box-shadow: inset 0 1px 0 #fff, 0 3px 8px #4a8fe02e;
+    font-size: 12px; font-weight: 800; color: #4a3f5a;
+    white-space: nowrap;
+  }
+  .chip {
+    height: 24px; padding: 0 10px; border-radius: 12px;
+    display: inline-flex; align-items: center;
+    font-size: 11px; font-weight: 900; color: #fff;
+  }
+  .chip.blue  { background: linear-gradient(180deg,#8fc7ff,#5a9eff); box-shadow: 0 2px 0 #4a8fe0; text-shadow: 0 1px 0 #4a8fe0; }
+  .chip.orange{ background: linear-gradient(180deg,#ffcf6f,#ff9a56); box-shadow: 0 2px 0 #e0863a; text-shadow: 0 1px 0 #e0863a; }
+  .info-strip .dot { width: 4px; height: 4px; border-radius: 50%; background: #b8c4d8; }
+  .info-strip .right { margin-left: auto; color: #6b6285; }
+
+  /* ===== C. 棋盘区 ===== */
+  .board-zone {
+    position: absolute; z-index: 3;
+    left: 0; right: 0; top: 208px; bottom: 150px;
+    display: flex; align-items: flex-end; justify-content: center;
+  }
+  .board-outer {
+    position: relative;
+    padding: 7px;
+    border-radius: 24px;
+    background: linear-gradient(180deg,#f2f9ff,#cfe6ff);
+    box-shadow: 0 8px 0 #a3c4f2, 0 14px 28px #4a8fe038, inset 0 0 0 3px #ffffff;
+  }
+  .board {
+    width: 468px; height: 468px;
+    border-radius: 18px;
+    background: #dcecff;
+    box-shadow: inset 0 0 0 2px #b8d6ff;
+    display: grid;
+    grid-template-columns: repeat(6,1fr); grid-template-rows: repeat(6,1fr);
+    gap: 3px; padding: 6px;
+  }
+  .cell {
+    position: relative;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: inset 0 2px 5px #4a8fe01f, inset 0 -1px 0 #ffffff, 0 1px 0 #ffffff;
+    display: grid; place-items: center;
+  }
+  .cell.alt { background: #dcEcff; background: #d9eaff; }
+  .cell.alt:nth-child(4n+2) { background: #ffe9f3; }  /* 淡粉点缀，糖果感 */
+  /* 品质框架（示例：2级绿框） */
+  .cell.qt2 { background: #eafaf0; box-shadow: inset 0 0 0 2.5px #5ec97a, inset 0 2px 5px #3ba55922; }
+  .cell.qt3 { background: #ecf5ff; box-shadow: inset 0 0 0 2.5px #5a9eff, inset 0 2px 5px #4a8fe022; }
+  /* 棋子 */
+  .piece {
+    width: 84%; height: 84%;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 34%, #ffffff, #eef5ff 72%, #d8e8fa);
+    box-shadow: 0 3px 6px #3a5a8c33, inset 0 -3px 5px #b8d6ff55;
+    display: grid; place-items: center;
+    position: relative;
+  }
+  .piece img { width: 74%; height: 74%; object-fit: contain; filter: drop-shadow(0 2px 2px #0000002e); }
+  /* 等级角标：圆角小方块 · 品质色 */
+  .lv {
+    position: absolute; right: -3px; bottom: -3px;
+    min-width: 19px; height: 19px; padding: 0 4px;
+    border-radius: 7px;
+    border: 2px solid #fff;
+    font-size: 11px; font-weight: 900; color: #fff; line-height: 15px;
+    text-align: center;
+    box-shadow: 0 2px 3px #00000038;
+  }
+  .lv.t1{ background:#9aa7b8; } .lv.t2{ background:#3ba559; } .lv.t3{ background:#4a8fe0; }
+  .lv.t4{ background:#7e4adf; } .lv.t5{ background:#e0863a; } .lv.t6{ background:#d63a4a; }
+  .cell.sel { outline: 3px solid #ffcf6f; outline-offset: -3px; box-shadow: 0 0 14px #ffcf6faa, inset 0 2px 5px #4a8fe01f; }
+
+  /* 倍速按钮：贴棋盘左缘、垂直居中 */
+  .speed {
+    position: absolute; left: -14px; top: 50%; transform: translateY(-50%);
+    z-index: 3;
+    height: 40px; padding: 0 13px 0 18px;
+    border-radius: 20px;
+    background: linear-gradient(180deg,#ffffff,#e8f1ff);
+    box-shadow: 0 3px 0 #b8d6ff, 0 5px 10px #4a8fe033;
+    font-size: 14px; font-weight: 900; color: #4a6ecc;
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  /* ===== D. 英雄技能 + 防线 卡片 ===== */
+  .hero-card {
+    position: absolute; z-index: 4;
+    left: 14px; right: 14px; bottom: 92px;
+    height: 58px;
+    display: flex; align-items: center; gap: 12px;
+    padding: 0 14px 0 6px;
+    border-radius: 18px;
+    background: #ffffffd9;
+    backdrop-filter: blur(6px);
+    box-shadow: inset 0 1px 0 #fff, 0 4px 0 #c9e2f8, 0 8px 16px #4a8fe02b;
+  }
+  .avatar {
+    width: 50px; height: 50px; flex: 0 0 50px;
+    border-radius: 50%;
+    background: conic-gradient(#ffcf6f 0 62%, #ffe9bd 62% 100%);
+    padding: 3px;
+  }
+  .avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background:#fff; }
+  .skill-name { font-size: 15px; font-weight: 900; color: #3a3450; line-height: 1.1; }
+  .skill-sub { display: inline-flex; align-items: center; margin-top: 3px; height: 17px; padding: 0 7px; border-radius: 9px; background: #ffefdb; color: #c77728; font-size: 10px; font-weight: 800; }
+  .vdiv { width: 2px; height: 32px; border-radius: 1px; background: #e3edf8; }
+  .hp-col { flex: 1; min-width: 0; }
+  .hp-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
+  .hp-head .t { font-size: 12px; font-weight: 900; color: #4a3f5a; }
+  .hp-head .v { font-size: 13px; font-weight: 900; color: #3ba559; }
+  .hp-track { height: 12px; border-radius: 6px; background: #e8f0fa; box-shadow: inset 0 2px 3px #4a8fe024; overflow: hidden; }
+  .hp-fill { width: 100%; height: 100%; border-radius: 6px; background: linear-gradient(180deg,#8de0b1,#4ecb71); box-shadow: inset 0 1px 0 #ffffffcc; }
+
+  /* ===== E. 底部操作栏 ===== */
+  .bottombar {
+    position: absolute; z-index: 5; left: 0; right: 0; bottom: 0;
+    height: 84px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    padding: 12px 14px 14px;
+    background: linear-gradient(180deg,#6fb4ff,#5a9eff);
+    border-top: 3px solid #ffffffcc;
+  }
+  .btn {
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    font-size: 14px; font-weight: 900;
+    box-shadow: 0 4px 0 #0002, 0 6px 10px #00000018;
+    position: relative;
+  }
+  .btn img { width: 22px; height: 24px; object-fit: contain; }
+  .btn.white { background: linear-gradient(180deg,#ffffff,#e8f1ff); color: #4a6ecc; box-shadow: 0 4px 0 #b8d6ff, 0 6px 10px #4a8fe033; }
+  .btn.green { background: linear-gradient(180deg,#8de0b1,#4ecb71); color: #fff; text-shadow: 0 1px 0 #3ba559; box-shadow: 0 4px 0 #3ba559, 0 6px 10px #4ecb7144; }
+  .btn.orange{ background: linear-gradient(180deg,#ffb35c,#ff7a3d); color: #fff; text-shadow: 0 1px 0 #e0863a; box-shadow: 0 4px 0 #d96a2b, 0 6px 10px #ff9a5644; font-size: 16px; }
+  .btn .cnt {
+    position: absolute; top: -7px; right: 8px;
+    height: 18px; padding: 0 7px; border-radius: 9px;
+    background: #ffcf6f; color: #fff; font-size: 10px; font-weight: 900; line-height: 18px;
+    border: 2px solid #fff; box-shadow: 0 2px 3px #00000030;
+  }
+  .btn .cnt.blue { background: #5a9eff; }
+
+  /* ===== 改动点说明 ===== */
+  .notes {
+    width: 720px; margin-top: 26px;
+    background: #2d313b; border-radius: 16px; padding: 18px 22px;
+    color: #cfd6e2; font-size: 13px; line-height: 1.9;
+  }
+  .notes b { color: #ffcf6f; }
+  .notes h3 { color: #fff; font-size: 15px; margin-bottom: 8px; }
+  .notes li { margin-left: 18px; }
+</style>
+</head>
+<body>
+  <h1>战斗界面 UI 改版 · 效果图 v1</h1>
+  <div class="sub">纯静态预览（真实素材拼装），未改任何游戏代码 ｜ 重点：棋盘格子质感、等级角标、信息条一行化、按钮统一</div>
+
+  <div class="phone">
+    <img class="stage-bg" src="../public/assets/ui/theme/battle-jade.png" alt="" />
+
+    <!-- A. 顶部资源栏 -->
+    <div class="topbar">
+      <div class="round-btn"><img src="../public/assets/ui/theme/back.png" alt="" /></div>
+      <div class="pill"><div class="col"><span class="num">4</span><span class="lbl">步数</span></div></div>
+      <div class="pill"><img src="../public/assets/icon-coin.png" alt="" /><div class="col"><span class="num">190</span><span class="lbl">金币</span></div></div>
+      <div class="pill"><img src="../public/assets/home/premium.png" alt="" /><div class="col"><span class="num">0</span><span class="lbl">元宝</span></div></div>
+      <div class="pill"><img src="../public/assets/home/stamina.png" alt="" /><div class="col"><span class="num">50/60</span><span class="lbl">体力</span></div><span class="plus">+</span></div>
+      <div class="spacer"></div>
+      <div class="round-btn">↻</div>
+    </div>
+
+    <!-- B. 关卡信息条：一行毛玻璃，不再换行 -->
+    <div class="info-strip">
+      <span class="chip blue">普通</span>
+      <span>关卡 1</span>
+      <span class="dot"></span>
+      <span class="chip orange">操作期</span>
+      <span>卡牌 1/6</span>
+      <span class="dot"></span>
+      <span>第 2/3 波</span>
+      <span class="right">？攻略</span>
+    </div>
+
+    <!-- C. 棋盘 -->
+    <div class="board-zone">
+      <div class="board-outer">
+        <div class="speed">⚡ 1x</div>
+        <div class="board" id="board"></div>
+      </div>
+    </div>
+
+    <!-- D. 英雄技能 + 防线 -->
+    <div class="hero-card">
+      <div class="avatar"><img src="../public/assets/hero.png" alt="" /></div>
+      <div>
+        <div class="skill-name">裂地重击</div>
+        <span class="skill-sub">说明 ›</span>
+      </div>
+      <div class="vdiv"></div>
+      <div class="hp-col">
+        <div class="hp-head"><span class="t">防线</span><span class="v">4 / 4</span></div>
+        <div class="hp-track"><div class="hp-fill"></div></div>
+      </div>
+    </div>
+
+    <!-- E. 底部操作栏 -->
+    <div class="bottombar">
+      <div class="btn white"><img src="../public/assets/icon-revive.png" alt="" />广告 +3步</div>
+      <div class="btn white"><img src="../public/assets/ui/theme/buff-crossfire.png" alt="" />广告提示<span class="cnt">5/5</span></div>
+      <div class="btn green"><img src="../public/assets/ui/board-shuffle.png" alt="" />广告洗牌<span class="cnt blue">3/3</span></div>
+      <div class="btn orange">出怪 ›</div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <h3>本版改动点（对应你提的三个痛点）</h3>
+    <li><b>棋盘 / 棋子底部的格子：</b>格子改成「独立凹槽」——圆角 + 3px 缝隙 + 内阴影，白/冰蓝棋盘格交替（偶数列带淡粉点缀），每格看得见、摸得着；棋盘外框改为「白内衬 + 冰蓝厚底」的玩具质感。</li>
+    <li><b>等级角标：</b>由灰色小圆球改为「品质色圆角小方块」钉在棋子右下角（1灰/2绿/3蓝/4紫/5橙/6红，白描边），层级一眼可读。</li>
+    <li><b>文本与按钮：</b>关卡信息合并为一条毛玻璃胶囊（普通｜关卡｜操作期｜卡牌｜波次），<b>不再换行</b>；倍速按钮改为贴棋盘左缘的胶囊；底部四按钮统一高度圆角、次数做成金色小角标；英雄技能与防线合并为一张卡片，层级更清晰。</li>
+  </div>
+
+<script>
+  // 棋盘示意布局（贴近截图局面）：w=战士 m=法师 p=祭司 c=金币 g=葫芦 s=星 x=宝箱
+  const map = [
+    ["w1","w1","m1","p1","g1","m1"],
+    ["m2","c1","s1","g2","p1","w1"],
+    ["w1","m2","c2","m1","x1","c1"],
+    ["x1","w2","p1","g1","g1","c1"],
+    ["w1","c1","m1","s1","s1","x1"],
+    ["s1","p1","g1","m1","w1","c2"],
+  ];
+  const img = {
+    w: q => `../public/assets/warriors/quality/warrior/${q}/preview.webp`,
+    m: q => `../public/assets/warriors/quality/mage/${q}/preview.webp`,
+    p: q => `../public/assets/warriors/quality/priest/${q}/preview.webp`,
+    c: () => "../public/assets/icon-coin.png",
+    g: () => "../public/assets/icon-gourd.png",
+    s: () => "../public/assets/ui/theme/star.png",
+    x: () => "../public/assets/icon-chest.png",
+  };
+  const board = document.getElementById("board");
+  map.forEach((row, r) => {
+    row.forEach((code, c) => {
+      const type = code[0], tier = +code[1];
+      const cell = document.createElement("div");
+      cell.className = "cell" + ((r + c) % 2 ? " alt" : "") + (tier >= 2 ? ` qt${tier}` : "");
+      cell.innerHTML = `<div class="piece"><img src="${img[type](tier)}" alt="" /><span class="lv t${tier}">${tier}</span></div>`;
+      board.appendChild(cell);
+    });
+  });
+  // 选中态示意：第2行第1格
+  board.children[6].classList.add("sel");
+</script>
+</body>
+</html>
