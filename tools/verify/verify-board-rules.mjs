@@ -113,5 +113,86 @@ refillBoardFromBottom();
 check("棋盘内容不变", state.board.map((p) => p.id).join() === before.join());
 check("不留下 rising 标记", state.board.every((p) => !p.rising));
 
+console.log("\n六、成簇规则：只认横向 / 纵向直线，斜线不成簇");
+// 从 app.js 源码抽出成簇相关函数做纯数据断言（注意 collectAllMatches 形参顺序是 (preferredTarget, board)）
+const matchFn = new Function(
+  "BOARD_SIZE",
+  "indexToPos",
+  "posToIndex",
+  `${extract("collectLine")}\n${extract("findLineMatch")}\n${extract("collectAllMatches")}\nreturn { findLineMatch, collectAllMatches };`
+);
+const { findLineMatch, collectAllMatches } = matchFn(
+  BOARD_SIZE,
+  (index) => ({ c: index % BOARD_SIZE, r: Math.floor(index / BOARD_SIZE) }),
+  (c, r) => r * BOARD_SIZE + c
+);
+// 基底：5 类循环铺满，横纵相邻永不同类 → 天然不存在任何三连，避免干扰
+const NOISE = ["n1", "n2", "n3", "n4", "n5"];
+const base = () => Array.from({ length: 36 }, (_, i) => {
+  const c = i % BOARD_SIZE;
+  const r = Math.floor(i / BOARD_SIZE);
+  return { id: 10000 + i, type: NOISE[(r * 2 + c) % 5], tier: 1 };
+});
+const put = (board, cells, type) => cells.forEach(([c, r]) => {
+  board[r * BOARD_SIZE + c] = { id: 20000 + r * BOARD_SIZE + c, type, tier: 1 };
+});
+const groupsOf = (board) => collectAllMatches(null, board);
+
+check("基底棋盘本身无三连（测试前提成立）", groupsOf(base()).length === 0);
+
+const horiz = base();
+put(horiz, [[1, 2], [2, 2], [3, 2]], "sword");
+const horizGroups = groupsOf(horiz);
+check("横向三连成簇", horizGroups.length === 1 && horizGroups[0].cluster.length === 3,
+  JSON.stringify(horizGroups.map((g) => g.cluster.length)));
+
+const vert = base();
+put(vert, [[4, 0], [4, 1], [4, 2]], "fan");
+const vertGroups = groupsOf(vert);
+check("纵向三连成簇", vertGroups.length === 1 && vertGroups[0].cluster.length === 3,
+  JSON.stringify(vertGroups.map((g) => g.cluster.length)));
+
+const diagDown = base();
+put(diagDown, [[0, 0], [1, 1], [2, 2]], "rock");
+check("右下斜三连【不】成簇", groupsOf(diagDown).length === 0);
+
+const diagUp = base();
+put(diagUp, [[5, 0], [4, 1], [3, 2]], "rock");
+check("右上斜三连【不】成簇", groupsOf(diagUp).length === 0);
+
+const diagLong = base();
+put(diagLong, [[0, 1], [1, 2], [2, 3], [3, 4]], "rock");
+check("斜四连【不】成簇", groupsOf(diagLong).length === 0);
+
+const pair = base();
+put(pair, [[1, 1], [2, 1]], "sword");
+check("仅两个相同不消除", groupsOf(pair).length === 0);
+
+// L 形：横三连 + 纵三连共用一格，应为同一个簇（长度 5）
+const ell = base();
+put(ell, [[0, 4], [1, 4], [2, 4], [0, 3], [0, 2]], "coin");
+const ellGroups = groupsOf(ell);
+check("L 形（横+纵共用一格）合成一个簇且长度为 5",
+  ellGroups.length === 1 && ellGroups[0].cluster.length === 5,
+  JSON.stringify(ellGroups.map((g) => g.cluster.length)));
+
+// 不同 tier 的同类棋子不算一簇
+const mixedTier = base();
+put(mixedTier, [[1, 2], [2, 2], [3, 2]], "sword");
+mixedTier[2 * BOARD_SIZE + 2].tier = 2;
+check("同类型但等级不同不成簇", groupsOf(mixedTier).length === 0);
+
+console.log("\n七、普通消除返步档位：4连→1 / 5连→2 / 6连→3 / 7连及以上→4（封顶 4）");
+const refundFn = new Function(`${extract("regularRefundSteps")}\nreturn regularRefundSteps;`);
+const regularRefundSteps = refundFn();
+check("3 连不返步", regularRefundSteps(3) === 0, `实际 ${regularRefundSteps(3)}`);
+check("4 连返 1 步", regularRefundSteps(4) === 1, `实际 ${regularRefundSteps(4)}`);
+check("5 连返 2 步", regularRefundSteps(5) === 2, `实际 ${regularRefundSteps(5)}`);
+check("6 连返 3 步", regularRefundSteps(6) === 3, `实际 ${regularRefundSteps(6)}`);
+check("7 连返 4 步", regularRefundSteps(7) === 4, `实际 ${regularRefundSteps(7)}`);
+check("8 连仍封顶 4 步", regularRefundSteps(8) === 4, `实际 ${regularRefundSteps(8)}`);
+check("12 连仍封顶 4 步", regularRefundSteps(12) === 4, `实际 ${regularRefundSteps(12)}`);
+check("非法输入返回 0", regularRefundSteps(null) === 0 && regularRefundSteps(undefined) === 0);
+
 console.log(failed ? `\n结论：${failed} 项失败` : "\n结论：全部通过");
 process.exit(failed ? 1 : 0);

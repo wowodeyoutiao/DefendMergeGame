@@ -3254,7 +3254,9 @@ function collectLine(index, dc, dr, board = state.board) {
 }
 
 function findLineMatch(index, board = state.board) {
-  const directions = [[1, 0], [0, 1], [1, 1], [1, -1]];
+  // 成簇只认横向 / 纵向直线：同种同阶棋子在同一行或同一列相连 >=3 才消除，斜线不成立。
+  // （换位另有独立规则：areAdjacentCells 只允许横纵相邻，斜向换位不生效。）
+  const directions = [[1, 0], [0, 1]];
   return directions
     .flatMap(([dc, dr]) => collectLine(index, dc, dr, board))
     .filter((value, itemIndex, values) => values.indexOf(value) === itemIndex);
@@ -3289,6 +3291,14 @@ function collectAllMatches(preferredTarget = null, board = state.board) {
     });
   }
   return groups;
+}
+
+// 普通消除（非宝箱）的返步档位：4连→1、5连→2、6连→3、7连及以上→4（封顶 4）。
+// 即「簇长 - 3，上限 4」。门槛为簇长 >= 4，达到即 100% 返还，不再是概率触发。
+// 单独抽成纯函数，便于 tools/verify/verify-board-rules.mjs 直接做数值断言。
+function regularRefundSteps(clusterSize) {
+  if (!Number.isInteger(clusterSize) || clusterSize < 4) return 0;
+  return Math.min(4, clusterSize - 3);
 }
 
 function clearMergeHint() {
@@ -3484,12 +3494,11 @@ function eliminateMatches(matches, { chain = 1 } = {}) {
     if (refundChance > 0) {
       const refunded = Math.random() < refundChance;
       if (refunded) {
-        // 按超出 3 个的部分累加返步：合并越多，返还越多（4→+1，6→+3，8+→+5）
-        const excess = regularCount - 3;
+        const excess = regularRefundSteps(regularCount);
         refundedSteps += excess;
         refundEvents.push({ count: regularCount, steps: excess, isChest: false });
       }
-      messages.push(refunded ? `触发普通消除返步 +${regularCount - 3}` : `未触发 ${Math.round(refundChance * 100)}% 普通返步`);
+      messages.push(refunded ? `触发普通消除返步 +${regularRefundSteps(regularCount)}` : `未触发 ${Math.round(refundChance * 100)}% 普通返步`);
     }
   }
   // 注意：不在本函数内直接累加 state.steps，交由 resolveBoardAfterMove 在回合结束后统一做飘字 + 数字滚动
