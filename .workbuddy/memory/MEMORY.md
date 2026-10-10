@@ -16,6 +16,12 @@
 - **换位只允许横向或纵向相邻**：同行且列差 1，或同列且行差 1。斜向（对角）一律不生效、不消耗步数。跨行首尾（如第 1 行末格与第 2 行首格）也不算相邻。
 - **递补方向是"从下向上"**：消除产生空位后，该列**下方**棋子逐格上顶，缺口留在**列底部**，由棋盘底部生成新棋子补入。上方棋子必须原地不动。**不是重力下沉**——第一版按品类常识做成了下沉，被推翻过。
 - 实现要点：`refillBoardFromBottom` 每列自上而下收集幸存棋子再自上而下写回（保证列内相对顺序不变）；上顶棋子标 `rising` + `riseDistance`（原行 − 新行），`styles.css` 用 `riseToVacancy` 做自下往上滑动。
+- **成簇（消除）只认横向 / 纵向直线（超哥 2026-10-10 定案，已改）**：同种同阶棋子在同一行或同一列相连 ≥3 才消除，**斜线一律不成簇**。`findLineMatch` 的 `directions` 现为 `[[1,0],[0,1]]`（原含 `[1,1]/[1,-1]` 两个斜向，是工程 2026-09-22 首次上传就带进来的原始行为，不是回归）。**注意与"换位规则"是两条独立的规则**：换位只准横纵相邻，成簇以前曾被误以为也只能横纵，实为两者混记；现在两者统一为横纵。
+- 成簇的保留行为（别当 bug）：L / T 形（横三连 + 纵三连共用一格）仍合并为**同一个簇**（Union 后长度 5）；同类型但 `tier` 不同不成簇。这两条 + 斜线不成簇已写进 `tools/verify/verify-board-rules.mjs` 第六节做永久断言。
+- ⚠️ **去斜向的难度影响与已落地的补偿（2026-10-10 实测 6000 局随机 6×6）**：平均每盘成簇数 1.51→1.11（-26%）、平均最大簇长 3.89→2.75（-29%）、可消除换位步数 52.3→43.8（-16%）、偶发无解棋盘 0%→约 0.2%（已有广告洗牌兜底）。返步收益一度从基线 0.890/回合 掉到 0.514（-42%）。
+- **普通消除返步档位最终定案（超哥 2026-10-10）**：4连→1、5连→2、6连→3、**7连及以上→4（封顶 4）**，门槛簇长 ≥4 且 100% 必返（非概率）。代码抽为纯函数 `regularRefundSteps(clusterSize) = Math.min(4, size - 3)`，`tools/verify/verify-board-rules.mjs` 第七节有 8 条数值断言锁死（含 8/12 连仍封顶、非法输入返回 0）。**这是终稿，不要再据此建议改成「簇长-2」做补偿。**（历史过程：去斜向后先按「簇长-2」补偿过一版，超哥随后改回这套更陡的档位。）
+- 该档位实测 0.484/回合，对比今天开工前基线 0.889 约 **-46%**（去斜向 + 陡档位叠加的结果）。**已确认为超哥有意收紧**，不要再当作 bug 汇报；若日后要回调，唯一旋钮是这个 `regularRefundSteps` 函数，别动成簇方向。
+- 只当朋友闲聊提及再说明：以上难度数字来自随机棋盘蒙特卡洛（`tmp/difficulty-check.mjs` / `tmp/refund-tune.mjs`），真实玩家会主动做大连杆，绝对值偏高，但**相对变化幅度**是可信的。
 
 ## 界面风格（超哥定案）
 
@@ -36,7 +42,7 @@
 - **回归三件套**（改完任何逻辑都跑一遍），脚本都在 `tools/verify/`（已入库）：
   - `node --check app.js` 语法；
   - `node tools/verify/static-scan.mjs` 静态扫描（未定义符号 / 残留引用 / DOM 引用落空 / state 字段 / CSS 关键帧 / JS 类名无 CSS 规则）；
-  - `NODE_PATH="C:/Users/MC/.workbuddy/binaries/node/workspace/node_modules" node tools/verify/regression-dom.mjs` 整体回归（把页面注入 jsdom 真跑，90 项断言，含"把每个界面所有按钮点一遍"）。
+  - `NODE_PATH="C:/Users/Administrator/.workbuddy/binaries/node/workspace/node_modules" node tools/verify/regression-dom.mjs` 整体回归（把页面注入 jsdom 真跑，90 项断言，含"把每个界面所有按钮点一遍"）。注意：文档里旧的 `C:/Users/MC/...` 路径已失效（2026-10-10 起环境用户为 Administrator），jsdom 已装到受管 workspace；跑之前若报 `Cannot find module 'jsdom'`，先 `npm install jsdom` 装到该 workspace（**不要 -g**）。
   - 另有两个专项：`tools/verify/verify-board-rules.mjs`（棋盘换位与递补，从 app.js 源码抽函数做纯数据断言，注意 app.js 是 CRLF）、`tools/verify/verify-equipment-icons.mjs`（装备图标与职业绑定）。
   - 脚本用 `import.meta.url` 上溯两级定位仓库根（从 `tmp/` 迁到 `tools/verify/` 时改过，再挪目录要同步改）。
 - **改任何 CSS/JS 后必须同步 bump `index.html` 里的资源版本参数**（`styles.css?v=` / `theme.css?v=`，2026-10-09 教训）：超哥端浏览器会拿旧缓存，表现为"改动不生效/旧样式盖住内容"，且本地复现永远正常、极难排查。版本参数用日期+改动主题，如 `?v=20261009-battle-v2`。
