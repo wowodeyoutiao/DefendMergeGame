@@ -3480,7 +3480,7 @@ function eliminateMatches(matches, { chain = 1 } = {}) {
     .map(({ cluster }) => cluster.length);
   if (regularCounts.length) {
     const regularCount = Math.max(...regularCounts);
-    const refundChance = Math.min(1, Math.max(0, (regularCount - 3) * 0.2));
+    const refundChance = regularCount > 3 ? 1 : 0; // 普通消除 4 连及以上 100% 返步（宝箱走独立公式，不受此概率影响）
     if (refundChance > 0) {
       const refunded = Math.random() < refundChance;
       if (refunded) {
