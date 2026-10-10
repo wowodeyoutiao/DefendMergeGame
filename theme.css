@@ -4451,6 +4451,7 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
 #gameScreen .defense-status {
   height: auto;                 /* 覆盖基础样式的固定高，让步数条的第二行撑开 */
   min-height: 56px;
+  grid-template-columns: 60px minmax(84px, 130px) minmax(0, 1fr); /* 第一列加宽，容纳放大后的主角按钮 */
   bottom: 8px;
   left: 12px; right: 12px;
   padding: 5px 10px 7px 4px;
@@ -4462,11 +4463,18 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   box-shadow: 0 0 0 3px var(--ui-ink), 0 4px 0 var(--ui-ink-soft), 0 8px 16px #0e2c5c55;
 }
 #gameScreen .hero-skill-button {
+  grid-row: 1 / 3;              /* 跨两行，填满步数行让出的左侧空间 */
+  width: 56px;
+  height: 56px;
   border: 3px solid var(--ui-ink);
   background: conic-gradient(var(--ui-gold-top) var(--skill-progress, 0%), #3d5da8 0);
   box-shadow: 0 2px 0 var(--ui-ink), 0 0 8px #ffd34d55;
 }
 #gameScreen .hero-skill-button::before { background: linear-gradient(135deg, #ffffff, #eaf4ff); }
+#gameScreen .hero-mini img { width: 44px; height: 50px; }
+#gameScreen .hero-skill-button > img.hero-portrait { width: 46px; height: 50px; }
+#gameScreen .hero-skill-button > img.hero-skill-icon { width: 24px; height: 24px; }
+#gameScreen .hero-skill-strip img { width: 26px; height: 26px; }
 #gameScreen .hero-skill-button.ready {
   box-shadow: 0 0 0 3px #ffd34d, 0 0 16px #ffd34daa, 0 2px 0 var(--ui-ink);
 }
@@ -4475,13 +4483,18 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
   50%      { box-shadow: 0 0 0 5px #ffd34d, 0 0 22px #ffd34dbb, 0 2px 0 var(--ui-ink); }
 }
 #gameScreen .hero-skill-help {
+  grid-row: 1 / 3;              /* 跨两行，纵向撑满 */
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   border: 2px solid #ecd9b8;
   border-radius: 10px;
   background: #fffdf6;
   color: #23395e;
-  font-size: 11px;
+  font-size: 12px;
 }
-#gameScreen .hero-skill-info > strong { color: #23395e; }
+#gameScreen .hero-skill-info > strong { color: #23395e; font-size: 12px; }
 #gameScreen .skill-timer {
   background: linear-gradient(180deg, var(--ui-gold-top), var(--ui-gold-bottom));
   color: #ffffff;
@@ -4516,21 +4529,20 @@ body:has(.modal:not(.hidden) .bag-modal) { overflow: hidden; }
 #gameScreen .defense-hp-track.critical span {
   background: linear-gradient(180deg, #ffb36b 0%, #ff6b6b 50%, #d63a4a 100%);
 }
-/* 步数：去底框，纯文本显示剩余步数（返步滚动动画作用于这里的 #stepsText） */
+/* 步数：去底框，纯文本显示剩余步数；位于血条正下方（第3列第2行），
+   「步数」与「防线」左对齐，数字紧跟其后（返步滚动动画作用于 #stepsText） */
 #gameScreen .defense-steps {
-  grid-column: 1 / -1;
+  grid-column: 3;
+  grid-row: 2;
   display: flex;
-  align-items: center;
-  gap: 6px;
-  align-self: center;
-  color: #cfe1ff;
-  text-shadow: 0 1px 0 #0b1c3a;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
 }
-#gameScreen .defense-steps > span { font-size: 11px; color: #cfe1ff; }
+#gameScreen .defense-steps > span { font-size: 11px; font-weight: 800; color: #6b5a2a; }
 #gameScreen .defense-steps b {
-  margin-left: auto;
-  font-size: 15px; font-weight: 900; color: #ffe08a;
-  text-shadow: 0 2px 0 #0b1c3a;
+  font-size: 15px; font-weight: 900; color: #e0921f;
+  text-shadow: 0 1px 0 #ffffff;
   transition: none;
 }
 
