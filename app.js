@@ -19,6 +19,9 @@ function monsterOffsetY(monsterY, cell, approachHeight) {
   return approachHeight * (1 + monsterY / MONSTER_SPAWN_Y);
 }
 const ATTACK_RANGE_BY_TIER = [0, 3, 4, 5, 6];
+/* 法师（sword）同列攻击距离单独收窄：法师打竖列且怪物沿列行进（列内停留密度高），
+   原与战士共用同一数组会导致法师性价比偏高，这里分层缩短其纵向停留段以平衡。 */
+const MAGE_RANGE_BY_TIER = [0, 2, 3, 3, 4];
 const AREA_RADIUS_BY_TIER = [0, 0.5, 1, 1.5, 2];
 const ATTACK_INTERVAL_BY_TIER = [0, 0.8, 0.62, 0.46, 0.34];
 const MONSTER_MOVE_INTERVAL = 1.24;
@@ -469,6 +472,136 @@ const MONSTER_PROFILES = {
   brute: { move: 0.78, hp: 1.7, reward: 28, dodge: 100, resilience: 0 },
   elite: { move: 0.92, hp: 1.35, reward: 34, dodge: 100, resilience: 0 },
 };
+
+// 怪物特性标签：直接贴三武将攻击轴（sword=同列 / fan=同行 / rock=半径），制造「本关该养谁」的抉择。
+// 减伤型（columnArmor/rowArmor）在 attackMonsters 按 piece.type 轴比对；evasion/ironwall 在 spawnMonster 叠加 dodge/resilience；
+// swarm/giant 在 spawnMonster 按系数调 hp/moveSpeed。配色用于战斗中特性徽章（零美术资源，纯 CSS 文本）。
+const MONSTER_TRAITS = {
+  columnArmor: { id: "columnArmor", badge: "列", label: "列甲", color: "#3aa0ff", counter: "sword",
+    desc: "仅被同列武将（男法师）全额伤害，其余攻击 −60%。", resistAxis: "col", resistPct: 0.6 },
+  rowArmor: { id: "rowArmor", badge: "行", label: "行甲", color: "#ff7a45", counter: "fan",
+    desc: "仅被同行武将（男战士）全额伤害，其余攻击 −60%。", resistAxis: "row", resistPct: 0.6 },
+  swarm: { id: "swarm", badge: "群", label: "群", color: "#9b59ff", counter: "rock",
+    desc: "血薄、数量多、移动快，范围武将（女祭司）清场最佳。", hpMul: 0.6, moveMul: 1.25 },
+  giant: { id: "giant", badge: "巨", label: "巨躯", color: "#d4503a", counter: "sword",
+    desc: "单体超高血、慢速，列爆发武将（男法师）单点突破最佳。", hpMul: 1.6, moveMul: 0.7 },
+  evasion: { id: "evasion", badge: "闪", label: "闪避", color: "#8a8f99", counter: "rock",
+    desc: "高闪避，薄行带武将易打空，需精准或范围。", extraDodge: 40 },
+  ironwall: { id: "ironwall", badge: "壁", label: "铁壁", color: "#6b7280", counter: null,
+    desc: "高韧性，需高 tier 武将或列阵/破阵（单点爆发）突破。", extraResilience: 40 },
+  colTutorial: { id: "colTutorial", badge: "列", label: "列甲", color: "#3aa0ff", counter: "sword",
+    desc: "教学关：认得「列」徽章即代表适合同列武将（男法师）。本关仅轻微减伤，正式关卡减伤更强。", resistAxis: "col", resistPct: 0.2 },
+  rowTutorial: { id: "rowTutorial", badge: "行", label: "行甲", color: "#ff7a45", counter: "fan",
+    desc: "教学关：认得「行」徽章即代表适合同行武将（男战士）。本关仅轻微减伤，正式关卡减伤更强。", resistAxis: "row", resistPct: 0.2 },
+};
+
+// 统一差异化数据层：刷怪 / 棋盘 / 卡牌都从它读。
+// monsterTraits: 本关小怪统一携带的特性数组（Boss 不带）；board: 棋盘修正；cardBias: 肉鸽卡牌加权投放权重。
+// 普通关：单特性或复合特性（+可选棋盘修正），1-8 显式、9 起走 NORMAL_CYCLE 循环覆盖「所有关卡」；
+// 挑战关：在普通关基础上叠加第二特性 + 双棋盘修正（列位置随关号轮换，部分关只叠特性不叠棋盘），由 getStageModifier 按模式分流。
+
+// 各特性对应的肉鸽卡牌加权（避免与 LEVEL_MODIFIERS 重复书写，集中维护）
+const TRAIT_CARD_BIAS = {
+  columnArmor: { columnMaster: 3, "war-cry": 2, crossfire: 2 },
+  rowArmor: { rowMaster: 3, "war-cry": 2 },
+  swarm: { areaMaster: 3, frost: 3, thunder: 2 },
+  giant: { columnMaster: 3, execution: 2, thunder: 2 },
+  evasion: { areaMaster: 2, "rapid-fire": 2, crossfire: 1 },
+  ironwall: { "war-cry": 2, execution: 3, columnMaster: 1 },
+  colTutorial: { columnMaster: 2 },
+  rowTutorial: { rowMaster: 2 },
+};
+
+// 1-8 关：沿用已定案设定（教学关 1/2 仅轻微减伤，3-8 正式特性）
+const LEVEL_MODIFIERS = {
+  1: { monsterTraits: ["colTutorial"], board: null, cardBias: { columnMaster: 2 } },
+  2: { monsterTraits: ["rowTutorial"], board: null, cardBias: { rowMaster: 2 } },
+  3: { monsterTraits: ["columnArmor"], board: null, cardBias: { columnMaster: 3, "war-cry": 2, crossfire: 2 } },
+  4: { monsterTraits: ["rowArmor"], board: null, cardBias: { rowMaster: 3, "war-cry": 2 } },
+  5: { monsterTraits: ["swarm"], board: { hazardColumn: 2 }, cardBias: { areaMaster: 3, frost: 3, thunder: 2 } },
+  6: { monsterTraits: ["giant"], board: { blessedColumn: 3 }, cardBias: { columnMaster: 3, execution: 2, thunder: 2 } },
+  7: { monsterTraits: ["evasion"], board: null, cardBias: { areaMaster: 2, "rapid-fire": 2, crossfire: 1 } },
+  8: { monsterTraits: ["ironwall"], board: null, cardBias: { "war-cry": 2, execution: 3, columnMaster: 1 } },
+};
+
+// 9 关起：16 步循环覆盖「所有关卡」，每 4 关插入一个复合关（双特性 + 棋盘修正）增加策略起伏。
+// 复合关特性组合均保证「最多一个减伤轴」，避免 col+row 双削导致无解（见 traitDamageMultiplier 逐轴相乘）。
+const NORMAL_CYCLE = [
+  { monsterTraits: ["columnArmor"], board: null },
+  { monsterTraits: ["rowArmor"], board: null },
+  { monsterTraits: ["swarm"], board: { hazardColumn: 2 } },
+  { monsterTraits: ["columnArmor", "ironwall"], board: { blessedColumn: 4 } },   // 复合：法师单点 + 铁壁，需高 tier 破甲
+  { monsterTraits: ["giant"], board: { blessedColumn: 3 } },
+  { monsterTraits: ["evasion"], board: null },
+  { monsterTraits: ["ironwall"], board: null },
+  { monsterTraits: ["rowArmor", "swarm"], board: { hazardColumn: 1 } },       // 复合：战士破甲 / 范围清群涌
+  { monsterTraits: ["columnArmor"], board: { blessedColumn: 3 } },
+  { monsterTraits: ["rowArmor"], board: { hazardColumn: 2 } },
+  { monsterTraits: ["swarm"], board: null },
+  { monsterTraits: ["evasion", "ironwall"], board: { blessedColumn: 2 } },       // 复合：高闪避+铁壁，薄甲需范围+高tier
+  { monsterTraits: ["giant"], board: null },
+  { monsterTraits: ["evasion"], board: { hazardColumn: 2 } },
+  { monsterTraits: ["ironwall"], board: { blessedColumn: 3 } },
+  { monsterTraits: ["giant", "swarm"], board: { hazardColumn: 5 } },       // 复合：巨躯+群涌，范围吃香但单体厚
+];
+
+function normalModifierForLevel(level) {
+  if (LEVEL_MODIFIERS[level]) return LEVEL_MODIFIERS[level];
+  const len = NORMAL_CYCLE.length;
+  const idx = (((level - 9) % len) + len) % len;
+  return NORMAL_CYCLE[idx];
+}
+
+// 挑战关：在普通关基础上「叠加第二特性 + 双棋盘修正」，比普通关更丰富、更难。
+// 难度保证：① 新叠加特性绝不与已有减伤轴形成「另一减伤轴」，整局最多一个减伤轴（避免 col+row 双削无解）；
+//           ② 普通关已是复合关（≥2 特性）时挑战关只叠特性、不补双棋盘——复合关叠第三特性已足够难，
+//              再叠双棋盘易超模；简单关（单特性）则稳定叠双棋盘，梯度锚定在天然高难点；
+//           ③ 双棋盘的列位置随关号在 6 套布局间轮换（用满 0–5 全部列），增加读图变化；
+//           ④ 卡牌池覆盖所有特性并偏 counter。
+const CHALLENGE_BOARD_LAYOUTS = [
+  { hazardColumn: 0, blessedColumn: 5 },
+  { hazardColumn: 5, blessedColumn: 0 },
+  { hazardColumn: 1, blessedColumn: 4 },
+  { hazardColumn: 4, blessedColumn: 1 },
+  { hazardColumn: 2, blessedColumn: 3 },
+  { hazardColumn: 3, blessedColumn: 2 },
+];
+function enrichChallenge(base, level) {
+  const baseTraits = (base.monsterTraits && base.monsterTraits.slice()) || ["columnArmor"];
+  // 已存在的减伤轴集合（col / row / 空）
+  const axes = new Set(
+    baseTraits.map((t) => MONSTER_TRAITS[t] && MONSTER_TRAITS[t].resistAxis).filter(Boolean),
+  );
+  const softTraits = ["swarm", "giant", "evasion", "ironwall"];
+  const resistTraits = ["columnArmor", "rowArmor"];
+  // 若已有减伤轴（无论几个），只叠 soft 避免引入另一轴致无解；若无减伤轴，叠一个减伤轴增加克制深度。
+  // 候选池排除 base 已带特性，避免挑战关叠加出重复徽章（如 [列甲,群涌] 再叠群涌）。
+  const candidates = axes.size > 0 ? softTraits : resistTraits;
+  const pool = candidates.filter((t) => !baseTraits.includes(t));
+  const second = pool.length ? pool[level % pool.length] : candidates[level % candidates.length];
+  const monsterTraits = [...baseTraits, second];
+  // 难度梯度：普通关已是复合关（≥2 特性）时挑战关只叠特性、不补双棋盘（锚定天然高难点）；
+  // 再额外每 6 关放宽 1 关（level%6===0）只叠特性，使"只叠特性"总比例回到约 1/3，比纯复合锚定的 24% 更温和。
+  const keepSingleBoard = (baseTraits.length || 0) >= 2 || level % 6 === 0;
+  const board = { ...(base.board || {}) };
+  if (!keepSingleBoard) {
+    const layout = CHALLENGE_BOARD_LAYOUTS[level % CHALLENGE_BOARD_LAYOUTS.length];
+    board.hazardColumn = layout.hazardColumn;
+    board.blessedColumn = layout.blessedColumn;
+  }
+  const cardBias = {};
+  monsterTraits.forEach((t) => Object.assign(cardBias, TRAIT_CARD_BIAS[t] || {}));
+  cardBias.challenge = 1;
+  return { monsterTraits, board, cardBias };
+}
+
+// 统一出口：按当前模式返回本关修正（普通=单特性循环；挑战=叠加更丰富条件）
+function getStageModifier(level) {
+  const base = normalModifierForLevel(level);
+  if (isChallengeMode()) return enrichChallenge(base, level);
+  return { ...base, cardBias: base.cardBias || {} };
+}
+
 // DEPRECATED · 未生效，勿调（波次出怪实际读 CHAPTERS[].roster，见 getWaveProfile）
 const LEVEL_WAVE_PROFILES = [
   ["normal", "normal", "normal"],
@@ -578,6 +711,15 @@ function getLevelHpScale(level) {
     1 + Math.max(0, currentLevel - LEVEL_SCALING.lateHpStart) * LEVEL_SCALING.lateHpPerLevel,
   );
   return LEVEL_SCALING.hpBase * Math.pow(currentLevel, LEVEL_SCALING.hpPower) * lateMultiplier;
+}
+
+// 前期暖场系数：前几关降低怪数与血量，让玩家先用初始阵容建立正反馈，
+// 第 4 关起回归满难度（与后期 lateHp 机制解耦，只作用于关卡早期）。
+function getEarlyEase(level) {
+  if (level <= 1) return 0.55;
+  if (level === 2) return 0.7;
+  if (level === 3) return 0.85;
+  return 1;
 }
 
 function getChapterIndex(level) {
@@ -713,7 +855,7 @@ const TYPES = {
     icon: "icon-sword.png",
     kind: "unit",
     color: "#cf3d2c",
-    dps: 10,
+    dps: 8,
   },
   fan: {
     name: "男战士",
@@ -721,7 +863,7 @@ const TYPES = {
     icon: "icon-fan.png",
     kind: "unit",
     color: "#3c8f74",
-    dps: 8,
+    dps: 11,
   },
   rock: {
     name: "女祭司",
@@ -729,7 +871,7 @@ const TYPES = {
     icon: "icon-rock.png",
     kind: "unit",
     color: "#5676aa",
-    dps: 7,
+    dps: 9,
   },
   gourd: {
     name: "葫芦",
@@ -816,6 +958,33 @@ const CARD_DEFINITIONS = [
     title: "破阵斩首",
     description: "对生命值高于 50% 的怪物造成 35% 额外伤害。",
   },
+  {
+    id: "columnMaster",
+    mark: "列",
+    tag: "流派专精",
+    title: "列阵精通",
+    icon: "buff-crossfire.png",
+    description: "男法师伤害 +30%，但男战士伤害 −15%。",
+    specialize: { buff: "sword", buffMul: 1.3, nerf: "fan", nerfMul: 0.85 },
+  },
+  {
+    id: "rowMaster",
+    mark: "行",
+    tag: "流派专精",
+    title: "横扫精通",
+    icon: "buff-war-cry.png",
+    description: "男战士伤害 +30%，但男法师伤害 −15%。",
+    specialize: { buff: "fan", buffMul: 1.3, nerf: "sword", nerfMul: 0.85 },
+  },
+  {
+    id: "areaMaster",
+    mark: "围",
+    tag: "流派专精",
+    title: "范围精通",
+    icon: "buff-burst.png",
+    description: "女祭司伤害 +30%，其余武将 −10%。",
+    specialize: { buff: "rock", buffMul: 1.3, nerf: "sword", nerfMul: 0.9, nerf2: "fan", nerf2Mul: 0.9 },
+  },
 ];
 
 const state = {
@@ -855,6 +1024,11 @@ const state = {
   attackSpeedMultiplier: 1,
   attackMode: "standard",
   executionReady: false,
+  levelModifier: null,
+  warriorDamageMult: { sword: 1, fan: 1, rock: 1 },
+  briefingShownForLevel: 0,
+  specialTipShown: false,
+  seenTraits: {},
   stamina: STARTING_STAMINA,
   maxStamina: MAX_STAMINA,
   staminaLastRegenAt: Date.now(),
@@ -936,6 +1110,7 @@ const boardEl = document.getElementById("board");
 const monsterLayer = document.getElementById("monsterLayer");
 const laneLayer = document.getElementById("laneLayer");
 const fxLayer = document.getElementById("fxLayer");
+const rangeLayer = document.getElementById("rangeLayer");
 const stepsText = document.getElementById("stepsText");
 const goldText = document.getElementById("goldText");
 const yuanbaoText = document.getElementById("yuanbaoText");
@@ -957,6 +1132,19 @@ const heroSkillStrip = document.getElementById("heroSkillStrip");
 const heroSkillIcon = document.getElementById("heroSkillIcon");
 const heroSkillName = document.getElementById("heroSkillName");
 const tipText = document.getElementById("tipText");
+// 统一反馈通道：桌面写侧栏 tipText，移动端（侧栏隐藏）改用战斗内顶部 toast（F3）。
+function showBattleToast(text) {
+  const el = document.getElementById("battleToast");
+  if (!el) return;
+  el.textContent = text;
+  el.classList.add("show");
+  clearTimeout(el._tipTimer);
+  el._tipTimer = setTimeout(() => el.classList.remove("show"), 2000);
+}
+function setTip(text) {
+  if (typeof tipText !== "undefined" && tipText) tipText.textContent = text;
+  if (currentView === "battle") showBattleToast(text);   // 仅战斗内弹 toast，避免主页/弹窗误弹
+}
 const speedBtn = document.getElementById("speedBtn");
 const startWaveBtn = document.getElementById("startWaveBtn");
 const adStepsBtn = document.getElementById("adStepsBtn");
@@ -974,6 +1162,7 @@ const homeGrowthText = document.getElementById("homeGrowthText");
 const homePowerText = document.getElementById("homePowerText");
 const homeLevelText = document.getElementById("homeLevelText");
 const homeStageName = document.getElementById("homeStageName");
+const homeStageTrait = document.getElementById("homeStageTrait");
 const homeRecordText = document.getElementById("homeRecordText");
 const homeStageMapImage = document.getElementById("homeStageMapImage");
 const homeQuickTask = document.getElementById("homeQuickTask");
@@ -997,6 +1186,7 @@ const homeStageCast = document.querySelector(".home-stage-cast");
 const homeNormalModeBtn = document.getElementById("homeNormalModeBtn");
 const homeChallengeModeBtn = document.getElementById("homeChallengeModeBtn");
 const battleHomeBtn = document.getElementById("battleHomeBtn");
+const briefingBtn = document.getElementById("briefingBtn");
 const legend = document.getElementById("legend");
 const modal = document.getElementById("modal");
 const modalCard = document.querySelector(".modal-card");
@@ -1996,6 +2186,21 @@ function resolveWarriorAttack(stats, monster, baseDamage, random = Math.random) 
   return { hit: true, critical, damage: baseDamage * (critical ? COMBAT_RATING_CONFIG.criticalDamageMultiplier : 1) };
 }
 
+// 怪物特性对伤害的减伤：列甲/行甲仅被对应轴武将全额伤害，其余 −resistPct。
+// 支持多特性叠加（挑战关）：多个减伤轴系数连乘。
+function traitDamageMultiplier(monster, warriorType) {
+  const traits = monster.traits;
+  if (!Array.isArray(traits) || traits.length === 0) return 1;
+  let mult = 1;
+  for (const id of traits) {
+    const t = MONSTER_TRAITS[id];
+    if (!t || !t.resistAxis) continue;
+    const onAxis = t.resistAxis === "col" ? warriorType === "sword" : warriorType === "fan";
+    mult *= onAxis ? 1 : (1 - (t.resistPct || 0.6));
+  }
+  return mult;
+}
+
 function getEquipmentSetStatus(type) {
   const quality = state.warriorQuality[type] || 1;
   const equipment = warriorEquipmentFor(type);
@@ -2424,6 +2629,19 @@ function renderHomeHud() {
   homeYuanbaoText.title = `${state.yuanbao} 元宝`;
   homeLevelText.textContent = selectedLevel;
   homeStageName.textContent = getChapter(selectedLevel).name;
+  // F8：选关界面提前展示本关特性，让玩家进关前就能决策是否先去养成（含挑战关更丰富条件）
+  const stageMod = getStageModifier(selectedLevel);
+  if (stageMod && stageMod.monsterTraits && stageMod.monsterTraits.length) {
+    const names = stageMod.monsterTraits.map((id) => (MONSTER_TRAITS[id] ? MONSTER_TRAITS[id].label : null)).filter(Boolean);
+    let txt = names.length ? `特性：${names.join("+")}` : "暖场关";
+    if (stageMod.board && stageMod.board.blessedColumn != null) txt += " · 增益列";
+    if (stageMod.board && stageMod.board.hazardColumn != null) txt += " · 险恶列";
+    homeStageTrait.textContent = txt;
+    homeStageTrait.classList.remove("hidden");
+  } else {
+    homeStageTrait.textContent = "常规关 · 无特殊机制";
+    homeStageTrait.classList.remove("hidden");
+  }
   setSceneBg(getSceneKey(selectedLevel));
   const enemyActions = isBossLevel(selectedLevel)
     ? getBossActions(selectedLevel)
@@ -2587,6 +2805,124 @@ function startLevelFromHome() {
     state.levelStaminaSpent = true;
   }
   showBattle();
+  showLevelBriefing();
+}
+
+/* 棋子图鉴：跟着关卡预告一起给玩家看，避免在战斗里靠试错猜每种棋子干什么。
+   单位（男法师/男战士/女祭司）用武将预览图，与棋盘上显示的是同一张；
+   道具与装置用 TYPES 里的图标，保证"图标 + 作用"一一对应。 */
+const PIECE_GUIDE_GROUPS = [
+  {
+    title: "武将棋子",
+    hint: "摆在棋盘上自动攻击，等级越高越强",
+    column: true,
+    items: [
+      { type: "sword", desc: "攻击同列怪物" },
+      { type: "fan", desc: "攻击同行怪物" },
+      { type: "rock", desc: "范围攻击并定身" },
+    ],
+  },
+  {
+    title: "道具 / 装置",
+    hint: "合成消除时立即触发效果",
+    items: [
+      { type: "gourd", desc: "消除时回复防线生命" },
+      { type: "coin", desc: "消除时获得金币" },
+      { type: "chest", desc: "3 连返 1 步，4 连返 2 步" },
+      { type: "trap", desc: "消除数量决定禁锢怪物时长" },
+      { type: "mine", desc: "消除数量决定爆炸伤害" },
+    ],
+  },
+];
+
+function pieceGuideIcon(type) {
+  const warrior = getWarriorAppearance(type);
+  if (warrior) return `${ASSET}${warrior.previewImage}`;
+  const def = TYPES[type];
+  return def ? `${ASSET}${def.icon}` : "";
+}
+
+function pieceGuideHTML() {
+  const groups = PIECE_GUIDE_GROUPS.map((group) => {
+    const rows = group.items.map((entry) => {
+      const def = TYPES[entry.type];
+      if (!def) return "";
+      const tone = def.color || "#c9a227";
+      return `<div class="briefing-piece" style="--tone:${tone}">
+          <span class="briefing-piece-icon"><img src="${pieceGuideIcon(entry.type)}" alt="${def.name}" /></span>
+          <span class="briefing-piece-text"><b>${def.name}</b><i>${entry.desc}</i></span>
+        </div>`;
+    }).join("");
+    return `<div class="briefing-piece-group">
+        <div class="briefing-piece-head"><b>${group.title}</b><span>${group.hint}</span></div>
+        <div class="briefing-piece-list${group.column ? " is-column" : ""}">${rows}</div>
+      </div>`;
+  }).join("");
+  return `<div class="briefing-pieces">${groups}</div>`;
+}
+
+// 关卡预告：进波前显式告诉玩家本关特性 + 推荐武将（差异化感知的主入口）。每关默认仅弹一次。
+// force=true 用于战斗内「本关特性」按钮重看（F9/F12）。
+function showLevelBriefing(force) {
+  const modifier = getStageModifier(state.level);
+  state.levelModifier = modifier;
+  if (!force && state.briefingShownForLevel === state.level) {
+    renderLanes();           // 已看过也确保棋盘染色与当前关一致
+    return;
+  }
+  state.briefingShownForLevel = state.level;
+  renderLanes();             // 同步增益列/险恶列染色（F2）
+  const FORMS = [
+    { name: "男法师", form: "同列直线" },
+    { name: "男战士", form: "同行直线" },
+    { name: "女祭司", form: "范围" },
+  ];
+  const formsHTML = `<div class="briefing-forms">${FORMS.map((f) => `<div class="briefing-form"><b>${f.name}</b>${f.form}</div>`).join("")}</div>`;
+  let html;
+  if (!modifier) {
+    const note = state.level <= 2
+      ? "本关为暖场关，无特殊机制。熟悉合成与三武将切换即可。"
+      : "本关为常规关，无特殊怪物机制。";
+    html = `<div class="briefing-body"><div class="briefing-note">${note}</div>${formsHTML}${pieceGuideHTML()}</div>`;
+  } else {
+    const traits = modifier.monsterTraits || [];
+    const defs = traits.map((id) => MONSTER_TRAITS[id]).filter(Boolean);
+    const tone = defs[0] ? defs[0].color : "#e0863a";
+    const badgesHTML = defs.map((t) => `<span class="briefing-badge" style="--tone:${t.color}">${t.badge}</span>`).join("");
+    const tnames = defs.map((t) => t.label).join(" + ");
+    const tdescs = defs.map((t) => t.desc).join("；");
+    const counterMap = { sword: "男法师（同列）", fan: "男战士（同行）", rock: "女祭司（范围）" };
+    const counters = new Set();
+    defs.forEach((t) => counters.add(t.counter ? counterMap[t.counter] : "高 tier 武将 / 列阵或破阵（单点爆发）"));
+    const counterName = [...counters].join(" / ");
+    const boardItems = modifier.board
+      ? Object.entries(modifier.board).map(([k, v]) => {
+        if (k === "blessedColumn") return `增益列（第 ${v + 1} 列，武将攻击距离 +1）`;
+        if (k === "hazardColumn") return `险恶列（第 ${v + 1} 列，怪物移动更快）`;
+        return "";
+      }).filter(Boolean)
+      : [];
+    const boardHas = boardItems.length > 0;
+    const boardText = boardHas ? boardItems.join("／") : "无（标准布局）";
+    const blessedHint = modifier.board && modifier.board.blessedColumn != null
+      ? "，并把对应武将放在增益列（金色高亮列）上即可获得 +1 射程" : "";
+    html = `<div class="briefing-body">
+      <div class="briefing-trait">
+        <div class="briefing-badges">${badgesHTML}</div>
+        <div class="briefing-trait-text">
+          <div class="briefing-trait-name" style="color:${tone}">${tnames}</div>
+          <div class="briefing-trait-desc">${tdescs}</div>
+        </div>
+      </div>
+      <div class="briefing-section"><span class="briefing-label">棋盘</span><span class="briefing-value">${boardText}${boardHas ? "（棋盘已高亮）" : ""}</span></div>
+      <div class="briefing-section"><span class="briefing-label">推荐</span><span class="briefing-value">重点培养 <b>${counterName}</b>${blessedHint}。</span></div>
+      ${formsHTML}
+      ${pieceGuideHTML()}
+    </div>`;
+  }
+  showModal(`关卡预告 · 第 ${state.level} 关`, "", [{ label: "开始守城", onClick: () => {} }]);
+  modalCard.classList.add("briefing-modal");   // 内容含棋子图鉴，允许整卡滚动
+  modalBody.innerHTML = html;
 }
 
 function showHomeFeature(feature) {
@@ -2720,6 +3056,25 @@ function renderMonsters() {
     el.classList.toggle("monster-walking", actionName === "walk");
     el.classList.toggle("monster-attacking", actionName === "attack");
     ["normal", "runner", "brute", "elite"].forEach((variant) => el.classList.toggle(`monster-${variant}`, monster.variant === variant));
+    const traitKey = Array.isArray(monster.traits) ? monster.traits.join(",") : "";
+    if (el.dataset.traitKey !== traitKey) {
+      el.dataset.traitKey = traitKey;
+      el.querySelectorAll(".monster-trait").forEach((b) => b.remove());
+      if (traitKey) {
+        monster.traits.forEach((id, i) => {
+          const t = MONSTER_TRAITS[id];
+          if (!t) return;
+          const badge = document.createElement("div");
+          badge.className = "monster-trait";
+          badge.textContent = t.badge;
+          badge.style.background = t.color;
+          badge.title = t.label;
+          if (i > 0) badge.style.right = `${1 + i * 9}px`;
+          el.appendChild(badge);
+          if (!state.seenTraits[id]) state.seenTraits[id] = true;
+        });
+      }
+    }
     el.style.setProperty("--monster-move-duration", `${MONSTER_MOVE_INTERVAL * 1000 / state.speed}ms`);
     const image = el.querySelector("img");
     const imageSrc = `${ASSET}${monster.actions?.[actionName] || monster.icon}`;
@@ -2771,9 +3126,17 @@ function renderMonsters() {
 
 function renderLanes() {
   laneLayer.innerHTML = "";
+  const board = state.levelModifier && state.levelModifier.board;
+  if (!board) {
+    laneLayer.classList.remove("active");   // 无棋盘修正的关卡不显示染色（F2）
+    return;
+  }
+  laneLayer.classList.add("active");
   for (let i = 0; i < 6; i += 1) {
     const lane = document.createElement("div");
     lane.className = "lane";
+    if (board.blessedColumn === i) lane.classList.add("lane-blessed");
+    if (board.hazardColumn === i) lane.classList.add("lane-hazard");
     laneLayer.appendChild(lane);
   }
 }
@@ -2842,7 +3205,7 @@ async function tryMove(from, to) {
   if (!areAdjacentCells(from, to)) {
     state.selected = null;
     renderBoard();
-    tipText.textContent = "只能与上下左右相邻的棋子交换，斜向换位不生效，也不消耗步数。";
+    setTip("只能与上下左右相邻的棋子交换，斜向换位不生效，也不消耗步数。");
     return;
   }
   const dragged = state.board[from];
@@ -2943,8 +3306,12 @@ function renderMergeHint() {
   });
 }
 
+// 注意：这里刻意**不依赖** state.levelStaminaSpent（本关体力是否已结算）。
+// 该标记只表示"本关体力已扣"，用于判断是否存在未结束的战局；而广告提示/洗牌是操作期内的
+// 辅助功能，只要在战斗界面、操作期、次数未用尽就应该可用。若依赖它，通关后点「下一关」
+// 直接进入新关时（体力要等第一次出怪才结算）两个按钮会被锁死，与从主页进关的表现不一致。
 function canRequestMergeHint() {
-  return currentView === "battle" && state.levelStaminaSpent
+  return currentView === "battle"
     && state.phase === "setup"
     && !state.resolving && !state.hintAd && !state.adPlayback && !state.hintIndices.length
     && state.mergeHintsUsed < MAX_MERGE_HINTS;
@@ -2986,7 +3353,7 @@ function findHintMoves(board = state.board) {
 }
 
 function canRequestBoardShuffle() {
-  return currentView === "battle" && state.levelStaminaSpent && state.phase === "setup"
+  return currentView === "battle" && state.phase === "setup"
     && !state.resolving && !state.hintAd && !state.adPlayback
     && state.boardShufflesUsed < MAX_BOARD_SHUFFLES;
 }
@@ -3049,7 +3416,7 @@ function showBoardShuffleAd() {
       state.selected = null;
       state.boardShufflesUsed += 1;
       state.shuffleAnimationPending = true;
-      tipText.textContent = "洗牌完成，棋子种类与等级保持不变。";
+      setTip("洗牌完成，棋子种类与等级保持不变。");
     },
   });
 }
@@ -3073,6 +3440,7 @@ function eliminateMatches(matches, { chain = 1 } = {}) {
   state.selected = null;
   const messages = [];
   let refundedSteps = 0;
+  const refundEvents = []; // { count, steps, isChest } 供回合结束统一做飘字 + 数字滚动
   results.forEach(({ type, cluster, targetIndex, highestTier }) => {
     const count = cluster.length;
     const nextTier = Math.min(MAX_PIECE_TIER, highestTier + 1);
@@ -3089,6 +3457,7 @@ function eliminateMatches(matches, { chain = 1 } = {}) {
     } else if (type === "chest") {
       const gain = Math.max(1, count - 2);
       refundedSteps += gain;
+      refundEvents.push({ count, steps: gain, isChest: true });
       messages.push(`宝箱 ${count} 连消除，返还 ${gain} 步`);
     } else if (type === "trap") {
       effects.rootDuration = (count - 2) * 0.5;
@@ -3114,14 +3483,25 @@ function eliminateMatches(matches, { chain = 1 } = {}) {
     const refundChance = Math.min(1, Math.max(0, (regularCount - 3) * 0.2));
     if (refundChance > 0) {
       const refunded = Math.random() < refundChance;
-      if (refunded) refundedSteps += 1;
-      messages.push(refunded ? "触发普通消除返步 +1" : `未触发 ${Math.round(refundChance * 100)}% 普通返步`);
+      if (refunded) {
+        // 按超出 3 个的部分累加返步：合并越多，返还越多（4→+1，6→+3，8+→+5）
+        const excess = regularCount - 3;
+        refundedSteps += excess;
+        refundEvents.push({ count: regularCount, steps: excess, isChest: false });
+      }
+      messages.push(refunded ? `触发普通消除返步 +${regularCount - 3}` : `未触发 ${Math.round(refundChance * 100)}% 普通返步`);
     }
   }
-  state.steps += refundedSteps;
+  // 注意：不在本函数内直接累加 state.steps，交由 resolveBoardAfterMove 在回合结束后统一做飘字 + 数字滚动
+  const SPECIAL_TYPES = ["gourd", "coin", "chest", "trap", "mine"];
+  let specialIntro = "";
+  if (!state.specialTipShown && results.some(({ type }) => SPECIAL_TYPES.includes(type))) {
+    state.specialTipShown = true;   // 首次消除到特殊棋子时一次性科普（F11）
+    specialIntro = "特殊棋子：葫芦回血 / 铜钱给金币 / 宝箱返步 / 陷阱禁锢 / 地雷伤害。";
+  }
   const chainText = chain > 1 ? `第 ${chain} 连锁：` : "";
-  tipText.textContent = `${chainText}${messages.join("；")}。`;
-  return { refundedSteps };
+  setTip(`${specialIntro}${chainText}${messages.join("；")}。`);
+  return { refundedSteps, refundEvents };
 }
 
 // 递补规则：消除产生的空位由该列下方的棋子逐格向上顶替，缺口留在列底部，
@@ -3186,18 +3566,61 @@ function wait(ms) {
 // 递补后棋子整列下沉会更容易形成新连线，给自动连锁设一个安全阀，避免极端随机局面卡住操作期。
 const MAX_AUTO_CHAIN = 15;
 
+// 步数返步统一结算：居中飘字 + 步数数字滚动
+const STEP_REFUND_TOAST_MS = 1800;   // 飘字总时长
+const STEP_REFUND_ROLL_AT = 1300;    // 飘字开始淡出时启动数字滚动
+const STEP_REFUND_ROLL_MS = 700;      // 数字滚动时长
+
+function rollStepsText(from, to) {
+  if (!stepsText) return;
+  const start = performance.now();
+  stepsText.classList.add("steps-rolling");
+  stepsText.textContent = String(from);
+  function frame(now) {
+    const t = Math.min(1, (now - start) / STEP_REFUND_ROLL_MS);
+    const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+    stepsText.textContent = String(Math.round(from + (to - from) * eased));
+    if (t < 1) requestAnimationFrame(frame);
+    else {
+      stepsText.textContent = String(to);
+      stepsText.classList.remove("steps-rolling");
+    }
+  }
+  requestAnimationFrame(frame);
+}
+
+function applyStepRefund(startSteps, events, totalRefund) {
+  const newSteps = startSteps + totalRefund;
+  state.steps = newSteps; // 状态立即更新（渲染仍显示 startSteps，待滚动补齐观感）
+  const toast = document.getElementById("stepRefundToast");
+  if (toast) {
+    const maxCount = events.reduce((m, e) => Math.max(m, e.count), 0);
+    toast.textContent = `本次合成消除了${maxCount}个元素，获得${totalRefund}点步数返还！`;
+    toast.classList.remove("show");
+    void toast.offsetWidth; // 强制重启动画
+    toast.classList.add("show");
+  }
+  // 飘字开始淡出时再滚动步数数字
+  setTimeout(() => rollStepsText(startSteps, newSteps), STEP_REFUND_ROLL_AT);
+}
+
 async function resolveBoardAfterMove(preferredTarget = null) {
   state.resolving = true;
   state.selected = null;
   const resolutionId = ++state.resolutionId;
   let chain = 0;
+  let totalRefund = 0;
+  const refundEvents = [];
+  const startSteps = state.steps; // 回合开始时的步数，作为数字滚动起点
   render();
 
   while (state.phase === "setup" && resolutionId === state.resolutionId && chain < MAX_AUTO_CHAIN) {
     const matches = collectAllMatches(chain === 0 ? preferredTarget : null);
     if (!matches.length) break;
     chain += 1;
-    eliminateMatches(matches, { chain });
+    const res = eliminateMatches(matches, { chain });
+    totalRefund += res.refundedSteps;
+    if (res.refundEvents.length) refundEvents.push(...res.refundEvents);
     render();
     await wait(300);
     if (resolutionId !== state.resolutionId) return;
@@ -3209,12 +3632,17 @@ async function resolveBoardAfterMove(preferredTarget = null) {
 
   if (resolutionId !== state.resolutionId) return;
   state.resolving = false;
-  render();
+  render(); // 此时步数仍显示 startSteps（本回合尚未累加返步），避免提前跳数
+
+  // 回合结束后统一结算返步：飘字提示 + 步数数字滚动
+  if (totalRefund > 0) {
+    applyStepRefund(startSteps, refundEvents, totalRefund);
+  }
   if (!chain) {
-    tipText.textContent = "棋盘已稳定，本次换位未形成消除。";
+    setTip("棋盘已稳定，本次换位未形成消除。");
   } else {
     advanceTutorial(4);
-    tipText.textContent = `自动检测完成，共触发 ${chain} 轮消除。`;
+    setTip(`自动检测完成，共触发 ${chain} 轮消除。`);
   }
   if (state.steps <= 0) startWave();
 }
@@ -3233,13 +3661,13 @@ function getFxPosition(index) {
 function rangeFlashAt(index, type, tier) {
   if (!WARRIORS.some(({ type: warriorType }) => warriorType === type)) return;
   const boardRect = boardEl.getBoundingClientRect();
-  const parentRect = fxLayer.getBoundingClientRect();
+  const parentRect = rangeLayer.getBoundingClientRect();
   const cell = boardRect.width / BOARD_SIZE || 56;
   const { c, r } = indexToPos(index);
   const boardLeft = boardRect.left - parentRect.left;
   const boardTop = boardRect.top - parentRect.top;
   const flash = document.createElement("div");
-  const range = ATTACK_RANGE_BY_TIER[tier] || ATTACK_RANGE_BY_TIER[1];
+  const range = (type === "sword" ? MAGE_RANGE_BY_TIER : ATTACK_RANGE_BY_TIER)[tier] || ATTACK_RANGE_BY_TIER[1];
 
   flash.className = `range-flash range-${type}`;
   flash.style.setProperty("--range-color", TYPES[type]?.color || "#ffe49b");
@@ -3268,7 +3696,7 @@ function rangeFlashAt(index, type, tier) {
     flash.style.height = `${cell}px`;
   }
 
-  fxLayer.appendChild(flash);
+  rangeLayer.appendChild(flash);
   setTimeout(() => flash.remove(), 320);
 }
 
@@ -3388,18 +3816,58 @@ function cardBurst() {
   setTimeout(() => fx.remove(), 620);
 }
 
+// 主角主动技能序列帧特效（运行时从 public/assets/skill-fx/manifest.json 载入；
+// 无清单/无序列帧时自动回退到 .hero-skill-fx 全屏淡色闪，保证不崩）。
+let heroSkillFxManifest = null;
+let heroSkillFxLoading = false;
+
+function loadHeroSkillFxManifest() {
+  if (heroSkillFxManifest || heroSkillFxLoading) return;
+  if (typeof fetch !== "function") { heroSkillFxManifest = {}; return; }
+  heroSkillFxLoading = true;
+  fetch(`${ASSET}skill-fx/manifest.json`)
+    .then((r) => (r.ok ? r.json() : null))
+    .then((m) => { heroSkillFxManifest = m || {}; })
+    .catch(() => { heroSkillFxManifest = {}; })
+    .finally(() => { heroSkillFxLoading = false; });
+}
+
+function playHeroSkillFx(skill) {
+  loadHeroSkillFxManifest();
+  const m = heroSkillFxManifest && heroSkillFxManifest.skills && heroSkillFxManifest.skills[skill.id];
+  // 底闪作为衬托 / 兜底，始终保留
+  const backdrop = document.createElement("div");
+  backdrop.className = "card-screen-fx hero-skill-fx";
+  fxLayer.appendChild(backdrop);
+  setTimeout(() => backdrop.remove(), 620);
+  if (!m || !m.frames) return; // 无序列帧则只留底闪
+  const fps = (heroSkillFxManifest.fps) || 30;
+  const total = m.frames;
+  const img = document.createElement("img");
+  img.className = "hero-skill-seq";
+  if (m.blend === "screen") img.classList.add("blend-screen");
+  img.alt = skill.name;
+  fxLayer.appendChild(img);
+  let i = 0;
+  const advance = () => {
+    if (i >= total) { img.remove(); return; }
+    img.src = `${ASSET}${m.dir}/${m.src}_${String(i).padStart(3, "0")}.png`;
+    i += 1;
+    setTimeout(advance, 1000 / fps);
+  };
+  advance();
+  setTimeout(() => img.remove(), (total / fps) * 1000 + 240);
+}
+
 function releaseHeroSkill() {
   const { skill, ready } = getHeroSkillStatus();
   if (!ready) return;
   state.heroSkillCooldowns[skill.id] = skill.cooldown;
   state.heroSkillIndex = (state.heroSkillIndex + 1) % getHeroSkillQueue().length;
   applyHeroSkillEffect(skill);
-  const fx = document.createElement("div");
-  fx.className = `card-screen-fx hero-skill-fx skill-fx-${skill.id}`;
-  fxLayer.appendChild(fx);
-  setTimeout(() => fx.remove(), 620);
+  playHeroSkillFx(skill);
   removeDefeatedMonsters();
-  tipText.textContent = `主角释放「${skill.name}」。`;
+  setTip(`主角释放「${skill.name}」。`);
   renderHud();
   renderMonsters();
 }
@@ -3503,7 +3971,9 @@ function startWave() {
   const waveLevel = getRunLevel();
   const beastRun = isBeastRaid();
   // 关卡强度：总怪数由关卡决定，再按波次形状分摊；血量同理按整关均值归一化。
-  // 关卡 1 逐波仍为 9/11/13 只 · 86/100/114 血，与旧公式完全一致（前期手感零变化）。
+  // 前 3 关乘 getEarlyEase 暖场系数（第 1 关 ≈ 0.55），让初始阵容不升档也能守住第一波，
+  // 第 4 关起 earlyEase=1，难度由 lateHp 机制渐进（前 20 关保持新手体验）。
+  const earlyEase = getEarlyEase(waveLevel);
   const monsterTotal = LEVEL_SCALING.monsterTotalBase
     * Math.pow(waveLevel, LEVEL_SCALING.monsterTotalPower);
   // 军报固定 10 波，若按自身波数分摊会让每波怪数低于主线；故统一按主线同关波数分摊，
@@ -3513,11 +3983,12 @@ function startWave() {
     / (beastRun ? getRoundsForLevel(waveLevel) : state.maxRounds);
   const waveCountShape = 0.85 + 0.3 * (state.round - 1) / Math.max(1, state.maxRounds - 1);
   const count = Math.max(2, Math.round(perWaveBase * waveCountShape
-    * (beastRun ? ARMY_REPORT_CONFIG.monsterTotalMultiplier : 1)));
+    * (beastRun ? ARMY_REPORT_CONFIG.monsterTotalMultiplier : 1) * earlyEase));
   const waveHpShape = (36 + state.round * 7) / (36 + 7 * (state.maxRounds + 1) / 2);
   const hp = Math.round(
     getLevelHpScale(waveLevel) * waveHpShape
-    * (beastRun ? ARMY_REPORT_CONFIG.difficultyMultiplier : challengeRun ? CHALLENGE_MODE_CONFIG.difficultyMultiplier : 1),
+    * (beastRun ? ARMY_REPORT_CONFIG.difficultyMultiplier : challengeRun ? CHALLENGE_MODE_CONFIG.difficultyMultiplier : 1)
+    * earlyEase,
   );
   state.waveConfig = {
     count,
@@ -3527,8 +3998,9 @@ function startWave() {
     fullReward: getFullLevelReward(),
     profile: getWaveProfile(waveLevel, state.round),
     lanePattern: state.round % 3 === 0 ? "pressure" : state.round % 2 === 0 ? "split" : "spread",
+    pressureLane: Math.floor(Math.random() * BOARD_SIZE),
   };
-  tipText.textContent = "出怪期开始。武将等级越高，攻击力、攻击速度与有效范围越强。";
+  setTip("出怪期开始。武将等级越高，攻击力、攻击速度与有效范围越强。");
   render();
   runLoop();
 }
@@ -3597,12 +4069,27 @@ function spawnMonster() {
   const isBoss = bossWave && state.spawned >= state.waveConfig.count - bossCount;
   const profileName = isBoss ? "brute" : state.waveConfig.profile;
   const profile = MONSTER_PROFILES[profileName];
+  const levelModifier = state.levelModifier;
+  const traits = (!isBoss && levelModifier && levelModifier.monsterTraits)
+    ? levelModifier.monsterTraits
+    : [];
+  let hpMul = 1, moveMul = 1, extraDodge = 0, extraResilience = 0;
+  traits.forEach((id) => {
+    const t = MONSTER_TRAITS[id];
+    if (!t) return;
+    if (t.hpMul) hpMul *= t.hpMul;
+    if (t.moveMul) moveMul *= t.moveMul;
+    if (t.extraDodge) extraDodge += t.extraDodge;
+    if (t.extraResilience) extraResilience += t.extraResilience;
+  });
   const previous = state.monsters[state.monsters.length - 1];
   let c = Math.floor(Math.random() * BOARD_SIZE);
   if (isBoss && Number.isInteger(state.bossLane) && !isChallengeMode()) c = state.bossLane;
-  else if (!bossWave && state.waveConfig.lanePattern === "pressure" && previous) c = previous.c;
+  else if (!bossWave && state.waveConfig.lanePattern === "pressure") c = Math.random() < 0.45 ? state.waveConfig.pressureLane : Math.floor(Math.random() * BOARD_SIZE);
   else if (!bossWave && state.waveConfig.lanePattern === "split" && previous) c = (previous.c + 2 + (state.spawned % 2)) % BOARD_SIZE;
-  const maxHp = Math.round((isBoss ? state.waveConfig.hp * BOSS_CONFIG.hpMultiplier : state.waveConfig.hp) * profile.hp);
+  const hazardColumn = levelModifier && levelModifier.board && levelModifier.board.hazardColumn;
+  if (hazardColumn === c) moveMul *= 1.3;
+  const maxHp = Math.round((isBoss ? state.waveConfig.hp * BOSS_CONFIG.hpMultiplier : state.waveConfig.hp) * profile.hp * hpMul);
   const monsterLevel = getRunLevel();
   const actions = isBoss ? getBossActions(monsterLevel) : getMonsterActionsForType(monsterLevel, profileName);
   state.monsters.push({
@@ -3616,9 +4103,10 @@ function spawnMonster() {
     triggeredDevices: [],
     isBoss,
     variant: profileName,
-    moveSpeed: profile.move,
-    dodge: isBoss ? BOSS_COMBAT_RATINGS.dodge : profile.dodge,
-    resilience: isBoss ? BOSS_COMBAT_RATINGS.resilience : profile.resilience,
+    traits,
+    moveSpeed: profile.move * moveMul,
+    dodge: (isBoss ? BOSS_COMBAT_RATINGS.dodge : profile.dodge) + extraDodge,
+    resilience: (isBoss ? BOSS_COMBAT_RATINGS.resilience : profile.resilience) + extraResilience,
     icon: actions.stand,
     actions,
     action: "stand",
@@ -3674,9 +4162,12 @@ function attackMonsters(dt) {
     const skillProfile = getWarriorSkillProfile(piece.type);
     const dps = (type.dps * Math.pow(1.8, level - 1) + equipmentBonuses.attack)
       * state.damageMultiplier
+      * (state.warriorDamageMult[piece.type] || 1)
       * (state.heroRallyRemaining > 0 ? 1.5 : 1)
       * (state.heroDamageRemaining > 0 ? 1.4 : 1);
-    const attackRange = ATTACK_RANGE_BY_TIER[level];
+    const blessedColumn = state.levelModifier && state.levelModifier.board && state.levelModifier.board.blessedColumn;
+    const attackRange = (piece.type === "sword" ? MAGE_RANGE_BY_TIER[level] : ATTACK_RANGE_BY_TIER[level])
+      + (blessedColumn === unit.c ? 1 : 0);
     const wideMode = state.attackMode === "wide";
     const targets = state.monsters.filter((monster) => {
       if (monster.hp <= 0) return false;
@@ -3709,7 +4200,7 @@ function attackMonsters(dt) {
         damageBurstAtMonster(monster, "闪避", { miss: true });
         return;
       }
-      const finalDamage = result.damage * multiTargetBonus;
+      const finalDamage = result.damage * multiTargetBonus * traitDamageMultiplier(monster, piece.type);
       monster.hp -= finalDamage;
       if (rootTriggered) monster.rootRemaining = Math.max(monster.rootRemaining || 0, skillProfile.multiTargetRoot);
       damageBurstAtMonster(monster, `-${Math.round(finalDamage)}`, { critical: result.critical, emphasized: finalDamage >= 24 });
@@ -3795,7 +4286,7 @@ function moveMonsters() {
       monster.action = "attack";
       monster.actionRemaining = 0.45;
     });
-    tipText.textContent = `漏怪 ${leaked.length} 个，防线受损。`;
+    setTip(`漏怪 ${leaked.length} 个，防线受损。`);
   }
   if (boardChanged) refillBoardFromBottom();
   return boardChanged;
@@ -3908,7 +4399,7 @@ function flushVictoryChests() {
   });
   victoryChestPending = [];
   if (total > 0 && typeof tipText !== "undefined" && tipText) {
-    tipText.textContent = `未点击领取的宝箱已自动发放 ${total} 元宝。`;
+    setTip(`未点击领取的宝箱已自动发放 ${total} 元宝。`);
   }
   return total;
 }
@@ -3940,7 +4431,7 @@ function breakthroughHero() {
   if (state.yuanbao < cost) return false;
   state.yuanbao -= cost;
   state.heroBreakthrough += 1;
-  tipText.textContent = `主角突破成功，可继续提升至 ${Math.min(HERO_MAX_LEVEL, (state.heroBreakthrough + 1) * 10)} 级。`;
+  setTip(`主角突破成功，可继续提升至 ${Math.min(HERO_MAX_LEVEL, (state.heroBreakthrough + 1) * 10)} 级。`);
   renderHud();
   return true;
 }
@@ -3967,7 +4458,7 @@ function checkCombatEnd() {
       state.steps = 8;
       if (isBossWave(state.round)) prepareBossWarning();
       addWaveSupply();
-      tipText.textContent = "守住了。新一波开始，继续消除并调整阵线。";
+      setTip("守住了。新一波开始，继续消除并调整阵线。");
       render();
     }
   }
@@ -4026,7 +4517,7 @@ function isModalBackAction(action) {
 }
 
 function showModal(title, body, actions = [], options = {}) {
-  modalCard.classList.remove("card-draft", "growth-modal", "hero-skill-view-modal", "equipment-modal", "bag-modal", "bag-compact", "forge-modal", "shop-modal", "victory-modal", "army-report-modal", "daily-modal");
+  modalCard.classList.remove("card-draft", "growth-modal", "hero-skill-view-modal", "equipment-modal", "bag-modal", "bag-compact", "forge-modal", "shop-modal", "victory-modal", "army-report-modal", "daily-modal", "briefing-modal");
   renderModalArtwork(title);
   modalTitle.textContent = title;
   /* 面板可把 #modalBody 挪作他用（如武将界面顶栏的资源胶囊），每次开弹窗先复位 */
@@ -4082,12 +4573,12 @@ function refillStamina(source) {
     state.yuanbao -= STAMINA_PURCHASE_COST;
     state.staminaPurchaseUsed = true;
     state.stamina = Math.min(STAMINA_OVERFLOW_LIMIT, state.stamina + STAMINA_REFILL_AMOUNT);
-    tipText.textContent = `已用 ${STAMINA_PURCHASE_COST} 元宝补充 ${STAMINA_REFILL_AMOUNT} 点体力，今日广告补充仍可使用。`;
+    setTip(`已用 ${STAMINA_PURCHASE_COST} 元宝补充 ${STAMINA_REFILL_AMOUNT} 点体力，今日广告补充仍可使用。`);
   } else {
     if (state.staminaAdUsed) return;
     state.staminaAdUsed = true;
     state.stamina = Math.min(STAMINA_OVERFLOW_LIMIT, state.stamina + STAMINA_REFILL_AMOUNT);
-    tipText.textContent = `激励广告完成，补充 ${STAMINA_REFILL_AMOUNT} 点体力。`;
+    setTip(`激励广告完成，补充 ${STAMINA_REFILL_AMOUNT} 点体力。`);
   }
   renderHud();
 }
@@ -4195,6 +4686,11 @@ function applyCard(card) {
   if (card.id === "execution") {
     state.executionReady = true;
   }
+  if (card.specialize) {
+    state.warriorDamageMult[card.specialize.buff] *= card.specialize.buffMul;
+    state.warriorDamageMult[card.specialize.nerf] *= card.specialize.nerfMul;
+    if (card.specialize.nerf2) state.warriorDamageMult[card.specialize.nerf2] *= card.specialize.nerf2Mul;
+  }
 }
 
 function chooseCard(card) {
@@ -4208,11 +4704,34 @@ function chooseCard(card) {
   state.cardQueued = false;
   state.phase = "combat";
   hideModal();
-  tipText.textContent = state.cardsOffered < CARD_KILL_STEPS.length
+  setTip(state.cardsOffered < CARD_KILL_STEPS.length
     ? `已获得「${card.title}」。继续守城，下一张卡牌还需击杀 ${state.nextCardKillTarget} 个怪物。`
-    : `已获得「${card.title}」。本局卡牌已全部获得。`;
+    : `已获得「${card.title}」。本局卡牌已全部获得。`);
   render();
   runLoop();
+}
+
+// 肉鸽卡牌加权投放：按本关 LEVEL_MODIFIERS.cardBias 加权抽 count 张不重复卡牌。
+// 通用卡默认权重 1；targeted 关把对应 counter 卡权重拉高 → 三选一变成「面对这波威胁，你要哪种 counter-build」。
+function pickWeightedCards(count) {
+  const bias = (state.levelModifier && state.levelModifier.cardBias) || null;
+  const available = CARD_DEFINITIONS.map((card) => ({
+    card,
+    weight: (bias && bias[card.id] != null) ? bias[card.id] : 1,
+  }));
+  const chosen = [];
+  while (chosen.length < count && available.length) {
+    const total = available.reduce((s, e) => s + e.weight, 0);
+    let r = Math.random() * total;
+    let idx = 0;
+    for (let i = 0; i < available.length; i += 1) {
+      r -= available[i].weight;
+      if (r <= 0) { idx = i; break; }
+    }
+    chosen.push(available[idx].card);
+    available.splice(idx, 1);
+  }
+  return chosen;
 }
 
 function openCardChoice() {
@@ -4226,7 +4745,7 @@ function openCardChoice() {
   modalCard.classList.remove("growth-modal", "equipment-modal", "bag-modal", "bag-compact");
   modalCard.classList.add("card-draft");
   renderModalArtwork("命运三选一");
-  const choices = shuffled(CARD_DEFINITIONS).slice(0, 3);
+  const choices = pickWeightedCards(3);
   modalTitle.textContent = "命运三选一";
   modalBody.textContent = `击杀 ${state.totalKills} 个怪物，选择一张卡牌加入本局。`;
   modalActions.className = "modal-actions card-options";
@@ -4238,7 +4757,7 @@ function openCardChoice() {
     button.dataset.cardStyle = String(index + 1);
     button.setAttribute("aria-label", `${card.title}：${card.description}`);
     button.innerHTML = `
-      <span class="card-mark"><img src="./public/assets/ui/theme/buff-${card.id}.png" alt="" /></span>
+      <span class="card-mark"><img src="./public/assets/ui/theme/${card.icon || `buff-${card.id}.png`}" alt="" /></span>
       <span class="card-copy">
         <strong>${card.title}</strong>
         <small>${card.tag}</small>
@@ -4273,14 +4792,14 @@ function showDefeat() {
     : [{ label: "局外养成", secondary: true, onClick: () => showGrowthModal(showDefeat) }];
   if (!state.revived) {
     showModal("防线失守", `${rewardText} ${growthHint} 模拟激励广告复活：回满防线 HP，并重新挑战当前波。`, [
-      { label: "重开本关", onClick: resetGame },
+      { label: "重开本关", onClick: () => restartLevel() },
       { label: "看广告复活", secondary: true, onClick: () => AdService.showRewarded({ placement: "失败复活", onComplete: revive }) },
       ...growthActions,
       { label: "返回主界面", secondary: true, onClick: returnToHomeAfterDefeat },
     ]);
   } else {
     showModal("本关失败", `${rewardText} ${growthHint} 本局复活机会已经用完，可以重开再试。`, [
-      { label: "重开本关", onClick: resetGame },
+      { label: "重开本关", onClick: () => restartLevel() },
       ...growthActions,
       { label: "返回主界面", secondary: true, onClick: returnToHomeAfterDefeat },
     ]);
@@ -4299,7 +4818,7 @@ function revive() {
   state.phase = "setup";
   state.monsters = [];
   state.spawned = 0;
-  tipText.textContent = "复活成功。先完成几次消除，再出怪。";
+  setTip("复活成功。先完成几次消除，再出怪。");
   addWaveSupply();
   render();
 }
@@ -4355,12 +4874,53 @@ function showVictory() {
   if (state.heroLevel >= HERO_MAX_LEVEL) expLine = `主角已满级（Lv.${HERO_MAX_LEVEL}），本关不再获得经验。`;
   else if (leveled > 0) expLine = `获得经验 ${formatPower(expGain)}，主角升至 ${state.heroLevel} 级（防线血量上限 ${state.maxHp}）！`;
   else expLine = `获得经验 ${formatPower(expGain)}。`;
-  const pendingChests = chestResult.pending.length;
-  const chestLine = pendingChests > 0
-    ? `${isChallengeMode() ? "挑战" : "普通"}关卡宝箱解锁 ${pendingChests} 个，点击宝箱即可领取元宝。`
-    : `本关三个宝箱的元宝奖励此前已领取。`;
-  const ybLine = state.paidYuanbao > 0 ? `${state.paidYuanbao} 元宝、` : "";
-  const body = `本关结算 ${state.paidReward} 金币、${ybLine}强化石 ${state.paidForgeEnhanceStone}、升星石 ${state.paidForgeStarStone}。${chestLine}${expLine}${dropText}`;
+  const modeLabel = isChallengeMode() ? "挑战" : "普通";
+  const VICTORY_FRAME_INDEX = { gold: 1, exp: 1, yuanbao: 6, enhance: 3, star: 7 };
+  const EQUIPMENT_QUALITY_FRAME = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 6, 6: 7, 7: 8 };
+  const rewardRows = [
+    { type: "gold", label: "金币", icon: "icon-coin.png", amount: formatPower(state.paidReward) },
+    state.paidYuanbao > 0 ? { type: "yuanbao", label: "元宝", icon: "home/premium.png", amount: state.paidYuanbao } : null,
+    { type: "enhance", label: "强化石", icon: "ui/forge/stone-enhance.png", amount: state.paidForgeEnhanceStone },
+    { type: "star", label: "升星石", icon: "ui/forge/stone-star.png", amount: state.paidForgeStarStone },
+    { type: "exp", label: "经验", icon: "hero.png", amount: formatPower(expGain) },
+  ].filter(Boolean);
+  const dropItems = [];
+  if (challengeDrops.length) {
+    challengeDrops.forEach((item) => dropItems.push({ type: "equipment", item }));
+  } else if (equipmentDrop) {
+    dropItems.push({ type: "equipment", item: equipmentDrop });
+  }
+  if (adEquipmentDrop) dropItems.push({ type: "equipment", item: adEquipmentDrop });
+  const allRewards = [...rewardRows, ...dropItems];
+  const rewardsHtml = allRewards.map((r) => {
+    if (r.type === "equipment") {
+      const item = r.item;
+      const frameIdx = EQUIPMENT_QUALITY_FRAME[item.quality] || 1;
+      const icon = getEquipmentIcon(item.slot, item.quality, item.warrior);
+      const q = qualityInfo(item.quality);
+      return `
+        <div class="victory-reward equipment">
+          <div class="reward-frame vf-${frameIdx}"><img src="${ASSET}${icon}" alt="${equipmentName(item)}" /></div>
+          <b>${equipmentName(item)}</b>
+          <span style="color:${q.color}">${q.name}</span>
+        </div>`;
+    }
+    return `
+      <div class="victory-reward resource">
+        <div class="reward-frame vf-${VICTORY_FRAME_INDEX[r.type]}"><img src="${ASSET}${r.icon}" alt="${r.label}" /></div>
+        <b>${r.label}</b>
+        <span>${r.amount}</span>
+      </div>`;
+  }).join("");
+  const dropNote = dropItems.length ? "" : `<p class="victory-note">${dropText}</p>`;
+  const body = `
+    <div class="victory-subtitle">
+      <b>已通关：${modeLabel}第 ${state.level} 关</b>
+      <span>恭喜挑战获得</span>
+    </div>
+    <div class="victory-rewards">${rewardsHtml}</div>
+    <p class="victory-note">${expLine}</p>
+    ${dropNote}`;
   const victoryActions = [
     { label: "下一关", onClick: () => { flushVictoryChests(); nextLevel(); } },
   ];
@@ -4380,6 +4940,7 @@ function showVictory() {
   victoryActions.push({ label: "局外养成", secondary: true, onClick: () => { flushVictoryChests(); showGrowthModal(showVictory); } });
   victoryActions.push({ label: "返回主界面", secondary: true, onClick: () => { flushVictoryChests(); completeLevelToHome(); } });
   showModal("胜利结算", body, victoryActions);
+  modalBody.innerHTML = body;
   modalCard.classList.add("victory-modal");
   victoryChestKey = String(state.level);
   victoryChestPending = chestResult.pending.slice();
@@ -4401,7 +4962,7 @@ function showVictory() {
     const icon = node.querySelector("img");
     if (icon) icon.src = `${ASSET}home/reward-chest.png`;
     if (typeof tipText !== "undefined" && tipText) {
-      tipText.textContent = `领取「${stageChestMeta(victoryChestChallenge)[index].label}」宝箱，获得 ${gain} 元宝。`;
+      setTip(`领取「${stageChestMeta(victoryChestChallenge)[index].label}」宝箱，获得 ${gain} 元宝。`);
     }
   };
 }
@@ -5938,7 +6499,7 @@ function armyReportTick() {
   if (state.armyReport.active) {
     if (now >= state.armyReport.active.expiresAt) {
       clearArmyReport();
-      if (currentView !== "battle") tipText.textContent = "军报已失效：未在时限内迎战，异兽撤离。";
+      if (currentView !== "battle") setTip("军报已失效：未在时限内迎战，异兽撤离。");
       if (armyReportModalOpen) showArmyReport();
       return;
     }
@@ -5990,9 +6551,9 @@ function triggerArmyReport(source = "online") {
   saveProgress();
   renderArmyReportState();
   if (currentView !== "battle") {
-    tipText.textContent = byPity
+    setTip(byPity
       ? "保底军报已至：久候无讯，此番必有斩获！军报 5 分钟内有效，请尽快迎战。"
-      : "军报已至：异兽入侵！军报 5 分钟内有效，请尽快迎战。";
+      : "军报已至：异兽入侵！军报 5 分钟内有效，请尽快迎战。");
   }
   return true;
 }
@@ -6203,7 +6764,7 @@ function beginBeastRaid(report) {
   // 不消耗体力（ARMY_REPORT_CONFIG.enterCostStamina = 0）；但标记战局进行中，返回主页可「继续守城」
   state.levelStaminaSpent = ARMY_REPORT_CONFIG.enterCostStamina <= 0;
   updateDailyProgress("beast");
-  tipText.textContent = `异兽入侵：共 ${state.beastRaid.waves} 波，每 ${ARMY_REPORT_CONFIG.bossEveryWaves} 波一个 BOSS 波，不消耗体力，守住即可获得重赏。`;
+  setTip(`异兽入侵：共 ${state.beastRaid.waves} 波，每 ${ARMY_REPORT_CONFIG.bossEveryWaves} 波一个 BOSS 波，不消耗体力，守住即可获得重赏。`);
   showBattle();
 }
 
@@ -6251,10 +6812,22 @@ function showBeastDefeat() {
   modalDetail.innerHTML = beastRewardRowHtml(result, false);
 }
 
+// 重开本局：保留本关已扣的体力标记。resetGame 会把 levelStaminaSpent 清成 false，
+// 若不恢复，第一次出怪（startWave）会按"本关未付费"再扣一次体力，等于重开一次多收一份门票。
+function restartLevel() {
+  const staminaAlreadySpent = state.levelStaminaSpent;
+  resetGame();
+  if (staminaAlreadySpent) state.levelStaminaSpent = true;
+  showBattle();
+  setTip("本局已重开，棋盘与进度重置；本关体力不再重复扣除。");
+}
+
 function nextLevel() {
   state.level += 1;
   state.selectedLevel = state.level;
   resetGame(false);
+  showBattle();             // 确保进入战斗界面（结算残留态需重置）
+  showLevelBriefing();      // 内部重设 levelModifier 并弹本关预告，救回差异化系统
 }
 
 function completeLevelToHome() {
@@ -6266,6 +6839,7 @@ function completeLevelToHome() {
 
 function resetGame(keepLevel = true, options = {}) {
   finishMergeHintAd(false, false);
+  state.adPlayback = null;   // 清残留广告态：否则换关/重开后广告类按钮会被旧状态锁死
   stopLoop();
   hideModal();
   state.resolutionId += 1;
@@ -6322,6 +6896,8 @@ function resetGame(keepLevel = true, options = {}) {
   state.heroSkillQueue = shuffled(getUnlockedHeroSkills().map((skill) => skill.id));
   state.heroRallyRemaining = 0;
   state.heroDamageRemaining = 0;
+  state.warriorDamageMult = { sword: 1, fan: 1, rock: 1 };
+  state.seenTraits = {};
   state.heroSpeedRemaining = 0;
   HERO_SKILLS.forEach((skill) => { state.heroSkillCooldowns[skill.id] = 0; });
   state.damageMultiplier = 1;
@@ -6332,9 +6908,9 @@ function resetGame(keepLevel = true, options = {}) {
   seedBoard();
   setSceneBg(getSceneKey(getRunLevel()));
   render();
-  tipText.textContent = isBeastRaid()
+  setTip(isBeastRaid()
     ? `异兽入侵：共 ${state.beastRaid.waves} 波，每 ${ARMY_REPORT_CONFIG.bossEveryWaves} 波一个 BOSS 波，不消耗体力。`
-    : "交换棋子，让 3 个以上同类棋子在横、竖或斜线上连续排列即可消除。";
+    : "交换棋子，让 3 个以上同类棋子在横、竖或斜线上连续排列即可消除。");
 }
 
 startWaveBtn.addEventListener("click", startWave);
@@ -6349,18 +6925,19 @@ adStepsBtn.addEventListener("click", () => AdService.showRewarded({
   placement: "额外步数",
   onComplete: () => {
     state.steps += 3;
-    tipText.textContent = "激励广告完成，获得 3 步。";
+    setTip("激励广告完成，获得 3 步。");
   },
 }));
 mergeHintBtn.addEventListener("click", showMergeHintAd);
 boardShuffleBtn.addEventListener("click", showBoardShuffleAd);
-resetBtn.addEventListener("click", () => showConfirm("重开本局", "确定重开本局吗？当前进度与已消耗体力不返还。", () => resetGame(), "重开"));
+resetBtn.addEventListener("click", () => showConfirm("重开本局", "确定重开本局吗？当前进度与已消耗体力不返还（也不会重复扣除）。", () => restartLevel(), "重开"));
 homeStartBtn.addEventListener("click", startLevelFromHome);
 homeNormalModeBtn.addEventListener("click", () => selectHomeMode(false));
 homeChallengeModeBtn.addEventListener("click", () => selectHomeMode(true));
 homeStaminaBtn.addEventListener("click", showStaminaRefill);
 homeHeroAvatar.addEventListener("click", () => showHeroSkillView(showHome));
 battleHomeBtn.addEventListener("click", () => showConfirm("返回主界面", "确定返回主界面吗？本局进度将丢失，已消耗体力不返还。", showHome, "返回"));
+briefingBtn.addEventListener("click", () => showLevelBriefing(true));   // F9/F12：重看本关特性与攻略
 homePrevLevelBtn.addEventListener("click", () => selectHomeLevel(-1));
 homeNextLevelBtn.addEventListener("click", () => selectHomeLevel(1));
 document.getElementById("armyMarqueeHome").addEventListener("click", () => {

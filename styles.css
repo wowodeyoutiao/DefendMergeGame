@@ -566,6 +566,7 @@ button {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
+.range-layer,
 .lane-layer,
 .monster-layer,
 .fx-layer {
@@ -613,6 +614,19 @@ button {
 .lane {
   background: linear-gradient(180deg, rgba(255, 231, 104, 0.22), transparent 80%);
   border-left: 1px dashed rgba(255, 245, 176, 0.32);
+}
+.lane.lane-blessed {
+  background: linear-gradient(180deg, rgba(255, 215, 120, 0.5), rgba(255, 215, 120, 0.14) 80%);
+  border-left: 1px dashed rgba(255, 222, 142, 0.65);
+}
+.lane.lane-hazard {
+  background: linear-gradient(180deg, rgba(220, 90, 60, 0.42), rgba(220, 90, 60, 0.1) 80%);
+  border-left: 1px dashed rgba(220, 90, 60, 0.6);
+}
+
+/* 攻击范围闪光：必须是「地面光效」，压在怪物层(z4)之下，否则蓝色圆形会像遮罩盖住怪物与飘血数字 */
+.range-layer {
+  z-index: 2;
 }
 
 .monster-layer {
@@ -724,6 +738,25 @@ button {
   font-size: 8px;
   font-weight: 700;
   text-shadow: 0 1px 2px rgba(17, 47, 60, 0.9);
+}
+
+.monster-trait {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 5.5px;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0.5px 0.5px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  z-index: 3;
 }
 
 .merge-fx,
@@ -845,6 +878,7 @@ button {
 .damage-fx {
   color: #fff3b0;
   animation: damageFade 900ms ease-out forwards;
+  scale: 0.5;
 }
 
 .damage-fx.heavy-hit {
@@ -918,6 +952,23 @@ button {
 .hero-skill-fx {
   background: rgba(88, 206, 239, 0.26);
   animation: heroSkillFlash 620ms ease-out forwards;
+}
+
+.hero-skill-seq {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: min(82%, 540px);
+  max-height: 74%;
+  transform: translate(-50%, -50%);
+  z-index: 14;
+  pointer-events: none;
+  object-fit: contain;
+}
+
+/* 源无 alpha 的亮色技能用 screen 混合把黑底变透明（加色发光感） */
+.hero-skill-seq.blend-screen {
+  mix-blend-mode: screen;
 }
 
 @keyframes heroSkillFlash {
@@ -1298,19 +1349,22 @@ button {
 
 .speed-float {
   position: absolute;
-  right: 8px;
-  bottom: 180px;
-  z-index: 10;
-  width: 44px;
-  height: 44px;
+  right: 100%;            /* 紧贴棋盘左缘之外，落在非交互留白带，避免滑动误触（F10） */
+  margin-right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  width: 38px;
+  height: 38px;
   border: 0;
   border-radius: 50%;
   background: linear-gradient(#5a9eff, #3f6fd6);
   box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.16), 0 3px 8px rgba(0, 0, 0, 0.2);
   color: #ffffff;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 900;
   cursor: pointer;
+  touch-action: manipulation;
   transition: transform .12s ease, box-shadow .12s ease;
 }
 .speed-float:disabled {
@@ -1319,7 +1373,7 @@ button {
   cursor: not-allowed;
 }
 @media (hover: hover) and (pointer: fine) {
-  .speed-float:hover:not(:disabled) { transform: translateY(-2px); box-shadow: inset 0 -3px 0 rgba(0,0,0,0.16), 0 6px 12px rgba(0,0,0,0.25); }
+  .speed-float:hover:not(:disabled) { transform: translateY(calc(-50% - 2px)); box-shadow: inset 0 -3px 0 rgba(0,0,0,0.16), 0 6px 12px rgba(0,0,0,0.25); }
 }
 
 .merge-hint-button {
@@ -1466,7 +1520,8 @@ button {
   text-shadow: 0 1px 0 #fff5d0;
 }
 
-.modal-card p {
+.modal-card p,
+#modalBody {
   margin: 0 0 16px;
   color: var(--muted);
   line-height: 1.5;
@@ -2330,4 +2385,111 @@ button {
   .home-bottom-nav {
     height: 84px;
   }
+}
+
+/* 战斗内顶部 toast：移动端（侧栏隐藏）替代 tipText 的反馈通道（F3） */
+.battle-toast {
+  position: absolute;
+  bottom: 78px;          /* 移出棋盘区：落在战斗屏底部、公告条上方，不再遮挡怪物与飘血数字 */
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  max-width: 90%;
+  padding: 6px 12px;
+  background: rgba(18, 26, 40, 0.86);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+  z-index: 25;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+  display: none;            /* 桌面端由侧栏 tipText 承载，默认隐藏 */
+}
+.battle-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+@media (max-width: 760px) {
+  .battle-toast { display: block; }
+}
+
+/* 步数返步飘字：居中突出提示，与侧栏 tipText 互不干扰 */
+.step-refund-toast {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.6);
+  z-index: 30;
+  pointer-events: none;
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 2px solid #ffe1a8;
+  background: linear-gradient(180deg, rgba(255, 154, 86, 0.94), rgba(255, 91, 91, 0.94));
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.38), inset 0 0 10px rgba(255, 255, 255, 0.32);
+  color: #fff7d6;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-shadow: 0 2px 0 #b5530f, 0 0 14px rgba(255, 196, 92, 0.9);
+  opacity: 0;
+}
+.step-refund-toast.show {
+  animation: stepRefundPop 1800ms ease forwards;
+}
+@keyframes stepRefundPop {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+  12%  { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+  22%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  72%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -58%) scale(0.95); }
+}
+
+/* 步数数字滚动增加反馈 */
+#stepsText { display: inline-block; }
+#stepsText.steps-rolling {
+  animation: stepsBump 700ms ease;
+  color: #ffe08a;
+  text-shadow: 0 0 10px rgba(255, 196, 92, 0.95);
+}
+@keyframes stepsBump {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.55); }
+  100% { transform: scale(1); }
+}
+
+/* 「本关特性」悬浮按钮：战斗内随时重看预告/攻略（F9/F12） */
+.briefing-fab {
+  position: absolute;
+  top: 46px;
+  right: 8px;
+  z-index: 22;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 50%;
+  background: linear-gradient(#ffce8a, #ef9a3a);
+  color: #5a2e00;
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 30px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+.briefing-fab:active { transform: scale(0.92); }
+
+/* 选关界面本关特性小字徽章（F8） */
+.home-stage-trait {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 10px;
+  font-size: 12px;
+  color: #ffe2a1;
+  background: rgba(168, 75, 36, 0.5);
+  border: 1px solid rgba(255, 206, 138, 0.4);
+  border-radius: 999px;
 }
